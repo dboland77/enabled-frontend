@@ -1,7 +1,7 @@
 'use client';
 
 import Script from 'next/script';
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/client';
 import type { accounts, CredentialResponse } from 'google-one-tap';
 import { useRouter } from 'next/navigation';
 
