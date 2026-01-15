@@ -9,6 +9,11 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@emotion/cache": "^11.14.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/material": "^7.3.7",
+    "@mui/system": "^7.3.7",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.90.0",
     "@types/google-one-tap": "^1.2.7",
