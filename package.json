@@ -18,6 +18,7 @@
     "@supabase/supabase-js": "^2.90.0",
     "@types/google-one-tap": "^1.2.7",
     "google-one-tap": "^1.0.6",
+    "lodash": "^4.17.21",
     "next": "16.1.1",
     "react": "19.2.3",
     "react-dom": "19.2.3"
