@@ -51,7 +51,7 @@ const OneTapComponent = () => {
           if (error) throw error;
 
           // redirect to protected page
-          router.push('/');
+          router.push('/account');
         } catch (error) {
           console.error('Error logging in with Google One Tap', error);
         }
