@@ -4,8 +4,6 @@ import Script from 'next/script';
 import { createClient } from '@/lib/supabase/client';
 import type { accounts, CredentialResponse } from 'google-one-tap';
 import { useRouter } from 'next/navigation';
-import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
 
 declare const google: { accounts: accounts };
 
