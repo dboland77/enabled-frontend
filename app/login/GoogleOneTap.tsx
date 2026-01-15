@@ -4,6 +4,8 @@ import Script from 'next/script';
 import { createClient } from '@/lib/supabase/client';
 import type { accounts, CredentialResponse } from 'google-one-tap';
 import { useRouter } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 
 declare const google: { accounts: accounts };
 
@@ -24,9 +26,7 @@ const OneTapComponent = () => {
 
   const initializeGoogleOneTap = async () => {
     const supabase = await createClient();
-    console.log('Initializing Google One Tap');
     const [nonce, hashedNonce] = await generateNonce();
-    console.log('Nonce: ', nonce, hashedNonce);
 
     // check if there's already an existing session before initializing the one-tap UI
     const { data, error } = await supabase.auth.getSession();
@@ -34,7 +34,7 @@ const OneTapComponent = () => {
       console.error('Error getting session', error);
     }
     if (data.session) {
-      router.push('/');
+      router.push('/account');
       return true;
     }
 
@@ -51,8 +51,6 @@ const OneTapComponent = () => {
           });
 
           if (error) throw error;
-          console.log('Session data: ', data);
-          console.log('Successfully logged in with Google One Tap');
 
           // redirect to protected page
           router.push('/');
