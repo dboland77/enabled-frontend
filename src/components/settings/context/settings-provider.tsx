@@ -1,10 +1,9 @@
-import isEqual from 'lodash/isEqual';
 import { useMemo, useState, useEffect, useCallback } from 'react';
 
 import { SettingsValueProps } from '../types';
 import { SettingsContext } from './settings-context';
-import { useLocalStorage } from '../../../hooks/use-local-storage';
-import { localStorageGetItem } from '../../../utils/storage-available';
+import { useLocalStorage } from '@/hooks/use-local-storage';
+import { localStorageGetItem } from '@/utils/storage-available';
 
 // ----------------------------------------------------------------------
 
