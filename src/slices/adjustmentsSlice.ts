@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-import { HOST_API } from '../config-global';
+import { HOST_API } from '@/config-global';
 
 const initialState = {
   adjustments: [

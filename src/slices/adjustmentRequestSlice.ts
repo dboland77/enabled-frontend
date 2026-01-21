@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-import { RequestStatusTypes } from 'src/frontend/types/adjustmentRequest';
+import { RequestStatusTypes } from '@/types/adjustmentRequest';
 
-import { HOST_API } from '../config-global';
+import { HOST_API } from '@/config-global';
 
 const currentDate = new Date();
 

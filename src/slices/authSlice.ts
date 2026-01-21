@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-import { AuthStateType } from 'src/frontend/routes/auth/types';
+import { AuthStateType } from '@/app/auth/types';
 
-import { HOST_API } from '../config-global';
+import { HOST_API } from '@/config-global';
 
 const initialState: AuthStateType = {
   authLoading: false,
