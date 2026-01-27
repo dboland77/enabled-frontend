@@ -7,7 +7,6 @@ import { createTheme, ThemeOptions, ThemeProvider as MuiThemeProvider } from '@m
 import { palette } from './palette';
 import { shadows } from './shadows';
 import { typography } from './typography';
-import RTL from './options/right-to-left';
 import { customShadows } from './custom-shadows';
 import { componentsOverrides } from './overrides';
 import { createPresets } from './options/presets';
@@ -56,10 +55,8 @@ export default function ThemeProvider({ children }: Props) {
 
   return (
     <MuiThemeProvider theme={theme}>
-      <RTL themeDirection={settings.themeDirection}>
-        <CssBaseline />
-        {children}
-      </RTL>
+      <CssBaseline />
+      {children}
     </MuiThemeProvider>
   );
 }
