@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import merge from 'lodash/merge';
 
 import CssBaseline from '@mui/material/CssBaseline';
 import { createTheme, ThemeOptions, ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
@@ -12,7 +11,6 @@ import { customShadows } from './custom-shadows';
 import { componentsOverrides } from './overrides';
 import { createPresets } from './options/presets';
 import { createContrast } from './options/contrast';
-import { useSettingsContext } from '../components/settings';
 
 // ----------------------------------------------------------------------
 
