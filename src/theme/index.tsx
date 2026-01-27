@@ -12,14 +12,15 @@ import { customShadows } from './custom-shadows';
 import { componentsOverrides } from './overrides';
 import { createPresets } from './options/presets';
 import { createContrast } from './options/contrast';
-
-// ----------------------------------------------------------------------
+import { useSettingsContext } from '../components/settings';
 
 type Props = {
   children: React.ReactNode;
 };
 
 export default function ThemeProvider({ children }: Props) {
+  const settings = useSettingsContext();
+
   const presets = createPresets(settings.themeColorPresets);
 
   const contrast = createContrast(settings.themeContrast, settings.themeMode);
