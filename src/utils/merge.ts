@@ -1,17 +1,17 @@
-export function merge(target, ...sources) {
+export function merge(target: any, ...sources: any) {
   for (let source of sources) {
     mergeValue(target, source);
   }
 
   return target;
 
-  function innerMerge(target, source) {
+  function innerMerge(target: any, source: any) {
     for (let [key, value] of Object.entries(source)) {
       target[key] = mergeValue(target[key], value);
     }
   }
 
-  function mergeValue(targetValue, value) {
+  function mergeValue(targetValue: any, value: any) {
     if (Array.isArray(value)) {
       if (!Array.isArray(targetValue)) {
         return [...value];

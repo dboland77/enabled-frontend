@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { merge } from '@/utils/merge';
 
 import CssBaseline from '@mui/material/CssBaseline';
 import { createTheme, ThemeOptions, ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
@@ -19,8 +20,6 @@ type Props = {
 };
 
 export default function ThemeProvider({ children }: Props) {
-  const settings = useSettingsContext();
-
   const presets = createPresets(settings.themeColorPresets);
 
   const contrast = createContrast(settings.themeContrast, settings.themeMode);
