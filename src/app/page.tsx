@@ -21,18 +21,6 @@ export default function Home() {
         <SnackbarProvider>
           <SettingsDrawer />
           <ProgressBar />
-          <div className="row">
-            <div className="col-12">
-              <h1 className="header">Supabase Auth + Storage</h1>
-              <p>
-                Experience our Auth and Storage through a simple profile management example. Create
-                a user profile and upload an avatar image. Fast, simple, secure.
-              </p>
-            </div>
-            <div className="col-6 form-widget">
-              <Link href="/login">Auth page</Link>
-            </div>
-          </div>
         </SnackbarProvider>
       </ThemeProvider>
     </SettingsProvider>
