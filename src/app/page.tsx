@@ -4,6 +4,7 @@ import ThemeProvider from '@/theme';
 import ProgressBar from '@/components/progress-bar';
 import { SettingsDrawer, SettingsProvider } from '@/components/settings';
 import SnackbarProvider from '@/components/snackbar/snackbar-provider';
+import { Suspense } from 'react';
 
 export default function Home() {
   return (
