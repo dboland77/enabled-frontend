@@ -1,3 +1,4 @@
+'use client';
 import * as Yup from 'yup';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -44,6 +45,9 @@ export default function LoginView() {
   const onSubmit = handleSubmit(async (data) => {
     try {
       const { email, password } = data;
+      await dispatch(signinUser({ email, password }));
+
+      router.push(returnTo || PATH_AFTER_LOGIN);
     } catch (error) {
       console.error(error);
       reset();
