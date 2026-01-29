@@ -4,6 +4,7 @@ import ThemeProvider from '@/theme';
 import ProgressBar from '@/components/progress-bar';
 import { SettingsDrawer, SettingsProvider } from '@/components/settings';
 import SnackbarProvider from '@/components/snackbar/snackbar-provider';
+import LandingPage from './LandingPage';
 
 export default function Home() {
   return (
@@ -21,6 +22,7 @@ export default function Home() {
         <SnackbarProvider>
           <SettingsDrawer />
           <ProgressBar />
+          <LandingPage />
         </SnackbarProvider>
       </ThemeProvider>
     </SettingsProvider>

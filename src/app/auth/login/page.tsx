@@ -1,5 +1,5 @@
 'use client';
-import { login, signup } from './actions';
+import { login, signup } from '../actions';
 import OneTapComponent from './GoogleOneTap';
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
