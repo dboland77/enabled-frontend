@@ -9,5 +9,4 @@ export * from './use-off-set-top';
 export * from './use-double-click';
 export * from './use-local-storage';
 export * from './use-event-listener';
-export * from './use-app-typed-redux';
 export * from './use-copy-to-clipboard';

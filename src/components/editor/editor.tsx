@@ -1,6 +1,6 @@
 import '../../utils/highlight';
 
-import ReactQuill from 'react-quill';
+import ReactQuill from 'react-quill-new';
 
 import { alpha } from '@mui/material/styles';
 
