@@ -7,10 +7,10 @@ export default function LandingPage() {
       <h1>Welcome to MyApp</h1>
       <ul>
         <li>
-          <Link href="/login">Login</Link>
+          <Link href="/auth/login">Login</Link>
         </li>
         <li>
-          <Link href="/register">Register</Link>
+          <Link href="/auth/register">Register</Link>
         </li>
       </ul>
     </main>
