@@ -8,14 +8,11 @@ import { alpha } from '@mui/material/styles';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
+import { redirect } from 'next/navigation';
 
-import { useAppSelector } from 'src/frontend/hooks';
-
-import { paths } from '../../routes/paths';
-import { useRouter } from '../../routes/hooks';
-import { varHover } from '../../components/animate';
-import { useSnackbar } from '../../components/snackbar';
-import CustomPopover, { usePopover } from '../../components/custom-popover';
+import { varHover } from '@/components/animate';
+import { useSnackbar } from '@/components/snackbar';
+import CustomPopover, { usePopover } from '@/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
@@ -26,18 +23,11 @@ const OPTIONS = [
   },
   {
     label: 'Profile',
-    linkTo: paths.dashboard.user.profile,
+    linkTo: '/account',
   },
 ];
 
-// ----------------------------------------------------------------------
-
 export default function AccountPopover() {
-  const router = useRouter();
-
-  const { firstname, lastname, avatarUrl } = useAppSelector((state) => state.userProfile);
-  const { email } = useAppSelector((state) => state.auth);
-
   const logout = () => {};
 
   const { enqueueSnackbar } = useSnackbar();
@@ -48,7 +38,7 @@ export default function AccountPopover() {
     try {
       await logout();
       popover.onClose();
-      router.push('/');
+      redirect('/signout');
       window.location.reload();
     } catch (error) {
       console.error(error);
@@ -58,8 +48,13 @@ export default function AccountPopover() {
 
   const handleClickItem = (path: string) => {
     popover.onClose();
-    router.push(path);
+    redirect(path);
   };
+
+  const firstname = 'Change me';
+  const lastname = 'Change me';
+  const avatarUrl = 'Change me';
+  const email = 'sdfsdf';
 
   return (
     <>
