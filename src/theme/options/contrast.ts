@@ -1,5 +1,5 @@
-import { grey } from '../palette';
-import { customShadows } from '../custom-shadows';
+import { grey } from '@/theme/palette';
+import { customShadows } from '@/theme/custom-shadows';
 
 // ----------------------------------------------------------------------
 

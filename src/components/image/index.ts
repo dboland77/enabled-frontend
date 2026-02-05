@@ -1,3 +1,3 @@
-export * from './types';
+export * from '@/components/image/types';
 
-export { default } from './image';
+export { default } from '@/components/image/image';

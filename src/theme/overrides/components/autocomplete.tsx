@@ -1,8 +1,10 @@
-import { alpha, Theme } from '@mui/material/styles';
+import { Theme } from '@mui/material/styles';
+import { alpha } from '@mui/system';
+
 import { svgIconClasses } from '@mui/material/SvgIcon';
 import { autocompleteClasses } from '@mui/material/Autocomplete';
 
-import { paper, menuItem } from '../../css';
+import { paper, menuItem } from '@/theme/css';
 
 // ----------------------------------------------------------------------
 

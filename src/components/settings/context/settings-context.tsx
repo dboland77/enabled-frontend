@@ -1,6 +1,6 @@
 import { useContext, createContext } from 'react';
 
-import { SettingsContextProps } from '../types';
+import { SettingsContextProps } from '@/components/settings/types';
 
 // ----------------------------------------------------------------------
 

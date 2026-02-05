@@ -1,4 +1,4 @@
-import { StyledEditorToolbar } from './styles';
+import { StyledEditorToolbar } from '@/components/editor/styles';
 
 // ----------------------------------------------------------------------
 

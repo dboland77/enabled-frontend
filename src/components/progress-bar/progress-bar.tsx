@@ -1,7 +1,7 @@
 import NProgress from 'nprogress';
 import { useState, useEffect } from 'react';
 
-import StyledProgressBar from './styles';
+import StyledProgressBar from '@/components/progress-bar/styles';
 
 export default function ProgressBar() {
   const [mounted, setMounted] = useState(false);

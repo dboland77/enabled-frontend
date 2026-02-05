@@ -3,16 +3,18 @@ import { useDropzone } from 'react-dropzone';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import { alpha } from '@mui/material/styles';
+
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
-import Iconify from '../iconify';
-import { UploadProps } from './types';
-import MultiFilePreview from './preview-multi-file';
-import RejectionFiles from './errors-rejection-files';
-import SingleFilePreview from './preview-single-file';
+import Iconify from '@/components/iconify';
+import { UploadProps } from '@/components/upload/types';
+import MultiFilePreview from '@/components/upload/preview-multi-file';
+import RejectionFiles from '@/components/upload/errors-rejection-files';
+import SingleFilePreview from '@/components/upload/preview-single-file';
 import { UploadIllustration } from '@/assets/illustrations';
+
+import { alpha } from '@mui/system';
 
 // ----------------------------------------------------------------------
 

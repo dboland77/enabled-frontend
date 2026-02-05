@@ -11,17 +11,17 @@ import IconButton from '@mui/material/IconButton';
 // import InputAdornment from '@mui/material/InputAdornment';
 import Dialog, { dialogClasses } from '@mui/material/Dialog';
 
-// import ResultItem from './result-item';
-import Label from '../../../components/label';
-// import { useRouter } from '../../../routes/hooks';
-import Iconify from '../../../components/iconify';
-// import Scrollbar from '../../../components/scrollbar';
-import { useBoolean } from '../../../hooks/use-boolean';
-import { useResponsive } from '../../../hooks/use-responsive';
-// import { useNavData } from '../../dashboard/config-navigation';
-// import { applyFilter, groupedData, getAllItems } from './utils';
-// import SearchNotFound from '../../../components/search-not-found';
-// import { useEventListener } from '../../../hooks/use-event-listener';
+// import ResultItem from '@/app/auth/layouts/common/searchbar/result-item';
+import Label from '@/components/label';
+// import { useRouter } from '@/app/auth/routes/hooks';
+import Iconify from '@/components/iconify';
+// import Scrollbar from '@/app/auth/components/scrollbar';
+import { useBoolean } from '@/hooks/use-boolean';
+import { useResponsive } from '@/hooks/use-responsive';
+// import { useNavData } from '@/app/auth/layouts/dashboard/config-navigation';
+// import { applyFilter, groupedData, getAllItems } from '@/app/auth/layouts/common/searchbar/utils';
+// import SearchNotFound from '@/app/auth/components/search-not-found';
+// import { useEventListener } from '@/app/auth/hooks/use-event-listener';
 
 function Searchbar() {
   const theme = useTheme();

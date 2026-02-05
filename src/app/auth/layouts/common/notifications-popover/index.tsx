@@ -14,16 +14,14 @@ import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
-import { getNotifications } from 'src/frontend/slices';
-import Scrollbar from 'src/frontend/components/scrollbar';
-import { useAppDispatch, useAppSelector } from 'src/frontend/hooks';
+import Scrollbar from '@/components/scrollbar';
 
-import Label from '../../../components/label';
-import Iconify from '../../../components/iconify';
-import NotificationItem from './notification-item';
-import { varHover } from '../../../components/animate';
-import { useBoolean } from '../../../hooks/use-boolean';
-import { useResponsive } from '../../../hooks/use-responsive';
+import Label from '@/components/label';
+import Iconify from '@/components/iconify';
+import NotificationItem from '@/app/auth/layouts/common/notifications-popover/notification-item';
+import { varHover } from '@/components/animate';
+import { useBoolean } from '@/hooks/use-boolean';
+import { useResponsive } from '@/hooks/use-responsive';
 
 export default function NotificationsPopover() {
   const drawer = useBoolean();
@@ -32,23 +30,19 @@ export default function NotificationsPopover() {
 
   const [currentTab, setCurrentTab] = useState('all');
 
-  const dispatch = useAppDispatch();
-
-  const userId = useAppSelector((state: any) => state.auth.id);
-  const { userNotifications, notificationsLoading } = useAppSelector(
-    (state: any) => state.notifications
-  );
+  const userNotifications = ['', ''];
+  const userId = 'asdfdsf';
+  const notificationsLoading = false;
 
   useEffect(() => {
     if (userId) {
-      dispatch(getNotifications(userId));
+      // dispatch(getNotifications(userId));
     }
-  }, [userId, dispatch]);
+  }, [userId]);
 
   const handleChangeTab = useCallback(
     (event: React.SyntheticEvent, newValue: string) => {
       setCurrentTab(newValue);
-      console.log(userNotifications);
     },
     [userNotifications]
   );

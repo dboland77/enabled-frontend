@@ -1,7 +1,9 @@
-import { alpha, styled } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
+import { alpha } from '@mui/system';
 
-import { bgBlur } from '../../theme/css';
-import { MenuPopoverArrowValue } from './types';
+
+import { bgBlur } from '@/theme/css';
+import { MenuPopoverArrowValue } from '@/components/custom-popover/types';
 
 // ----------------------------------------------------------------------
 

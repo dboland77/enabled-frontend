@@ -3,7 +3,7 @@ import { Icon } from '@iconify/react';
 
 import Box, { BoxProps } from '@mui/material/Box';
 
-import { IconifyProps } from './types';
+import { IconifyProps } from '@/components/iconify/types';
 
 // ----------------------------------------------------------------------
 

@@ -2,7 +2,7 @@ import { m, MotionProps } from 'framer-motion';
 
 import Box, { BoxProps } from '@mui/material/Box';
 
-import { varContainer } from './variants';
+import { varContainer } from '@/components/animate/variants';
 
 // ----------------------------------------------------------------------
 

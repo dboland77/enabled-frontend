@@ -9,7 +9,7 @@ import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import LoadingButton from '@mui/lab/LoadingButton';
+import Button from '@mui/material/Button';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import Iconify from '@/components/iconify';
@@ -45,10 +45,7 @@ export default function LoginView() {
   const onSubmit = handleSubmit(async (data) => {
     try {
       const { email, password } = data;
-      await dispatch(signinUser({ email, password }));
-
-      router.push(returnTo || PATH_AFTER_LOGIN);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       reset();
       setErrorMsg(typeof error === 'string' ? error : error.message);
@@ -62,9 +59,7 @@ export default function LoginView() {
       <Stack direction="row" spacing={0.5}>
         <Typography variant="body2">New user?</Typography>
 
-        <Link component={RouterLink} href={paths.auth.register} variant="subtitle2">
-          Create an account
-        </Link>
+        <Link variant="subtitle2">Create an account</Link>
       </Stack>
     </Stack>
   );
@@ -94,7 +89,7 @@ export default function LoginView() {
         Forgot password?
       </Link>
 
-      <LoadingButton
+      <Button
         fullWidth
         color="inherit"
         size="large"
@@ -103,7 +98,7 @@ export default function LoginView() {
         loading={isSubmitting}
       >
         Login
-      </LoadingButton>
+      </Button>
     </Stack>
   );
 

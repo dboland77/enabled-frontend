@@ -1,3 +1,3 @@
-export * from './types';
+export * from '@/components/editor/types';
 
-export { default } from './editor';
+export { default } from '@/components/editor/editor';

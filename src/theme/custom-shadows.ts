@@ -1,10 +1,12 @@
-import { alpha } from '@mui/material/styles';
 
-import { grey, info, error, common, primary, success, warning, secondary } from './palette';
+
+import { grey, info, error, common, primary, success, warning, secondary } from '@/theme/palette';
+import { alpha } from '@mui/system';
+
 
 // ----------------------------------------------------------------------
 
-interface CustomShadows {
+export interface CustomShadows {
   z1: string;
   z4: string;
   z8: string;
@@ -23,15 +25,6 @@ interface CustomShadows {
   card: string;
   dialog: string;
   dropdown: string;
-}
-
-declare module '@mui/material/styles' {
-  interface Theme {
-    customShadows: CustomShadows;
-  }
-  interface ThemeOptions {
-    customShadows?: CustomShadows;
-  }
 }
 
 // ----------------------------------------------------------------------

@@ -1,10 +1,8 @@
 import { forwardRef } from 'react';
 
 import Link from '@mui/material/Link';
-// import { useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import Box, { BoxProps } from '@mui/material/Box';
-
-import { RouterLink } from '../../routes/components';
 
 export interface LogoProps extends BoxProps {
   disabledLink?: boolean;
@@ -14,13 +12,13 @@ const NICE_BLUE = '#2596be';
 
 const Logo = forwardRef<HTMLDivElement, LogoProps>(
   ({ disabledLink = false, sx, ...other }, ref) => {
-    // const theme = useTheme();
+    const theme = useTheme();
 
-    // const PRIMARY_LIGHT = theme.palette.primary.light;
+    const PRIMARY_LIGHT = theme.palette.primary.light;
 
-    // const PRIMARY_MAIN = theme.palette.primary.main;
+    const PRIMARY_MAIN = theme.palette.primary.main;
 
-    // const PRIMARY_DARK = theme.palette.primary.dark;
+    const PRIMARY_DARK = theme.palette.primary.dark;
 
     const logo = (
       <Box
@@ -34,7 +32,7 @@ const Logo = forwardRef<HTMLDivElement, LogoProps>(
         }}
         {...other}
       >
-        {/* <defs>
+        <defs>
           <linearGradient id="BG1" x1="100%" x2="50%" y1="9.946%" y2="50%">
             <stop offset="0%" stopColor={PRIMARY_DARK} />
             <stop offset="100%" stopColor={PRIMARY_MAIN} />
@@ -49,7 +47,7 @@ const Logo = forwardRef<HTMLDivElement, LogoProps>(
             <stop offset="0%" stopColor={PRIMARY_LIGHT} />
             <stop offset="100%" stopColor={PRIMARY_MAIN} />
           </linearGradient>
-        </defs> */}
+        </defs>
         <svg height="50" width="100">
           <text x="0" y="20" fill={NICE_BLUE} letterSpacing="2" fontSize="22">
             enableD
@@ -63,7 +61,7 @@ const Logo = forwardRef<HTMLDivElement, LogoProps>(
     }
 
     return (
-      <Link component={RouterLink} href="/" sx={{ display: 'contents' }}>
+      <Link href="/" sx={{ display: 'contents' }}>
         {logo}
       </Link>
     );

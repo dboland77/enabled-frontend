@@ -1,8 +1,7 @@
-import Button from '@mui/material/Button';
+import Link from '@mui/material/Link';
 import { Theme, SxProps } from '@mui/material/styles';
 
-import { RouterLink } from '../../routes/components';
-import { PATH_AFTER_LOGIN } from '../../config-global';
+const PATH_AFTER_LOGIN = '/account';
 
 type Props = {
   sx?: SxProps<Theme>;
@@ -10,8 +9,8 @@ type Props = {
 
 export default function LoginButton({ sx }: Props) {
   return (
-    <Button component={RouterLink} href={PATH_AFTER_LOGIN} variant="outlined" sx={{ mr: 1, ...sx }}>
-      Login
-    </Button>
+    <Link variant="body2" color="inherit" underline="always" sx={{ alignSelf: 'flex-end' }}>
+      Forgot password?
+    </Link>
   );
 }

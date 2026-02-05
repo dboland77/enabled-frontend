@@ -1,4 +1,4 @@
-import { BackgroundType } from '../types';
+import { BackgroundType } from '@/components/animate/types';
 
 // ----------------------------------------------------------------------
 

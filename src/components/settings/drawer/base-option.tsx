@@ -1,8 +1,9 @@
 import Stack from '@mui/material/Stack';
-import { alpha } from '@mui/material/styles';
+import { alpha } from '@mui/system';
+
 import ButtonBase from '@mui/material/ButtonBase';
 
-import SvgColor from '../../svg-color';
+import SvgColor from '@/components/svg-color';
 
 // ----------------------------------------------------------------------
 

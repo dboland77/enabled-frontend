@@ -3,8 +3,8 @@ import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import { Theme, SxProps } from '@mui/material/styles';
 
-import DownloadButton from './download-button';
-import { fileData, fileThumb, fileFormat } from './utils';
+import DownloadButton from '@/components/file-thumbnail/download-button';
+import { fileData, fileThumb, fileFormat } from '@/components/file-thumbnail/utils';
 
 // ----------------------------------------------------------------------
 

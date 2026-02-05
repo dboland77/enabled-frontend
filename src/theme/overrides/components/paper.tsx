@@ -1,4 +1,6 @@
-import { Theme, alpha } from '@mui/material/styles';
+import { Theme } from '@mui/material/styles';
+import { alpha } from '@mui/system';
+
 
 // ----------------------------------------------------------------------
 

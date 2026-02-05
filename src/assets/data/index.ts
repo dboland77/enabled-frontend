@@ -1,1 +1,1 @@
-export * from './countries';
+export * from '@/assets/data/countries';

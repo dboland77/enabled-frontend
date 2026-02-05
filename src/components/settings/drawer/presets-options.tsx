@@ -1,8 +1,9 @@
 import Box from '@mui/material/Box';
-import { alpha } from '@mui/material/styles';
+import { alpha } from '@mui/system';
+
 import ButtonBase from '@mui/material/ButtonBase';
 
-import { presetOptions } from '../../../theme/options/presets';
+import { presetOptions } from '@/theme/options/presets';
 
 // ----------------------------------------------------------------------
 

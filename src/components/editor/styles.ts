@@ -1,9 +1,9 @@
 import Box from '@mui/material/Box';
-import { alpha, styled } from '@mui/material/styles';
+import { alpha, styled } from '@mui/system';
 
 // ----------------------------------------------------------------------
 
-export const StyledEditor = styled(Box)(({ theme }) => ({
+export const StyledEditor = styled(Box)(({ theme }: any) => ({
   overflow: 'hidden',
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
@@ -51,7 +51,7 @@ export const StyledEditor = styled(Box)(({ theme }) => ({
   },
 }));
 
-export const StyledEditorToolbar = styled('div')(({ theme }) => {
+export const StyledEditorToolbar = styled('div')(({ theme }: any) => {
   const isRTL = theme.direction === 'rtl';
 
   return {

@@ -5,9 +5,9 @@ import IconButton from '@mui/material/IconButton';
 import { Theme, SxProps } from '@mui/material/styles';
 import Badge, { badgeClasses } from '@mui/material/Badge';
 
-import Iconify from '../../components/iconify';
-import { varHover } from '../../components/animate';
-import { useSettingsContext } from '../../components/settings';
+import Iconify from '@/components/iconify';
+import { varHover } from '@/components/animate';
+import { useSettingsContext } from '@/components/settings';
 
 // ----------------------------------------------------------------------
 

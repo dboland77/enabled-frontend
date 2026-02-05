@@ -7,15 +7,15 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Drawer, { drawerClasses } from '@mui/material/Drawer';
 
-import Iconify from '../../iconify';
-import Scrollbar from '../../scrollbar';
-import BaseOptions from './base-option';
-import { paper } from '../../../theme/css';
-import LayoutOptions from './layout-options';
-import PresetsOptions from './presets-options';
-import StretchOptions from './stretch-options';
-import { useSettingsContext } from '../context';
-import FullScreenOption from './fullscreen-option';
+import Iconify from '@/components/iconify';
+import Scrollbar from '@/components/scrollbar';
+import BaseOptions from '@/components/settings/drawer/base-option';
+import { paper } from '@/theme/css';
+import LayoutOptions from '@/components/settings/drawer/layout-options';
+import PresetsOptions from '@/components/settings/drawer/presets-options';
+import StretchOptions from '@/components/settings/drawer/stretch-options';
+import { useSettingsContext } from '@/components/settings/context';
+import FullScreenOption from '@/components/settings/drawer/fullscreen-option';
 
 // ----------------------------------------------------------------------
 

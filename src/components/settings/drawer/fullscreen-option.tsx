@@ -1,10 +1,12 @@
 import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
-import { alpha } from '@mui/material/styles';
+
 import ButtonBase from '@mui/material/ButtonBase';
 
-import SvgColor from '../../svg-color';
+import SvgColor from '@/components/svg-color';
+
+import { alpha } from '@mui/system';
 
 // ----------------------------------------------------------------------
 

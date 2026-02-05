@@ -3,17 +3,19 @@ import { Controller, useFormContext } from 'react-hook-form';
 
 import FormHelperText from '@mui/material/FormHelperText';
 
-import Editor, { EditorProps } from '../editor';
+import Editor, { EditorProps } from '@/components/editor';
 
-interface Props extends EditorProps {
+type Props = Omit<EditorProps, 'value' | 'onChange' | 'id'> & {
   name: string;
   placeholder?: string;
-}
+  id?: string;
+};
 
 export default function RHFEditor({
   name,
   placeholder = 'Please add any information you think is important for this request.',
   helperText,
+  id,
   ...other
 }: Props) {
   const {
@@ -39,7 +41,7 @@ export default function RHFEditor({
       control={control}
       render={({ field, fieldState: { error } }) => (
         <Editor
-          id={name}
+          id={id ?? name}
           value={field.value}
           onChange={field.onChange}
           placeholder={placeholder}

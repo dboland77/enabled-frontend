@@ -1,6 +1,8 @@
-import { alpha, Shadows } from '@mui/material/styles';
+import { Shadows } from '@mui/material/styles';
+import { alpha } from '@mui/system';
 
-import { grey, common } from './palette';
+
+import { grey, common } from '@/theme/palette';
 
 // ----------------------------------------------------------------------
 

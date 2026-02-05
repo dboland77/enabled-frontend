@@ -1,4 +1,4 @@
-export * from './types';
-export * from './context';
+export * from '@/components/settings/types';
+export * from '@/components/settings/context';
 
-export { default as SettingsDrawer } from './drawer';
+export { default as SettingsDrawer } from '@/components/settings/drawer';

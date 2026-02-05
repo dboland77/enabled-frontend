@@ -1,12 +1,14 @@
-import '../../utils/highlight';
+'use client';
+import { useEffect } from 'react';
+import dynamic from 'next/dynamic';
 
-import ReactQuill from 'react-quill-new';
+import { EditorProps } from '@/components/editor/types';
+import { StyledEditor } from '@/components/editor/styles';
+import Toolbar, { formats } from '@/components/editor/toolbar';
 
-import { alpha } from '@mui/material/styles';
+import { alpha } from '@mui/system';
 
-import { EditorProps } from './types';
-import { StyledEditor } from './styles';
-import Toolbar, { formats } from './toolbar';
+const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 
 export default function Editor({
   id = 'enabled-quill',
@@ -17,6 +19,11 @@ export default function Editor({
   sx,
   ...other
 }: EditorProps) {
+  useEffect(() => {
+    // Load highlight only on the client to avoid SSR "document is not defined"
+    import('@/utils/highlight');
+  }, []);
+
   const modules = {
     toolbar: {
       container: `#${id}`,
@@ -37,9 +44,9 @@ export default function Editor({
       <StyledEditor
         sx={{
           ...(error && {
-            border: (theme) => `solid 1px ${theme.palette.error.main}`,
+            border: (theme: any) => `solid 1px ${theme.palette.error.main}`,
             '& .ql-editor': {
-              bgcolor: (theme) => alpha(theme.palette.error.main, 0.08),
+              bgcolor: (theme: any) => alpha(theme.palette.error.main, 0.08),
             },
           }),
           ...sx,

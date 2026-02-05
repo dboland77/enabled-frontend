@@ -1,3 +1,3 @@
-export * from './types';
+export * from '@/components/iconify/types';
 
-export { default } from './iconify';
+export { default } from '@/components/iconify/iconify';

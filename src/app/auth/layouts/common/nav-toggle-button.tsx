@@ -1,11 +1,11 @@
 import { useTheme } from '@mui/material/styles';
 import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 
-import { NAV } from '../config-layout';
-import { bgBlur } from '../../theme/css';
-import Iconify from '../../components/iconify';
-import { useResponsive } from '../../hooks/use-responsive';
-import { useSettingsContext } from '../../components/settings';
+import { NAV } from '@/app/auth/layouts/config-layout';
+import { bgBlur } from '@/theme/css';
+import Iconify from '@/components/iconify';
+import { useResponsive } from '@/hooks/use-responsive';
+import { useSettingsContext } from '@/components/settings';
 
 // ----------------------------------------------------------------------
 

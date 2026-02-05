@@ -1,3 +1,3 @@
-export * from './types';
+export * from '@/components/scrollbar/types';
 
-export { default } from './scrollbar';
+export { default } from '@/components/scrollbar/scrollbar';

@@ -1,7 +1,9 @@
-import { alpha, Theme } from '@mui/material/styles';
+import { Theme } from '@mui/material/styles';
+import { alpha } from '@mui/system';
+
 import { DrawerProps, drawerClasses } from '@mui/material/Drawer';
 
-import { paper } from '../../css';
+import { paper } from '@/theme/css';
 
 // ----------------------------------------------------------------------
 

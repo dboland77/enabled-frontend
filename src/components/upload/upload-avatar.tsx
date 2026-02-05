@@ -2,13 +2,15 @@ import { useDropzone } from 'react-dropzone';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-import { alpha } from '@mui/material/styles';
+
 import Typography from '@mui/material/Typography';
 
-import Image from '../image';
-import Iconify from '../iconify';
-import { UploadProps } from './types';
-import RejectionFiles from './errors-rejection-files';
+import Image from '@/components/image';
+import Iconify from '@/components/iconify';
+import { UploadProps } from '@/components/upload/types';
+import RejectionFiles from '@/components/upload/errors-rejection-files';
+
+import { alpha } from '@mui/system';
 
 // ----------------------------------------------------------------------
 

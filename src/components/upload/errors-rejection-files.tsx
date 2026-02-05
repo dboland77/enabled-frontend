@@ -2,11 +2,13 @@ import { FileRejection } from 'react-dropzone';
 
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
-import { alpha } from '@mui/material/styles';
+
 import Typography from '@mui/material/Typography';
 
-import { fileData } from '../file-thumbnail';
-import { fData } from '../../utils/format-number';
+import { fileData } from '@/components/file-thumbnail';
+import { fData } from '@/utils/format-number';
+
+import { alpha } from '@mui/system';
 
 // ----------------------------------------------------------------------
 

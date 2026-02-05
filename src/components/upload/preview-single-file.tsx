@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 
-import Image from '../image';
+import Image from '@/components/image';
 
 // ----------------------------------------------------------------------
 

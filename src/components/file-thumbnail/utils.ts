@@ -1,4 +1,4 @@
-import { ExtendFile } from './types';
+import { ExtendFile } from '@/components/file-thumbnail/types';
 
 // ----------------------------------------------------------------------
 

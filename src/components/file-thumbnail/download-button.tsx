@@ -1,8 +1,8 @@
 import { useTheme } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 
-import Iconify from '../iconify';
-import { bgBlur } from '../../theme/css';
+import Iconify from '@/components/iconify';
+import { bgBlur } from '@/theme/css';
 
 // ----------------------------------------------------------------------
 

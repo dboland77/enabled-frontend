@@ -1,1 +1,1 @@
-export { default } from './svg-color';
+export { default } from '@/components/svg-color/svg-color';

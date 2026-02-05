@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
-import { login, signup } from '../actions';
-import OneTapComponent from './GoogleOneTap';
+import { login, signup } from '@/app/auth/actions';
+import OneTapComponent from '@/app/auth/login/GoogleOneTap';
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -11,7 +11,7 @@ import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 import { useBoolean } from '@/hooks';
 import FormProvider, { RHFTextField } from '@/components/hook-form';
-import LoadingButton from '@mui/lab/LoadingButton';
+import Button from '@mui/material/Button';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import Iconify from '@/components/iconify';
@@ -89,7 +89,7 @@ export default function LoginPage() {
         Forgot password?
       </Link>
 
-      <LoadingButton
+      <Button
         fullWidth
         color="inherit"
         size="large"
@@ -98,7 +98,7 @@ export default function LoginPage() {
         loading={isSubmitting}
       >
         Login
-      </LoadingButton>
+      </Button>
     </Stack>
   );
 

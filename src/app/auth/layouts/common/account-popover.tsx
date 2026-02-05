@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
-import { alpha } from '@mui/material/styles';
+
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
@@ -13,6 +13,8 @@ import { redirect } from 'next/navigation';
 import { varHover } from '@/components/animate';
 import { useSnackbar } from '@/components/snackbar';
 import CustomPopover, { usePopover } from '@/components/custom-popover';
+
+import { alpha } from '@mui/system';
 
 // ----------------------------------------------------------------------
 
