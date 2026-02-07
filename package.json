@@ -33,7 +33,7 @@
     "react-dropzone": "^14.4.0",
     "react-hook-form": "^7.71.1",
     "react-lazy-load-image-component": "^1.6.3",
-    "react-quill-new": "^3.8.2",
+    "react-quill-new": "^3.7.0",
     "simplebar-react": "^3.3.2",
     "swr": "^2.3.8",
     "yup": "^1.7.1"
