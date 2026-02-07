@@ -52,7 +52,7 @@ export function avatar(theme: Theme) {
 
       styleOverrides: {
         rounded: {
-          borderRadius: theme.shape.borderRadius * 1.5,
+          borderRadius: Number(theme.shape.borderRadius) * 1.5,
         },
         colorDefault: ({ ownerState }: { ownerState: AvatarProps }) => {
           const color = colorByName(`${ownerState.alt}`);

@@ -4,27 +4,24 @@ import Stack from '@mui/material/Stack';
 import Popover from '@mui/material/Popover';
 
 import NavItem from '@/components/nav-section/mini/nav-item';
-import { usePathname } from '@/routes/hooks';
 import { NavListProps, NavSubListProps } from '@/components/nav-section/types';
-import { useActiveLink } from '@/routes/hooks/use-active-link';
 
 // ----------------------------------------------------------------------
 
 export default function NavList({ data, depth, slotProps }: NavListProps) {
   const navRef = useRef<HTMLDivElement | null>(null);
 
-  const pathname = usePathname();
-
-  const active = useActiveLink(data.path, !!data.children);
-
   const [openMenu, setOpenMenu] = useState(false);
+
+  const active = true
+  
 
   useEffect(() => {
     if (openMenu) {
       handleCloseMenu();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
+  }, []);
 
   const handleOpenMenu = useCallback(() => {
     if (data.children) {

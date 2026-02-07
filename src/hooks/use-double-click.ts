@@ -1,7 +1,5 @@
 import { useRef, useCallback } from 'react';
 
-// ----------------------------------------------------------------------
-
 type Props = {
   timeout?: number;
   click?: (e: React.SyntheticEvent) => void;
@@ -9,7 +7,7 @@ type Props = {
 };
 
 export function useDoubleClick({ click, doubleClick, timeout = 250 }: Props) {
-  const clickTimeout = useRef<any>();
+  const clickTimeout = useRef<any>(null);
 
   const clearClickTimeout = () => {
     if (clickTimeout) {

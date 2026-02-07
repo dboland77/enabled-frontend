@@ -13,8 +13,6 @@ import FileThumbnail, { fileData } from '@/components/file-thumbnail';
 
 import { alpha } from '@mui/system';
 
-// ----------------------------------------------------------------------
-
 export default function MultiFilePreview({ thumbnail, files, onRemove, sx }: UploadProps) {
   return (
     <AnimatePresence initial={false}>

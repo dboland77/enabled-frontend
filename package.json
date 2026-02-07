@@ -20,6 +20,7 @@
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.90.0",
     "@types/google-one-tap": "^1.2.7",
+    "date-fns": "^4.1.0",
     "framer-motion": "^12.29.3",
     "google-one-tap": "^1.0.6",
     "highlight.js": "^11.11.1",
@@ -39,7 +40,10 @@
     "yup": "^1.7.1"
   },
   "devDependencies": {
+    "@types/date-fns": "^2.5.3",
+    "@types/lodash": "^4.17.23",
     "@types/nprogress": "^0.2.3",
+    "@types/numeral": "^2.0.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/react-lazy-load-image-component": "^1.6.5",

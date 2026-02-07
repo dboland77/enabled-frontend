@@ -6,8 +6,6 @@ import { checkboxClasses } from '@mui/material/Checkbox';
 import { menuItemClasses } from '@mui/material/MenuItem';
 import { autocompleteClasses } from '@mui/material/Autocomplete';
 
-// ----------------------------------------------------------------------
-
 export const paper = ({
   theme,
   bgcolor,
@@ -35,7 +33,7 @@ export const paper = ({
   ...(dropdown && {
     padding: theme.spacing(0.5),
     boxShadow: theme.customShadows.dropdown,
-    borderRadius: theme.shape.borderRadius * 1.25,
+    borderRadius: Number(theme.shape.borderRadius) * 1.25,
   }),
 });
 
@@ -44,7 +42,7 @@ export const paper = ({
 export const menuItem = (theme: Theme) => ({
   ...theme.typography.body2,
   padding: theme.spacing(0.75, 1),
-  borderRadius: theme.shape.borderRadius * 0.75,
+  borderRadius: Number(theme.shape.borderRadius) * 0.75,
   '&:not(:last-of-type)': {
     marginBottom: 4,
   },
@@ -70,8 +68,6 @@ export const menuItem = (theme: Theme) => ({
     margin: theme.spacing(0.5, 0),
   },
 });
-
-// ----------------------------------------------------------------------
 
 type BgBlurProps = {
   blur?: number;
@@ -112,8 +108,6 @@ export function bgBlur(props?: BgBlurProps) {
   };
 }
 
-// ----------------------------------------------------------------------
-
 type BgGradientProps = {
   direction?: string;
   color?: string;
@@ -144,8 +138,6 @@ export function bgGradient(props?: BgGradientProps) {
     background: `linear-gradient(${direction}, ${startColor}, ${endColor})`,
   };
 }
-
-// ----------------------------------------------------------------------
 
 export function textGradient(value: string) {
   return {

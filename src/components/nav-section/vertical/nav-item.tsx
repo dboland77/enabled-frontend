@@ -6,8 +6,7 @@ import Tooltip from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 import ListItemButton from '@mui/material/ListItemButton';
 
-import Iconify from 'src/frontend/components/iconify';
-import { RouterLink } from 'src/frontend/routes/components';
+import Iconify from '@/components/iconify';
 
 import { NavItemProps, NavItemStateProps } from '@/components/nav-section/types';
 
@@ -120,7 +119,6 @@ const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
 
     return (
       <Link
-        component={RouterLink}
         href={path}
         color="inherit"
         underline="none"
