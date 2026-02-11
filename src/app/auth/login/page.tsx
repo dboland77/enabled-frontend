@@ -1,22 +1,29 @@
 'use client';
-import { useState } from 'react';
-import { login, signup } from '@/app/auth/actions';
 import OneTapComponent from '@/app/auth/login/GoogleOneTap';
+
 import * as Yup from 'yup';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+
 import Link from '@mui/material/Link';
-import Typography from '@mui/material/Typography';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
-import { useBoolean } from '@/hooks';
-import FormProvider, { RHFTextField } from '@/components/hook-form';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import InputAdornment from '@mui/material/InputAdornment';
-import IconButton from '@mui/material/IconButton';
-import Iconify from '@/components/iconify';
 
-export default function LoginPage() {
+import Iconify from '@/components/iconify';
+import { useBoolean } from '@/hooks';
+import FormProvider, { RHFTextField } from '@/components/hook-form';
+
+import { createClient } from '@/lib/supabase/client';
+import { useRouter, redirect } from 'next/navigation';
+
+import { LoginFormValues } from '../types';
+
+export default function LoginView() {
   const [errorMsg, setErrorMsg] = useState('');
 
   const showPassword = useBoolean();
@@ -25,6 +32,7 @@ export default function LoginPage() {
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
     password: Yup.string().required('Password is required'),
   });
+
   const defaultValues = {
     email: 'employee@company.com',
     password: 'demo',
@@ -41,16 +49,17 @@ export default function LoginPage() {
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = handleSubmit(async (data) => {
-    try {
-      const { email, password } = data;
-    } catch (error: any) {
-      console.error(error);
-      reset();
+  const onSubmit = async (data: LoginFormValues) => {
+    const supabase = await createClient();
 
-      setErrorMsg(typeof error === 'string' ? error : error.message);
+    const { error } = await supabase.auth.signInWithPassword(data);
+
+    if (error) {
+      redirect('/error');
     }
-  });
+
+    redirect('/account');
+  };
 
   const renderHead = (
     <Stack spacing={2} sx={{ mb: 5 }}>
@@ -59,14 +68,14 @@ export default function LoginPage() {
       <Stack direction="row" spacing={0.5}>
         <Typography variant="body2">New user?</Typography>
 
-        <button formAction={login}>Create an account</button>
+        <Link variant="subtitle2">Create an account</Link>
       </Stack>
     </Stack>
   );
 
   const renderForm = (
     <Stack spacing={2.5}>
-      {/* {!!errorMsg && <Alert severity="error">{errorMsg}</Alert>} */}
+      {!!errorMsg && <Alert severity="error">{errorMsg}</Alert>}
 
       <RHFTextField name="email" label="Email address" />
 
@@ -103,19 +112,17 @@ export default function LoginPage() {
   );
 
   return (
-    <>
-      <FormProvider methods={methods} onSubmit={onSubmit}>
-        {renderHead}
+    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+      {renderHead}
 
-        <Alert severity="info" sx={{ mb: 3 }}>
-          Use email : <strong>employee@company.com</strong>
-          <br />
-          Password :<strong> demo</strong>
-        </Alert>
+      <Alert severity="info" sx={{ mb: 3 }}>
+        Use email : <strong>employee@company.com</strong>
+        <br />
+        Password :<strong> demo</strong>
+      </Alert>
 
-        {renderForm}
-      </FormProvider>
+      {renderForm}
       <OneTapComponent />
-    </>
+    </FormProvider>
   );
 }
