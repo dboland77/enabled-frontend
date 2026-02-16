@@ -21,20 +21,22 @@ import FormProvider, { RHFTextField } from '@/components/hook-form';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter, redirect } from 'next/navigation';
 
-import { LoginFormValues } from '../types';
+import { SignUpFormValues } from '../types';
 
-export default function LoginView() {
+export default function SignUpView() {
   const [errorMsg, setErrorMsg] = useState('');
 
   const showPassword = useBoolean();
 
-  const LoginSchema = Yup.object().shape({
-    email: Yup.string().required('Email is required').email('Email must be a valid email address'),
-    password: Yup.string().required('Password is required'),
+  const SignUpSchema = Yup.object().shape({
+    email: Yup.string()
+      .required('Email is required to sign up')
+      .email('Email must be a valid email address'),
+    password: Yup.string().required('Password is required to sign up'),
   });
 
   const methods = useForm({
-    resolver: yupResolver(LoginSchema),
+    resolver: yupResolver(SignUpSchema),
     defaultValues: {
       email: '',
       password: '',
@@ -47,10 +49,10 @@ export default function LoginView() {
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = async (data: LoginFormValues) => {
+  const onSubmit = async (data: SignUpFormValues) => {
     const supabase = await createClient();
 
-    const { error } = await supabase.auth.signInWithPassword(data);
+    const { error } = await supabase.auth.signUp(data);
 
     if (error) {
       redirect('/error');
@@ -61,13 +63,7 @@ export default function LoginView() {
 
   const renderHead = (
     <Stack spacing={2} sx={{ mb: 5 }}>
-      <Typography variant="h4">Sign in to enableD</Typography>
-
-      <Stack direction="row" spacing={0.5}>
-        <Typography variant="body2">New user?</Typography>
-
-        <Link variant="subtitle2">Create an account</Link>
-      </Stack>
+      <Typography variant="h4">Sign up to enableD</Typography>
     </Stack>
   );
 
@@ -92,10 +88,6 @@ export default function LoginView() {
         }}
       />
 
-      <Link variant="body2" color="inherit" underline="always" sx={{ alignSelf: 'flex-end' }}>
-        Forgot password?
-      </Link>
-
       <Button
         fullWidth
         color="inherit"
@@ -104,7 +96,7 @@ export default function LoginView() {
         variant="contained"
         loading={isSubmitting}
       >
-        Login
+        Sign Up
       </Button>
     </Stack>
   );
@@ -114,7 +106,6 @@ export default function LoginView() {
       {renderHead}
 
       {renderForm}
-      <OneTapComponent />
     </FormProvider>
   );
 }
