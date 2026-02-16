@@ -19,12 +19,13 @@ import { useBoolean } from '@/hooks';
 import FormProvider, { RHFTextField } from '@/components/hook-form';
 
 import { createClient } from '@/lib/supabase/client';
-import { useRouter, redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 import { SignUpFormValues } from '../types';
 
 export default function SignUpView() {
   const [errorMsg, setErrorMsg] = useState('');
+  const router = useRouter();
 
   const showPassword = useBoolean();
 
@@ -55,10 +56,10 @@ export default function SignUpView() {
     const { error } = await supabase.auth.signUp(data);
 
     if (error) {
-      redirect('/error');
+      router.push('/error');
     }
 
-    redirect('/account');
+    router.push('/auth/login');
   };
 
   const renderHead = (

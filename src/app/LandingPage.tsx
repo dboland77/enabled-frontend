@@ -10,7 +10,7 @@ export default function LandingPage() {
           <Link href="/auth/login">Login</Link>
         </li>
         <li>
-          <Link href="/auth/register">Register</Link>
+          <Link href="/auth/signup">Sign Up</Link>
         </li>
       </ul>
     </main>

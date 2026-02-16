@@ -19,12 +19,13 @@ import { useBoolean } from '@/hooks';
 import FormProvider, { RHFTextField } from '@/components/hook-form';
 
 import { createClient } from '@/lib/supabase/client';
-import { useRouter, redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 import { LoginFormValues } from '../types';
 
 export default function LoginView() {
   const [errorMsg, setErrorMsg] = useState('');
+  const router = useRouter();
 
   const showPassword = useBoolean();
 
@@ -53,10 +54,10 @@ export default function LoginView() {
     const { error } = await supabase.auth.signInWithPassword(data);
 
     if (error) {
-      redirect('/error');
+      router.push('/error');
     }
 
-    redirect('/account');
+    router.push('/account');
   };
 
   const renderHead = (
@@ -66,7 +67,15 @@ export default function LoginView() {
       <Stack direction="row" spacing={0.5}>
         <Typography variant="body2">New user?</Typography>
 
-        <Link variant="subtitle2">Create an account</Link>
+        <Link
+          component="button"
+          variant="body2"
+          onClick={() => {
+            router.push('/auth/signup');
+          }}
+        >
+          Sign Up
+        </Link>
       </Stack>
     </Stack>
   );
