@@ -33,7 +33,7 @@ export type AuthContextType = {
   logout: () => Promise<void>;
 };
 
-export type LoginFormValues = {
+export type SignInFormValues = {
   email: string;
   password: string;
 };

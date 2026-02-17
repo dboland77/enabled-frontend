@@ -4,10 +4,10 @@ import Link from '@mui/material/Link';
 export default function LandingPage() {
   return (
     <main>
-      <h1>Welcome to MyApp</h1>
+      <h1>Welcome to enableD</h1>
       <ul>
         <li>
-          <Link href="/auth/login">Login</Link>
+          <Link href="/auth/signin">Sign In</Link>
         </li>
         <li>
           <Link href="/auth/signup">Sign Up</Link>

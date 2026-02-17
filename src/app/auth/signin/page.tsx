@@ -1,5 +1,5 @@
 'use client';
-import OneTapComponent from '@/app/auth/login/GoogleOneTap';
+import OneTapComponent from '@/app/auth/signin/GoogleOneTap';
 
 import * as Yup from 'yup';
 import { useState } from 'react';
@@ -21,21 +21,21 @@ import FormProvider, { RHFTextField } from '@/components/hook-form';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 
-import { LoginFormValues } from '../types';
+import { SignInFormValues } from '../types';
 
-export default function LoginView() {
+export default function SignInView() {
   const [errorMsg, setErrorMsg] = useState('');
   const router = useRouter();
 
   const showPassword = useBoolean();
 
-  const LoginSchema = Yup.object().shape({
+  const SignInSchema = Yup.object().shape({
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
     password: Yup.string().required('Password is required'),
   });
 
   const methods = useForm({
-    resolver: yupResolver(LoginSchema),
+    resolver: yupResolver(SignInSchema),
     defaultValues: {
       email: '',
       password: '',
@@ -48,7 +48,7 @@ export default function LoginView() {
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = async (data: LoginFormValues) => {
+  const onSubmit = async (data: SignInFormValues) => {
     const supabase = await createClient();
 
     const { error } = await supabase.auth.signInWithPassword(data);
@@ -113,7 +113,7 @@ export default function LoginView() {
         variant="contained"
         loading={isSubmitting}
       >
-        Login
+        Sign In
       </Button>
     </Stack>
   );

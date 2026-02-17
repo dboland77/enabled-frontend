@@ -1,5 +1,5 @@
 'use client';
-import OneTapComponent from '@/app/auth/login/GoogleOneTap';
+import OneTapComponent from '@/app/auth/signin/GoogleOneTap';
 
 import * as Yup from 'yup';
 import { useState } from 'react';
@@ -59,12 +59,26 @@ export default function SignUpView() {
       router.push('/error');
     }
 
-    router.push('/auth/login');
+    router.push('/auth/signin');
   };
 
   const renderHead = (
     <Stack spacing={2} sx={{ mb: 5 }}>
       <Typography variant="h4">Sign up to enableD</Typography>
+
+      <Stack direction="row" spacing={0.5}>
+        <Typography variant="body2">Existing user?</Typography>
+
+        <Link
+          component="button"
+          variant="body2"
+          onClick={() => {
+            router.push('/auth/signin');
+          }}
+        >
+          Sign In
+        </Link>
+      </Stack>
     </Stack>
   );
 
