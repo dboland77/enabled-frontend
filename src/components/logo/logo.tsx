@@ -25,15 +25,14 @@ const Logo = forwardRef<HTMLDivElement, LogoProps>(
         ref={ref}
         component="div"
         sx={{
-          width: 100,
-          height: 40,
+          width: 200,
+          height: 20,
           display: 'inline-flex',
           ...sx,
         }}
         {...other}
       >
-        {/* All gradients must be inside <svg> */}
-        <svg width="100" height="50">
+        <svg height="50" width="300">
           <defs>
             <linearGradient id="BG1" x1="100%" x2="50%" y1="9.946%" y2="50%">
               <stop offset="0%" stopColor={PRIMARY_DARK} />
@@ -50,12 +49,11 @@ const Logo = forwardRef<HTMLDivElement, LogoProps>(
               <stop offset="100%" stopColor={PRIMARY_MAIN} />
             </linearGradient>
           </defs>
-          {/* All gradients must be inside <svg> */}
-        </svg>
-        <svg height="50" width="100">
-          <text x="0" y="20" fill={NICE_BLUE} letterSpacing="2" fontSize="22">
-            enableD
-          </text>
+          <svg height="50" width="300">
+            <text x="0" y="30" fill={NICE_BLUE} letterSpacing="2" fontSize="35">
+              enableD
+            </text>
+          </svg>
         </svg>
       </Box>
     );
