@@ -32,22 +32,26 @@ const Logo = forwardRef<HTMLDivElement, LogoProps>(
         }}
         {...other}
       >
-        <defs>
-          <linearGradient id="BG1" x1="100%" x2="50%" y1="9.946%" y2="50%">
-            <stop offset="0%" stopColor={PRIMARY_DARK} />
-            <stop offset="100%" stopColor={PRIMARY_MAIN} />
-          </linearGradient>
+        {/* All gradients must be inside <svg> */}
+        <svg width="100" height="50">
+          <defs>
+            <linearGradient id="BG1" x1="100%" x2="50%" y1="9.946%" y2="50%">
+              <stop offset="0%" stopColor={PRIMARY_DARK} />
+              <stop offset="100%" stopColor={PRIMARY_MAIN} />
+            </linearGradient>
 
-          <linearGradient id="BG2" x1="50%" x2="50%" y1="0%" y2="100%">
-            <stop offset="0%" stopColor={PRIMARY_LIGHT} />
-            <stop offset="100%" stopColor={PRIMARY_MAIN} />
-          </linearGradient>
+            <linearGradient id="BG2" x1="50%" x2="50%" y1="0%" y2="100%">
+              <stop offset="0%" stopColor={PRIMARY_LIGHT} />
+              <stop offset="100%" stopColor={PRIMARY_MAIN} />
+            </linearGradient>
 
-          <linearGradient id="BG3" x1="50%" x2="50%" y1="0%" y2="100%">
-            <stop offset="0%" stopColor={PRIMARY_LIGHT} />
-            <stop offset="100%" stopColor={PRIMARY_MAIN} />
-          </linearGradient>
-        </defs>
+            <linearGradient id="BG3" x1="50%" x2="50%" y1="0%" y2="100%">
+              <stop offset="0%" stopColor={PRIMARY_LIGHT} />
+              <stop offset="100%" stopColor={PRIMARY_MAIN} />
+            </linearGradient>
+          </defs>
+          {/* All gradients must be inside <svg> */}
+        </svg>
         <svg height="50" width="100">
           <text x="0" y="20" fill={NICE_BLUE} letterSpacing="2" fontSize="22">
             enableD
