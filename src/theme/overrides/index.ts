@@ -1,4 +1,4 @@
-import merge from 'lodash/merge';
+import { merge } from '@/utils/merge';
 
 import { Theme } from '@mui/material/styles';
 

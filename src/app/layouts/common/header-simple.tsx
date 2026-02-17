@@ -5,9 +5,9 @@ import { useTheme } from '@mui/material/styles';
 
 import { bgBlur } from '@/theme/css';
 import Logo from '@/components/logo';
-import { HEADER } from '@/app/auth/layouts/config-layout';
-import HeaderShadow from '@/app/auth/layouts/common/header-shadow';
-import SettingsButton from '@/app/auth/layouts/common/settings-button';
+import { HEADER } from '@/app/layouts/config-layout';
+import HeaderShadow from '@/app/layouts/common/header-shadow';
+import SettingsButton from '@/app/layouts/common/settings-button';
 import { useOffSetTop } from '@/hooks/use-off-set-top';
 
 // ----------------------------------------------------------------------
