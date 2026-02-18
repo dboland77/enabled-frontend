@@ -7,15 +7,11 @@ import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
 import TableContainer from '@mui/material/TableContainer';
 
-import { paths } from 'src/frontend/routes/paths';
-import { getAdjustments } from 'src/frontend/slices';
-import Iconify from 'src/frontend/components/iconify';
-import Scrollbar from 'src/frontend/components/scrollbar';
-import { RouterLink } from 'src/frontend/routes/components';
-import ProgressBar from 'src/frontend/components/progress-bar';
-import { useAppDispatch, useAppSelector } from 'src/frontend/hooks';
-import { useSettingsContext } from 'src/frontend/components/settings';
-import CustomBreadcrumbs from 'src/frontend/components/custom-breadcrumbs';
+import Iconify from '@/components/iconify';
+import Scrollbar from '@/components/scrollbar';
+import ProgressBar from '@/components/progress-bar';
+import { useSettingsContext } from '@/components/settings';
+import CustomBreadcrumbs from '@/components/custom-breadcrumbs';
 import {
   useTable,
   emptyRows,
@@ -24,7 +20,7 @@ import {
   TableHeadCustom,
   TableSelectedAction,
   TablePaginationCustom,
-} from 'src/frontend/components/table';
+} from '@/components/table';
 
 import AdjustmentTableRow from '../adjustment-table-row';
 
@@ -39,19 +35,18 @@ export default function AdjustmentListView() {
 
   const settings = useSettingsContext();
 
-  const dispatch = useAppDispatch();
+  const [tableData] = useState([
+    { id: '1', adjustment_title: 'a', adjustment_detail: 'sdfsdf', adjustment_type: 'asdfsd' },
+    { id: '2', adjustment_title: 'b', adjustment_detail: 'sdfsdf', adjustment_type: 'asdfsd' },
+  ]);
 
-  const { adjustments, adjustmentsLoading } = useAppSelector((state) => state.adjustments);
-
-  const [tableData] = useState(adjustments);
-
-  useEffect(() => {
-    dispatch(getAdjustments());
-  }, [dispatch]);
+  useEffect(() => {}, []);
 
   const dataFiltered = tableData.length > 0 ? tableData : [];
 
   const notFound = !(dataFiltered.length > 0);
+
+  const adjustmentsLoading = false;
 
   // const dataInPage = dataFiltered.slice(
   //   table.page * table.rowsPerPage,
@@ -67,14 +62,13 @@ export default function AdjustmentListView() {
       <CustomBreadcrumbs
         heading="Adjustments Table"
         links={[
-          { name: 'Home', href: paths.dashboard.root },
-          { name: 'Adjustments', href: paths.dashboard.adjustments.root },
+          { name: 'Home', href: '/dashboard' },
+          { name: 'Adjustments', href: 'dashboard/adjustments' },
           { name: 'List' },
         ]}
         action={
           <Button
-            component={RouterLink}
-            href={paths.dashboard.adjustments.new}
+            href={'dashboard/adjustments/new'}
             variant="contained"
             startIcon={<Iconify icon="mingcute:add-line" />}
           >

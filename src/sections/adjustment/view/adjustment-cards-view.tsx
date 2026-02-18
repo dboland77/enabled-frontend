@@ -1,11 +1,9 @@
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 
-import { paths } from 'src/frontend/routes/paths';
-import Iconify from 'src/frontend/components/iconify';
-import { RouterLink } from 'src/frontend/routes/components';
-import { useSettingsContext } from 'src/frontend/components/settings';
-import CustomBreadcrumbs from 'src/frontend/components/custom-breadcrumbs';
+import Iconify from '@/components/iconify';
+import { useSettingsContext } from '@/components/settings';
+import CustomBreadcrumbs from '@/components/custom-breadcrumbs';
 
 import AdjustmentCardList from '../adjustment-card-list';
 
@@ -17,14 +15,13 @@ export default function AdjustmentCardsView() {
       <CustomBreadcrumbs
         heading="Adjustment Cards"
         links={[
-          { name: 'Home', href: paths.dashboard.root },
-          { name: 'Adjustments', href: paths.dashboard.adjustments.root },
+          { name: 'Home', href: '/dashboard' },
+          { name: 'Adjustments', href: '/dashboard/adjustments' },
           { name: 'Cards' },
         ]}
         action={
           <Button
-            component={RouterLink}
-            href={paths.dashboard.adjustments.new}
+            href={'/dashboard/adjustments/new'}
             variant="contained"
             startIcon={<Iconify icon="mingcute:add-line" />}
           >

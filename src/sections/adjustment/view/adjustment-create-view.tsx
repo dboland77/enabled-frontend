@@ -1,8 +1,7 @@
 import Container from '@mui/material/Container';
 
-import { paths } from 'src/frontend/routes/paths';
-import { useSettingsContext } from 'src/frontend/components/settings';
-import CustomBreadcrumbs from 'src/frontend/components/custom-breadcrumbs';
+import { useSettingsContext } from '@/components/settings';
+import CustomBreadcrumbs from '@/components/custom-breadcrumbs';
 
 import CreateAdjustmentForm from '../adjustment-form';
 
@@ -16,11 +15,11 @@ export default function AdjustmentCreateView() {
         links={[
           {
             name: 'Home',
-            href: paths.dashboard.root,
+            href: '/dashboard',
           },
           {
             name: 'Adjustments',
-            href: paths.dashboard.adjustments.root,
+            href: '/dashboard/adjustments',
           },
           { name: 'New Adjustment' },
         ]}
