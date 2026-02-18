@@ -1,8 +1,8 @@
 import Box, { BoxProps } from '@mui/material/Box';
 
-import { NAV, HEADER } from '../config-layout';
-import { useResponsive } from '../../hooks/use-responsive';
-import { useSettingsContext } from '../../components/settings';
+import { NAV, HEADER } from '@/layouts/config-layout';
+import { useResponsive } from '@/hooks/use-responsive';
+import { useSettingsContext } from '@/components/settings';
 
 const SPACING = 8;
 

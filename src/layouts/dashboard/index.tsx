@@ -5,9 +5,9 @@ import Header from './header';
 import NavMini from './nav-mini';
 import NavVertical from './nav-vertical';
 import NavHorizontal from './nav-horizontal';
-import { useBoolean } from '../../hooks/use-boolean';
-import { useResponsive } from '../../hooks/use-responsive';
-import { useSettingsContext } from '../../components/settings';
+import { useBoolean } from '@/hooks/use-boolean';
+import { useResponsive } from '@/hooks/use-responsive';
+import { useSettingsContext } from '@/components/settings';
 
 type Props = {
   children: React.ReactNode;

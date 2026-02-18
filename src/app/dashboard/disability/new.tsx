@@ -1,13 +1,9 @@
-import { Helmet } from 'react-helmet-async';
-
-import { DisabilityCreateView } from 'src/frontend/sections/disability/view';
+import { DisabilityCreateView } from '@/sections/disability/view';
 
 export default function DisabilityCreatePage() {
   return (
     <>
-      <Helmet>
-        <title> enableD: Create a disability record</title>
-      </Helmet>
+      <title> enableD: Create a disability record</title>
 
       <DisabilityCreateView />
     </>

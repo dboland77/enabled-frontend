@@ -1,8 +1,6 @@
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 
-import { useAppSelector } from 'src/frontend/hooks';
-
 import { NAV } from '../config-layout';
 import Logo from '../../components/logo';
 import { hideScroll } from '../../theme/css';
@@ -11,7 +9,7 @@ import NavToggleButton from '../common/nav-toggle-button';
 import { NavSectionMini } from '../../components/nav-section';
 
 export default function NavMini() {
-  const { role } = useAppSelector((state) => state.auth);
+  const role = 'EMPLOYEE';
 
   const navData = useNavData();
 

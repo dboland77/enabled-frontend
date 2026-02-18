@@ -1,13 +1,9 @@
-import { Helmet } from 'react-helmet-async';
-
-import { DisabilityCardsView } from 'src/frontend/sections/disability/view';
+import { DisabilityCardsView } from '@/sections/disability/view';
 
 export default function DisabilityCardsPage() {
   return (
     <>
-      <Helmet>
-        <title> enableD: Disability Cards</title>
-      </Helmet>
+      <title> enableD: Disability Cards</title>
 
       <DisabilityCardsView />
     </>

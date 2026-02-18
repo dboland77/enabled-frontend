@@ -1,17 +1,17 @@
+'use client';
 import { useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Drawer from '@mui/material/Drawer';
 
-import Logo from 'src/frontend/components/logo';
-import { useAppSelector } from 'src/frontend/hooks';
-import { usePathname } from 'src/frontend/routes/hooks';
-import { NAV } from 'src/frontend/layouts/config-layout';
-import Scrollbar from 'src/frontend/components/scrollbar';
-import { useResponsive } from 'src/frontend/hooks/use-responsive';
-import { NavSectionVertical } from 'src/frontend/components/nav-section';
-import NavToggleButton from 'src/frontend/layouts/common/nav-toggle-button';
+import Logo from '@/components/logo';
+import { usePathname } from 'next/navigation';
+import { NAV } from '@/layouts/config-layout';
+import Scrollbar from '@/components/scrollbar';
+import { useResponsive } from '@/hooks/use-responsive';
+import { NavSectionVertical } from '@/components/nav-section';
+import NavToggleButton from '@/layouts/common/nav-toggle-button';
 
 import { useNavData } from './config-navigation';
 
@@ -20,9 +20,9 @@ type Props = {
   onCloseNav: VoidFunction;
 };
 
-export default function NavVertical({ openNav, onCloseNav }: Props) {
-  const { role } = useAppSelector((state) => state.auth);
+const role = 'EMPLOYEE';
 
+export default function NavVertical({ openNav, onCloseNav }: Props) {
   const pathname = usePathname();
 
   const lgUp = useResponsive('up', 'lg');

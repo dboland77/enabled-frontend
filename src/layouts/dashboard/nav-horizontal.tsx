@@ -4,8 +4,6 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import { useTheme } from '@mui/material/styles';
 
-import { useAppSelector } from 'src/frontend/hooks';
-
 import { bgBlur } from '../../theme/css';
 import { HEADER } from '../config-layout';
 import { useNavData } from './config-navigation';
@@ -18,7 +16,7 @@ import { NavSectionHorizontal } from '../../components/nav-section';
 function NavHorizontal() {
   const theme = useTheme();
 
-  const { role } = useAppSelector((state) => state.auth);
+  const role = 'EMPLOYEE';
 
   const navData = useNavData();
 

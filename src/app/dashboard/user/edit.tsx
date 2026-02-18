@@ -1,7 +1,6 @@
-import { Helmet } from 'react-helmet-async';
-
-import { useParams } from '../../../routes/hooks';
-import { UserEditView } from '../../../sections/user/view';
+'use client';
+import { useParams } from 'next/navigation';
+import { UserEditView } from '@/sections/user/view';
 
 // ----------------------------------------------------------------------
 
@@ -12,9 +11,7 @@ export default function UserEditPage() {
 
   return (
     <>
-      <Helmet>
-        <title> enableD: User Edit</title>
-      </Helmet>
+      <title> enableD: User Edit</title>
 
       <UserEditView id={`${id}`} />
     </>

@@ -4,8 +4,8 @@ import Toolbar from '@mui/material/Toolbar';
 import { useTheme } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 
-import { bgBlur } from '../../theme/css';
-import Logo from '../../components/logo';
+import { bgBlur } from '@/theme/css';
+import Logo from '@/components/logo';
 // import Searchbar from '../common/searchbar';
 import { NAV, HEADER } from '../config-layout';
 import SvgColor from '../../components/svg-color';

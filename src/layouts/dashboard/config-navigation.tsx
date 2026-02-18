@@ -1,7 +1,5 @@
 import { useMemo } from 'react';
 
-import { paths } from 'src/frontend/routes/paths';
-
 import SvgColor from '../../components/svg-color';
 
 const icon = (name: string) => (
@@ -27,29 +25,29 @@ export function useNavData() {
         items: [
           {
             title: 'Home',
-            path: paths.dashboard.root,
+            path: '/dashboard',
             icon: ICONS.dashboard,
           },
 
           {
             title: 'Me',
-            path: paths.dashboard.user.root,
+            path: '/dashboard/user',
             icon: ICONS.user,
             children: [
-              { title: 'profile', path: paths.dashboard.user.profile },
-              { title: 'cards', path: paths.dashboard.user.cards },
-              { title: 'create', path: paths.dashboard.user.new },
-              { title: 'list', path: paths.dashboard.user.list },
+              { title: 'profile', path: '/dashboard/user/profile' },
+              { title: 'cards', path: '/dashboard/user/profile' },
+              { title: 'create', path: '/dashboard/user/profile' },
+              { title: 'list', path: '/dashboard/user/profile' },
             ],
           },
           {
             title: 'My Adjustments',
-            path: paths.dashboard.adjustmentRequests.root,
+            path: '/dashboard/user/adjustmentRequests',
             icon: ICONS.disability,
             children: [
-              { title: 'browse', path: paths.dashboard.adjustmentRequests.root },
-              { title: 'list', path: paths.dashboard.adjustmentRequests.list },
-              { title: 'request', path: paths.dashboard.adjustmentRequests.new },
+              { title: 'browse', path: '/dashboard/user/adjustmentRequests' },
+              { title: 'list', path: '/dashboard/user/adjustmentRequests/list' },
+              { title: 'request', path: '/dashboard/user/adjustmentRequests/new' },
             ],
           },
         ],
@@ -60,22 +58,22 @@ export function useNavData() {
         items: [
           {
             title: 'Disability Information',
-            path: paths.dashboard.disability.root,
+            path: 'dashboard/disability',
             icon: ICONS.disability,
             children: [
-              { title: 'browse', path: paths.dashboard.disability.root },
-              { title: 'list', path: paths.dashboard.disability.list },
-              { title: 'create', path: paths.dashboard.disability.new },
+              { title: 'browse', path: 'dashboard/disability' },
+              { title: 'list', path: 'dashboard/disability/list' },
+              { title: 'create', path: 'dashboard/disability/new' },
             ],
           },
           {
             title: 'Available Adjustments',
-            path: paths.dashboard.adjustments.root,
+            path: 'dashboard/adjustments',
             icon: ICONS.file,
             children: [
-              { title: 'browse', path: paths.dashboard.adjustments.root },
-              { title: 'choose', path: paths.dashboard.adjustments.cards },
-              { title: 'create', path: paths.dashboard.adjustments.new },
+              { title: 'browse', path: 'dashboard/adjustments' },
+              { title: 'choose', path: 'dashboard/adjustments/cards' },
+              { title: 'create', path: 'dashboard/adjustments/create' },
             ],
           },
         ],
