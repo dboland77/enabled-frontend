@@ -5,8 +5,8 @@ export default function ProfileImageUploader() {
   const widgetRef = useRef<any>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
-  const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-  const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+  const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
 
   useEffect(() => {
     // @ts-ignore

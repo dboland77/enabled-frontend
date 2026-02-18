@@ -3,15 +3,15 @@ import Card from '@mui/material/Card';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
 
-import Iconify from 'src/frontend/components/iconify';
-import { fDate } from 'src/frontend/utils/format-time';
-import Markdown from 'src/frontend/components/markdown';
+import Iconify from '@/components/iconify';
+import { fDate } from '@/utils/format-time';
+import Markdown from '@/components/markdown';
 
-import { IAdjustmentRequestItem } from '../../types/adjustmentRequest';
+import { IAdjustmentRequestItem } from '@/types/adjustmentRequest';
 
 type Props = {
   adjustmentRequest: IAdjustmentRequestItem;
@@ -25,7 +25,7 @@ export default function AdjustmentRequestDetailsContent({ adjustmentRequest }: P
     <Stack component={Card} spacing={3} sx={{ p: 3 }}>
       <Typography variant="h4">{title}</Typography>
 
-      <Markdown children={detail} />
+      <Markdown />
 
       <Stack spacing={2}>
         <Typography variant="h6">Benefits</Typography>
@@ -96,11 +96,9 @@ export default function AdjustmentRequestDetailsContent({ adjustmentRequest }: P
 
   return (
     <Grid container spacing={3}>
-      <Grid xs={12} md={8}>
-        {renderContent}
-      </Grid>
+      <Grid>{renderContent}</Grid>
 
-      <Grid xs={12} md={4}>
+      <Grid>
         {renderOverview}
 
         {renderCompany}
