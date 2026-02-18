@@ -2,7 +2,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 
-import Iconify from '../../components/iconify';
+import Iconify from '@/components/iconify';
 import CustomPopover, { usePopover } from '../../components/custom-popover';
 
 // ----------------------------------------------------------------------

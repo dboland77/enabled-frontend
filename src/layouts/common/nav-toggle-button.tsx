@@ -1,7 +1,7 @@
 import { useTheme } from '@mui/material/styles';
 import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 
-import { NAV } from '@/app/layouts/config-layout';
+import { NAV } from '@/layouts/config-layout';
 import { bgBlur } from '@/theme/css';
 import Iconify from '@/components/iconify';
 import { useResponsive } from '@/hooks/use-responsive';

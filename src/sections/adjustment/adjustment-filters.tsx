@@ -14,12 +14,12 @@ import Typography from '@mui/material/Typography';
 import Autocomplete from '@mui/material/Autocomplete';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
-import Iconify from 'src/frontend/components/iconify';
-import Scrollbar from 'src/frontend/components/scrollbar';
+import Iconify from '@/components/iconify';
+import Scrollbar from '@/components/scrollbar';
 import {
   IAdjustmentRequestFilters,
   IAdjustmentRequestFilterValue,
-} from 'src/frontend/types/adjustmentRequest';
+} from '@/types/adjustmentRequest';
 
 // ----------------------------------------------------------------------
 

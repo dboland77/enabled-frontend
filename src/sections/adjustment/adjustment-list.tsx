@@ -1,13 +1,11 @@
+'use client';
 import { useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Pagination, { paginationClasses } from '@mui/material/Pagination';
 
-import { paths } from 'src/frontend/routes/paths';
-import { useRouter } from 'src/frontend/routes/hooks';
-import { getAdjustmentRequests } from 'src/frontend/slices';
-import { useAppDispatch, useAppSelector } from 'src/frontend/hooks';
-import { IAdjustmentRequestItem } from 'src/frontend/types/adjustmentRequest';
+import { useRouter } from 'next/navigation';
+import { IAdjustmentRequestItem } from '@/types/adjustmentRequest';
 
 import AdjustmentRequestItem from './adjustment-item';
 
@@ -17,23 +15,20 @@ type Props = {
 
 export default function AdjustmentRequestList({ adjustmentRequests }: Props) {
   const router = useRouter();
-  const userId = useAppSelector((state: any) => state.auth.id);
-  const dispatch = useAppDispatch();
+  const userId = '12345';
 
-  useEffect(() => {
-    dispatch(getAdjustmentRequests(userId));
-  }, [userId, dispatch]);
+  useEffect(() => {}, [userId]);
 
   const handleView = useCallback(
     (id: string) => {
-      router.push(paths.dashboard.adjustmentRequests.details);
+      router.push('dashboard/adjustmentRequests/details');
     },
     [router]
   );
 
   const handleEdit = useCallback(
     (id: string) => {
-      router.push(paths.dashboard.adjustmentRequests.edit(id));
+      router.push('dashboard/adjustmentRequests/edit:id');
     },
     [router]
   );

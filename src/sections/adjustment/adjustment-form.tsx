@@ -1,3 +1,4 @@
+'use client';
 import * as Yup from 'yup';
 import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
@@ -5,22 +6,15 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-import Grid from '@mui/material/Unstable_Grid2';
+import { Grid } from '@mui/material/';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 
-import { paths } from 'src/frontend/routes/paths';
-import { useRouter } from 'src/frontend/routes/hooks';
-import { createAdjustment } from 'src/frontend/slices';
-import { useSnackbar } from 'src/frontend/components/snackbar';
-import { useResponsive } from 'src/frontend/hooks/use-responsive';
-import { useAppDispatch, useAppSelector } from 'src/frontend/hooks';
-import FormProvider, {
-  RHFEditor,
-  RHFTextField,
-  RHFAutocomplete,
-} from 'src/frontend/components/hook-form';
+import { useRouter } from 'next/navigation';
+import { useSnackbar } from '@/components/snackbar';
+import { useResponsive } from '@/hooks/use-responsive';
+import FormProvider, { RHFEditor, RHFTextField, RHFAutocomplete } from '@/components/hook-form';
 
 export default function CreateAdjustmentForm() {
   const router = useRouter();
@@ -28,9 +22,7 @@ export default function CreateAdjustmentForm() {
   const mdUp = useResponsive('up', 'md');
 
   const { enqueueSnackbar } = useSnackbar();
-  const dispatch = useAppDispatch();
-  const { adjustmentsLoading } = useAppSelector((state) => state.adjustments);
-  const { adjustments } = useAppSelector((state) => state.adjustments);
+  const adjustments = [{ adjustment_type: 'a' }];
 
   // Set Option Values for the form
   const adjustmentTypes = adjustments.map((a) => a.adjustment_type);
@@ -66,10 +58,9 @@ export default function CreateAdjustmentForm() {
     };
 
     try {
-      await dispatch(createAdjustment(adjustment));
       reset();
       enqueueSnackbar('Adjustment created!');
-      router.push(paths.dashboard.adjustments.root);
+      router.push('dashboard/adjustments');
     } catch (error) {
       console.error(error);
     }
@@ -78,7 +69,7 @@ export default function CreateAdjustmentForm() {
   const renderDetails = (
     <>
       {mdUp && (
-        <Grid md={4}>
+        <Grid>
           <Typography variant="h6" sx={{ mb: 0.5 }}>
             Adjustment Details
           </Typography>
@@ -89,7 +80,7 @@ export default function CreateAdjustmentForm() {
         </Grid>
       )}
 
-      <Grid xs={12} md={8}>
+      <Grid>
         <Card>
           {!mdUp && <CardHeader title="Details" />}
 
@@ -131,13 +122,13 @@ export default function CreateAdjustmentForm() {
 
   const renderActions = (
     <>
-      {mdUp && <Grid md={4} />}
-      <Grid xs={12} md={8} sx={{ display: 'flex', alignItems: 'center' }}>
+      {mdUp && <Grid />}
+      <Grid sx={{ display: 'flex', alignItems: 'center' }}>
         <LoadingButton
           type="submit"
           variant="contained"
           size="large"
-          loading={adjustmentsLoading}
+          loading={false}
           sx={{ ml: 2 }}
         >
           Create Adjustment

@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 
-import { IAdjustmentCard } from 'src/frontend/types/adjustment';
+import { IAdjustmentCard } from '@/types/adjustment';
 
 import AdjustmentCard from './adjustment-card';
 

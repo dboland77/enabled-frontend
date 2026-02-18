@@ -5,9 +5,9 @@ import Divider from '@mui/material/Divider';
 import ListItemText from '@mui/material/ListItemText';
 import { alpha, useTheme } from '@mui/material/styles';
 
-import Image from 'src/frontend/components/image';
-import { AvatarShape } from 'src//assets/illustrations';
-import { IAdjustmentCard } from 'src/frontend/types/adjustment';
+import Image from '@/components/image';
+import { AvatarShape } from '@/assets/illustrations';
+import { IAdjustmentCard } from '@/types/adjustment';
 
 type Props = {
   adjustment: IAdjustmentCard;

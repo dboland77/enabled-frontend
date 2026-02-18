@@ -4,8 +4,8 @@ import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Stack, { StackProps } from '@mui/material/Stack';
 
-import Iconify from 'src/frontend/components/iconify';
-import { IAdjustmentFilters, IAdjustmentFilterValue } from 'src/frontend/types/adjustment';
+import Iconify from '@/components/iconify';
+import { IAdjustmentFilters, IAdjustmentFilterValue } from '@/types/adjustment';
 
 type Props = StackProps & {
   filters: IAdjustmentFilters;

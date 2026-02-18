@@ -1,3 +1,5 @@
+'use client';
+
 import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
 
@@ -7,10 +9,10 @@ import Typography from '@mui/material/Typography';
 import Autocomplete from '@mui/material/Autocomplete';
 import InputAdornment from '@mui/material/InputAdornment';
 
-import { useRouter } from 'src/frontend/routes/hooks';
-import Iconify from 'src/frontend/components/iconify';
-import SearchNotFound from 'src/frontend/components/search-not-found';
-import { IAdjustmentRequestItem } from 'src/frontend/types/adjustmentRequest';
+import { useRouter } from 'next/navigation';
+import Iconify from '@/components/iconify';
+import SearchNotFound from '@/components/search-not-found';
+import { IAdjustmentRequestItem } from '@/types/adjustmentRequest';
 
 // ----------------------------------------------------------------------
 

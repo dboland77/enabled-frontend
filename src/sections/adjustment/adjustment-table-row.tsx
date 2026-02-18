@@ -3,7 +3,7 @@ import Checkbox from '@mui/material/Checkbox';
 import TableCell from '@mui/material/TableCell';
 import ListItemText from '@mui/material/ListItemText';
 
-import { IAdjustmentItem } from 'src/frontend/types/adjustment';
+import { IAdjustmentItem } from '@/types/adjustment';
 
 type Props = {
   selected: boolean;

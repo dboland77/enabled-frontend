@@ -18,7 +18,7 @@ import Scrollbar from '@/components/scrollbar';
 
 import Label from '@/components/label';
 import Iconify from '@/components/iconify';
-import NotificationItem from '@/app/layouts/common/notifications-popover/notification-item';
+import NotificationItem from '@/layouts/common/notifications-popover/notification-item';
 import { varHover } from '@/components/animate';
 import { useBoolean } from '@/hooks/use-boolean';
 import { useResponsive } from '@/hooks/use-responsive';

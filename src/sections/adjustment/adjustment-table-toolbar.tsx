@@ -11,12 +11,12 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
-import Iconify from 'src/frontend/components/iconify';
-import CustomPopover, { usePopover } from 'src/frontend/components/custom-popover';
+import Iconify from '@/components/iconify';
+import CustomPopover, { usePopover } from '@/components/custom-popover';
 import {
   IAdjustmentRequestFilters,
   IAdjustmentRequestFilterValue,
-} from 'src/frontend/types/adjustmentRequest';
+} from '@/types/adjustmentRequest';
 
 type Props = {
   filters: IAdjustmentRequestFilters;
