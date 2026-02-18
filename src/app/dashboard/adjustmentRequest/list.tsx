@@ -1,13 +1,9 @@
-import { Helmet } from 'react-helmet-async';
-
-import { AdjustmentRequestListView } from 'src/frontend/sections/adjustmentRequest/view';
+import { AdjustmentRequestListView } from '@/sections/adjustmentRequest/view';
 
 export default function AdjustmentRequestListPage() {
   return (
     <>
-      <Helmet>
-        <title> enableD: Adjustment List</title>
-      </Helmet>
+      <title> enableD: Adjustment List</title>
 
       <AdjustmentRequestListView />
     </>

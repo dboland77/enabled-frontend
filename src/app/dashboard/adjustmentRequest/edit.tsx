@@ -1,7 +1,6 @@
-import { Helmet } from 'react-helmet-async';
-
-import { useParams } from 'src/frontend/routes/hooks';
-import { AdjustmentRequestEditView } from 'src/frontend/sections/adjustmentRequest/view';
+'use client';
+import { useParams } from 'next/navigation';
+import { AdjustmentRequestEditView } from '@/sections/adjustmentRequest/view';
 
 export default function AdjustmentRequestEditPage() {
   const params = useParams();
@@ -10,9 +9,7 @@ export default function AdjustmentRequestEditPage() {
 
   return (
     <>
-      <Helmet>
-        <title> enableD: Adjustment Edit</title>
-      </Helmet>
+      <title> enableD: Adjustment Edit</title>
 
       <AdjustmentRequestEditView id={`${id}`} />
     </>
