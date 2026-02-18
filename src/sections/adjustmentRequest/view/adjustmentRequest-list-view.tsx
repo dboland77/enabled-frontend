@@ -9,22 +9,22 @@ import TableBody from '@mui/material/TableBody';
 import IconButton from '@mui/material/IconButton';
 import TableContainer from '@mui/material/TableContainer';
 
-import { paths } from 'src/frontend/routes/paths';
-import { useRouter } from 'src/frontend/routes/hooks';
-import Iconify from 'src/frontend/components/iconify';
-import Scrollbar from 'src/frontend/components/scrollbar';
-import { RouterLink } from 'src/frontend/routes/components';
-import { useBoolean } from 'src/frontend/hooks/use-boolean';
-import ProgressBar from 'src/frontend/components/progress-bar';
-import { useAppDispatch, useAppSelector } from 'src/frontend/hooks';
-import { ConfirmDialog } from 'src/frontend/components/custom-dialog';
-import { useSettingsContext } from 'src/frontend/components/settings';
-import CustomBreadcrumbs from 'src/frontend/components/custom-breadcrumbs';
+import { paths } from '@/routes/paths';
+import { useRouter } from '@/routes/hooks';
+import Iconify from '@/components/iconify';
+import Scrollbar from '@/components/scrollbar';
+import { RouterLink } from '@/routes/components';
+import { useBoolean } from '@/hooks/use-boolean';
+import ProgressBar from '@/components/progress-bar';
+import { useAppDispatch, useAppSelector } from '@/hooks';
+import { ConfirmDialog } from '@/components/custom-dialog';
+import { useSettingsContext } from '@/components/settings';
+import CustomBreadcrumbs from '@/components/custom-breadcrumbs';
 import {
   getAdjustmentRequests,
   deleteAdjustmentRequest,
   deleteManyAdjustmentRequests,
-} from 'src/frontend/slices';
+} from '@/slices';
 import {
   useTable,
   emptyRows,
@@ -33,7 +33,7 @@ import {
   TableHeadCustom,
   TableSelectedAction,
   TablePaginationCustom,
-} from 'src/frontend/components/table';
+} from '@/components/table';
 
 import AdjustmentRequestTableRow from '../adjustmentRequest-table-row';
 

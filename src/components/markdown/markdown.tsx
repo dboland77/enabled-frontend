@@ -8,8 +8,6 @@ import rehypeHighlight from 'rehype-highlight';
 
 import Link from '@mui/material/Link';
 
-import { RouterLink } from '../../routes/components';
-
 import Image from '../image';
 import StyledMarkdown from './styles';
 import { MarkdownProps } from './types';
@@ -38,7 +36,7 @@ const components = {
     return isHttp ? (
       <Link target="_blank" rel="noopener" {...props} />
     ) : (
-      <Link component={RouterLink} href={props.href} {...props}>
+      <Link href={props.href} {...props}>
         {props.children}
       </Link>
     );

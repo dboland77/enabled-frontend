@@ -9,12 +9,12 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
 
-import { paths } from 'src/frontend/routes/paths';
-import Iconify from 'src/frontend/components/iconify';
-import { fDate } from 'src/frontend/utils/format-time';
-import { RouterLink } from 'src/frontend/routes/components';
-import { IAdjustmentRequestItem } from 'src/frontend/types/adjustmentRequest';
-import CustomPopover, { usePopover } from 'src/frontend/components/custom-popover';
+import { paths } from '@/routes/paths';
+import Iconify from '@/components/iconify';
+import { fDate } from '@/utils/format-time';
+import { RouterLink } from '@/routes/components';
+import { IAdjustmentRequestItem } from '@/types/adjustmentRequest';
+import CustomPopover, { usePopover } from '@/components/custom-popover';
 
 type Props = {
   adjustmentRequest: IAdjustmentRequestItem;

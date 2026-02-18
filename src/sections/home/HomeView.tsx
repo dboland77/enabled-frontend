@@ -5,9 +5,9 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 
 import { SeoIllustration } from 'src/assets/illustrations';
-import { useAppDispatch, useAppSelector } from 'src/frontend/hooks';
-import { getUserProfile, getAdjustments } from 'src/frontend/slices';
-import { useSettingsContext } from 'src/frontend/components/settings';
+import { useAppDispatch, useAppSelector } from '@/hooks';
+import { getUserProfile, getAdjustments } from '@/slices';
+import { useSettingsContext } from '@/components/settings';
 
 import AppWelcome from './WelcomeWidget';
 

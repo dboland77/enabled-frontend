@@ -11,18 +11,14 @@ import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-import { paths } from 'src/frontend/routes/paths';
-import { useRouter } from 'src/frontend/routes/hooks';
-import { useSnackbar } from 'src/frontend/components/snackbar';
-import { useResponsive } from 'src/frontend/hooks/use-responsive';
-import { useAppDispatch, useAppSelector } from 'src/frontend/hooks';
-import { IAdjustmentRequestItem } from 'src/frontend/types/adjustmentRequest';
-import { createAdjustmentRequest, updateAdjustmentRequest } from 'src/frontend/slices';
-import FormProvider, {
-  RHFEditor,
-  RHFTextField,
-  RHFAutocomplete,
-} from 'src/frontend/components/hook-form';
+import { paths } from '@/routes/paths';
+import { useRouter } from '@/routes/hooks';
+import { useSnackbar } from '@/components/snackbar';
+import { useResponsive } from '@/hooks/use-responsive';
+import { useAppDispatch, useAppSelector } from '@/hooks';
+import { IAdjustmentRequestItem } from '@/types/adjustmentRequest';
+import { createAdjustmentRequest, updateAdjustmentRequest } from '@/slices';
+import FormProvider, { RHFEditor, RHFTextField, RHFAutocomplete } from '@/components/hook-form';
 
 type Props = {
   currentAdjustmentRequest?: IAdjustmentRequestItem;

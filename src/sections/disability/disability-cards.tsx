@@ -3,11 +3,11 @@ import { useEffect, useCallback } from 'react';
 import Box from '@mui/material/Box';
 import Pagination, { paginationClasses } from '@mui/material/Pagination';
 
-import { paths } from 'src/frontend/routes/paths';
-import { useRouter } from 'src/frontend/routes/hooks';
-import { getDisabilities } from 'src/frontend/slices';
-import { IDisabilityItem } from 'src/frontend/types/disability';
-import { useAppDispatch, useAppSelector } from 'src/frontend/hooks';
+import { paths } from '@/routes/paths';
+import { useRouter } from '@/routes/hooks';
+import { getDisabilities } from '@/slices';
+import { IDisabilityItem } from '@/types/disability';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 
 import DisabilityItem from './disability-item';
 

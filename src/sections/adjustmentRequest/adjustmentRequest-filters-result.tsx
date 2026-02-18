@@ -4,11 +4,11 @@ import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Stack, { StackProps } from '@mui/material/Stack';
 
-import Iconify from 'src/frontend/components/iconify';
+import Iconify from '@/components/iconify';
 import {
   IAdjustmentRequestFilters,
   IAdjustmentRequestFilterValue,
-} from 'src/frontend/types/adjustmentRequest';
+} from '@/types/adjustmentRequest';
 
 type Props = StackProps & {
   filters: IAdjustmentRequestFilters;

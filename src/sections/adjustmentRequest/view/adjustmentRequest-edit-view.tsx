@@ -1,9 +1,9 @@
 import Container from '@mui/material/Container';
 
-import { paths } from 'src/frontend/routes/paths';
-import { useAppSelector } from 'src/frontend/hooks';
-import { useSettingsContext } from 'src/frontend/components/settings';
-import CustomBreadcrumbs from 'src/frontend/components/custom-breadcrumbs';
+import { paths } from '@/routes/paths';
+import { useAppSelector } from '@/hooks';
+import { useSettingsContext } from '@/components/settings';
+import CustomBreadcrumbs from '@/components/custom-breadcrumbs';
 
 import RequestAdjustmentForm from '../adjustmentRequest-form';
 

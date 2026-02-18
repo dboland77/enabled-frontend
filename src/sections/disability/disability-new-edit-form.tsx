@@ -10,14 +10,14 @@ import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 
-import { paths } from 'src/frontend/routes/paths';
-import { useRouter } from 'src/frontend/routes/hooks';
-import { createDisability } from 'src/frontend/slices';
-import { useSnackbar } from 'src/frontend/components/snackbar';
-import { IDisabilityItem } from 'src/frontend/types/disability';
-import { useResponsive } from 'src/frontend/hooks/use-responsive';
-import { useAppDispatch, useAppSelector } from 'src/frontend/hooks';
-import FormProvider, { RHFEditor, RHFTextField } from 'src/frontend/components/hook-form';
+import { paths } from '@/routes/paths';
+import { useRouter } from '@/routes/hooks';
+import { createDisability } from '@/slices';
+import { useSnackbar } from '@/components/snackbar';
+import { IDisabilityItem } from '@/types/disability';
+import { useResponsive } from '@/hooks/use-responsive';
+import { useAppDispatch, useAppSelector } from '@/hooks';
+import FormProvider, { RHFEditor, RHFTextField } from '@/components/hook-form';
 
 type Props = {
   currentDisability?: IDisabilityItem;

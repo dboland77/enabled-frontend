@@ -5,7 +5,7 @@ import Card from '@mui/material/Card';
 import Container from '@mui/material/Container';
 import Tabs, { tabsClasses } from '@mui/material/Tabs';
 
-import { useAppSelector } from 'src/frontend/hooks';
+import { useAppSelector } from '@/hooks';
 
 import Iconify from '../../../components/iconify';
 import ProfileCover from '../profile-cover';

@@ -5,9 +5,8 @@ import IconButton from '@mui/material/IconButton';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Stack, { StackProps } from '@mui/material/Stack';
 
-import Iconify from 'src/frontend/components/iconify';
-import { RouterLink } from 'src/frontend/routes/components';
-import { usePopover } from 'src/frontend/components/custom-popover';
+import Iconify from '@/components/iconify';
+import { usePopover } from '@/components/custom-popover';
 
 type Props = StackProps & {
   backLink: string;
@@ -34,18 +33,14 @@ export default function AdjustmentRequestDetailsToolbar({
       }}
       {...other}
     >
-      <Button
-        component={RouterLink}
-        href={backLink}
-        startIcon={<Iconify icon="eva:arrow-ios-back-fill" width={16} />}
-      >
+      <Button href={backLink} startIcon={<Iconify icon="eva:arrow-ios-back-fill" width={16} />}>
         Back
       </Button>
 
       <Box sx={{ flexGrow: 1 }} />
 
       <Tooltip title="Edit">
-        <IconButton component={RouterLink} href={editLink}>
+        <IconButton href={editLink}>
           <Iconify icon="solar:pen-bold" />
         </IconButton>
       </Tooltip>

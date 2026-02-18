@@ -4,9 +4,9 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Container from '@mui/material/Container';
 
-import { paths } from 'src/frontend/routes/paths';
-import { useSettingsContext } from 'src/frontend/components/settings';
-import { RequestStatusTypes } from 'src/frontend/types/adjustmentRequest';
+import { paths } from '@/routes/paths';
+import { useSettingsContext } from '@/components/settings';
+import { RequestStatusTypes } from '@/types/adjustmentRequest';
 
 import AdjustmentRequestDetailsToolbar from '../adjustmentRequest-details-toolbar';
 import AdjustmentRequestDetailsContent from '../adjustmentRequest-details-content';

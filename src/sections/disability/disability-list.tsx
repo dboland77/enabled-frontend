@@ -3,10 +3,10 @@ import { useCallback } from 'react';
 import Box from '@mui/material/Box';
 import Pagination from '@mui/material/Pagination';
 
-import { paths } from 'src/frontend/routes/paths';
-import { useRouter } from 'src/frontend/routes/hooks';
-import { IDisabilityItem } from 'src/frontend/types/disability';
-import { usePagination } from 'src/frontend/hooks/use-pagination';
+import { paths } from '@/routes/paths';
+import { useRouter } from '@/routes/hooks';
+import { IDisabilityItem } from '@/types/disability';
+import { usePagination } from '@/hooks/use-pagination';
 
 import DisabilityItem from './disability-item';
 

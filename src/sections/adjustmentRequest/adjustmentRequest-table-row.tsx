@@ -8,12 +8,12 @@ import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
 
-import Label from 'src/frontend/components/label';
-import Iconify from 'src/frontend/components/iconify';
-import { useBoolean } from 'src/frontend/hooks/use-boolean';
-import { ConfirmDialog } from 'src/frontend/components/custom-dialog';
-import CustomPopover, { usePopover } from 'src/frontend/components/custom-popover';
-import { RequestStatusTypes, IAdjustmentRequestItem } from 'src/frontend/types/adjustmentRequest';
+import Label from '@/components/label';
+import Iconify from '@/components/iconify';
+import { useBoolean } from '@/hooks/use-boolean';
+import { ConfirmDialog } from '@/components/custom-dialog';
+import CustomPopover, { usePopover } from '@/components/custom-popover';
+import { RequestStatusTypes, IAdjustmentRequestItem } from '@/types/adjustmentRequest';
 
 type Props = {
   selected: boolean;

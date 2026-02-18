@@ -6,14 +6,14 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 
-import { paths } from 'src/frontend/routes/paths';
-import Iconify from 'src/frontend/components/iconify';
-import { getDisabilities } from 'src/frontend/slices';
-import { RouterLink } from 'src/frontend/routes/components';
-import EmptyContent from 'src/frontend/components/empty-content';
-import { useAppDispatch, useAppSelector } from 'src/frontend/hooks';
-import { useSettingsContext } from 'src/frontend/components/settings';
-import CustomBreadcrumbs from 'src/frontend/components/custom-breadcrumbs';
+import { paths } from '@/routes/paths';
+import Iconify from '@/components/iconify';
+import { getDisabilities } from '@/slices';
+import { RouterLink } from '@/routes/components';
+import EmptyContent from '@/components/empty-content';
+import { useAppDispatch, useAppSelector } from '@/hooks';
+import { useSettingsContext } from '@/components/settings';
+import CustomBreadcrumbs from '@/components/custom-breadcrumbs';
 
 import DisabilityList from '../disability-list';
 import NHSContainerLogo from '../NHSContainerLogo';
