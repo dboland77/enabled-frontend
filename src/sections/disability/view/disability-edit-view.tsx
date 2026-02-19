@@ -1,6 +1,5 @@
 import Container from '@mui/material/Container';
 
-import { paths } from '@/routes/paths';
 import { useSettingsContext } from '@/components/settings';
 import CustomBreadcrumbs from '@/components/custom-breadcrumbs';
 
@@ -26,11 +25,11 @@ export default function DisabilityEditView({ id }: Props) {
         links={[
           {
             name: 'Home',
-            href: paths.dashboard.root,
+            href: '/dashboard',
           },
           {
             name: 'Disability',
-            href: paths.dashboard.disability.root,
+            href: '/dashboard/disability',
           },
           { name: currentDisability?.name },
         ]}

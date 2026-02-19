@@ -6,28 +6,32 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 
-import { paths } from '@/routes/paths';
 import Iconify from '@/components/iconify';
-import { getDisabilities } from '@/slices';
-import { RouterLink } from '@/routes/components';
 import EmptyContent from '@/components/empty-content';
-import { useAppDispatch, useAppSelector } from '@/hooks';
 import { useSettingsContext } from '@/components/settings';
 import CustomBreadcrumbs from '@/components/custom-breadcrumbs';
 
 import DisabilityList from '../disability-list';
 import NHSContainerLogo from '../NHSContainerLogo';
 
+// TODO - change to state
+
+const disabilities = [
+  {
+    id: '123',
+    name: 'dfff',
+    slug: '/sdfsdf',
+  },
+];
+
+const disabilitiesLoading = false;
+
 export default function DisabilityCardsView() {
   const settings = useSettingsContext();
-  const dispatch = useAppDispatch();
-  const { disabilities } = useAppSelector((state) => state.disabilities);
 
   const notFound = !disabilities.length;
 
-  useEffect(() => {
-    dispatch(getDisabilities());
-  }, [dispatch]);
+  useEffect(() => {}, []);
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -46,17 +50,16 @@ export default function DisabilityCardsView() {
       <CustomBreadcrumbs
         heading="List"
         links={[
-          { name: 'Home', href: paths.dashboard.root },
+          { name: 'Home', href: '/dashboard' },
           {
             name: 'Disability',
-            href: paths.dashboard.disability.root,
+            href: '/dashboard/disability',
           },
           { name: 'Cards' },
         ]}
         action={
           <Button
-            component={RouterLink}
-            href={paths.dashboard.disability.new}
+            href={'/dashboard/disability/new'}
             variant="contained"
             startIcon={<Iconify icon="mingcute:add-line" />}
           >
