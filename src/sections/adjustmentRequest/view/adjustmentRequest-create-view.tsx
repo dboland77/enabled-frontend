@@ -1,6 +1,5 @@
 import Container from '@mui/material/Container';
 
-import { paths } from '@/routes/paths';
 import { useSettingsContext } from '@/components/settings';
 import CustomBreadcrumbs from '@/components/custom-breadcrumbs';
 
@@ -16,11 +15,11 @@ export default function AdjustmentRequestCreateView() {
         links={[
           {
             name: 'Home',
-            href: paths.dashboard.root,
+            href: '/dashboard',
           },
           {
             name: 'Adjustment Requests',
-            href: paths.dashboard.adjustmentRequests.root,
+            href: '/dashboard/adjustmentRequests',
           },
           { name: 'Request Adjustment' },
         ]}

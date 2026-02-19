@@ -9,10 +9,8 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
 
-import { paths } from '@/routes/paths';
 import Iconify from '@/components/iconify';
 import { fDate } from '@/utils/format-time';
-import { RouterLink } from '@/routes/components';
 import { IAdjustmentRequestItem } from '@/types/adjustmentRequest';
 import CustomPopover, { usePopover } from '@/components/custom-popover';
 
@@ -51,11 +49,7 @@ export default function AdjustmentRequestItem({
           <ListItemText
             sx={{ mb: 1 }}
             primary={
-              <Link
-                component={RouterLink}
-                href={paths.dashboard.adjustmentRequests.details}
-                color="inherit"
-              >
+              <Link href={'dashboard/adjustmentRequests/details'} color="inherit">
                 {title}
               </Link>
             }

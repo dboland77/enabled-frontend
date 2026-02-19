@@ -1,10 +1,10 @@
+'use client';
 import { useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Pagination, { paginationClasses } from '@mui/material/Pagination';
 
-import { paths } from '@/routes/paths';
-import { useRouter } from '@/routes/hooks';
+import { useRouter } from 'next/navigation';
 import { IAdjustmentRequestItem } from '@/types/adjustmentRequest';
 
 import AdjustmentRequestItem from './adjustmentRequest-item';
@@ -18,14 +18,14 @@ export default function AdjustmentRequestList({ adjustmentRequests }: Props) {
 
   const handleView = useCallback(
     (id: string) => {
-      router.push(paths.dashboard.adjustmentRequests.details);
+      router.push('dashboard/adjustmentRequests/details');
     },
     [router]
   );
 
   const handleEdit = useCallback(
     (id: string) => {
-      router.push(paths.dashboard.adjustmentRequests.edit(id));
+      router.push('dashboard/adjustmentRequests/edit:id');
     },
     [router]
   );

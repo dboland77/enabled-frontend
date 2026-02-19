@@ -1,3 +1,4 @@
+'use client';
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { useMemo, useEffect } from 'react';
@@ -5,23 +6,32 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 
-import { paths } from '@/routes/paths';
-import { useRouter } from '@/routes/hooks';
-import { createDisability } from '@/slices';
+import { useRouter } from 'next/navigation';
 import { useSnackbar } from '@/components/snackbar';
 import { IDisabilityItem } from '@/types/disability';
 import { useResponsive } from '@/hooks/use-responsive';
-import { useAppDispatch, useAppSelector } from '@/hooks';
 import FormProvider, { RHFEditor, RHFTextField } from '@/components/hook-form';
 
 type Props = {
   currentDisability?: IDisabilityItem;
 };
+
+// TODO - change to state
+
+const disabilities = [
+  {
+    id: '123',
+    name: 'dfff',
+    slug: '/sdfsdf',
+  },
+];
+
+const disabilitiesLoading = false;
 
 export default function DisabilityNewEditForm({ currentDisability }: Props) {
   const router = useRouter();
@@ -29,8 +39,6 @@ export default function DisabilityNewEditForm({ currentDisability }: Props) {
   const mdUp = useResponsive('up', 'md');
 
   const { enqueueSnackbar } = useSnackbar();
-  const dispatch = useAppDispatch();
-  const { disabilitiesLoading, disabilities } = useAppSelector((state) => state.disabilities);
 
   const NewDisabilitySchema = Yup.object().shape({
     name: Yup.string().required('Please tell us the name of the disability'),
@@ -71,7 +79,6 @@ export default function DisabilityNewEditForm({ currentDisability }: Props) {
 
     try {
       if (!currentDisability) {
-        await dispatch(createDisability(request));
       }
       if (!disabilitiesLoading) {
         reset();
@@ -79,7 +86,7 @@ export default function DisabilityNewEditForm({ currentDisability }: Props) {
           currentDisability ? 'Disability updated successfully!' : 'Disability Entry created!'
         );
       }
-      router.push(paths.dashboard.disability.root);
+      router.push('/dashboard/disability');
     } catch (error) {
       console.error(error);
     }
@@ -88,7 +95,7 @@ export default function DisabilityNewEditForm({ currentDisability }: Props) {
   const renderDetails = (
     <>
       {mdUp && (
-        <Grid md={4}>
+        <Grid>
           <Typography variant="h6" sx={{ mb: 0.5 }}>
             Disability Details
           </Typography>
@@ -98,7 +105,7 @@ export default function DisabilityNewEditForm({ currentDisability }: Props) {
         </Grid>
       )}
 
-      <Grid xs={12} md={8}>
+      <Grid>
         <Card>
           {!mdUp && <CardHeader title="Details" />}
 
@@ -124,8 +131,8 @@ export default function DisabilityNewEditForm({ currentDisability }: Props) {
 
   const renderActions = (
     <>
-      {mdUp && <Grid md={4} />}
-      <Grid xs={12} md={8} sx={{ display: 'flex', alignItems: 'center' }}>
+      {mdUp && <Grid />}
+      <Grid sx={{ display: 'flex', alignItems: 'center' }}>
         <LoadingButton
           type="submit"
           variant="contained"

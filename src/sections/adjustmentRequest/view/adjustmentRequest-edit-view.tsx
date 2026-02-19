@@ -1,9 +1,8 @@
 import Container from '@mui/material/Container';
 
-import { paths } from '@/routes/paths';
-import { useAppSelector } from '@/hooks';
 import { useSettingsContext } from '@/components/settings';
 import CustomBreadcrumbs from '@/components/custom-breadcrumbs';
+import { RequestStatusTypes } from '@/types/adjustmentRequest';
 
 import RequestAdjustmentForm from '../adjustmentRequest-form';
 
@@ -11,10 +10,24 @@ type Props = {
   id: string;
 };
 
+const adjustmentRequests = [
+  {
+    id: 'dfd',
+    title: 'test',
+    detail: 'detail test',
+    createdAt: '',
+    adjustmentType: 'adj type',
+    requiredDate: new Date().toISOString(),
+    workfunction: 'test function',
+    benefit: 'ben1',
+    location: 'here',
+    disability: 'd1',
+    status: RequestStatusTypes.NEW,
+  },
+];
+
 export default function AdjustmentRequestEditView({ id }: Props) {
   const settings = useSettingsContext();
-
-  const { adjustmentRequests } = useAppSelector((state) => state.adjustmentRequests);
 
   const currentAdjustmentRequest = adjustmentRequests.filter((a) => a.id === id)[0];
 
@@ -25,11 +38,11 @@ export default function AdjustmentRequestEditView({ id }: Props) {
         links={[
           {
             name: 'Home',
-            href: paths.dashboard.root,
+            href: '/dashboard',
           },
           {
             name: 'Adjustment Requests',
-            href: paths.dashboard.adjustmentRequests.list,
+            href: '/dashboard/adjustmentRequests/list',
           },
           {
             name: 'Edit Adjustment Request',

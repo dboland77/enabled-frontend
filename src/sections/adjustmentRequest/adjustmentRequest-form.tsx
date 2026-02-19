@@ -1,3 +1,4 @@
+'use client';
 import * as Yup from 'yup';
 import { useMemo, useEffect } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -5,19 +6,16 @@ import { useForm, Controller } from 'react-hook-form';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-import { paths } from '@/routes/paths';
-import { useRouter } from '@/routes/hooks';
+import { useRouter } from 'next/navigation';
 import { useSnackbar } from '@/components/snackbar';
 import { useResponsive } from '@/hooks/use-responsive';
-import { useAppDispatch, useAppSelector } from '@/hooks';
 import { IAdjustmentRequestItem } from '@/types/adjustmentRequest';
-import { createAdjustmentRequest, updateAdjustmentRequest } from '@/slices';
 import FormProvider, { RHFEditor, RHFTextField, RHFAutocomplete } from '@/components/hook-form';
 
 type Props = {
@@ -30,10 +28,16 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
   const mdUp = useResponsive('up', 'md');
 
   const { enqueueSnackbar } = useSnackbar();
-  const dispatch = useAppDispatch();
-  const { adjustmentRequestsLoading } = useAppSelector((state) => state.adjustmentRequests);
-  const { id } = useAppSelector((state) => state.auth);
-  const { adjustments } = useAppSelector((state) => state.adjustments);
+
+  // TODO - change to state
+  const adjustments = [
+    { id: '1', adjustment_title: 'a', adjustment_detail: 'sdfsdf', adjustment_type: 'asdfsd' },
+    { id: '2', adjustment_title: 'b', adjustment_detail: 'sdfsdf', adjustment_type: 'asdfsd' },
+  ];
+
+  const id = '123456';
+
+  const adjustmentRequestsLoading = false;
 
   // Set Option Values for the form
   const adjustmentTypes = adjustments.map((a) => a.adjustment_type);
@@ -100,9 +104,7 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
 
     try {
       if (!currentAdjustmentRequest) {
-        await dispatch(createAdjustmentRequest(request));
       } else {
-        await dispatch(updateAdjustmentRequest(request));
       }
       if (!adjustmentRequestsLoading) {
         reset();
@@ -110,7 +112,7 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
           currentAdjustmentRequest ? 'Request updated successfully!' : 'Adjustment Request created!'
         );
       }
-      router.push(paths.dashboard.adjustmentRequests.root);
+      router.push('dashboard/adjustmentRequests');
     } catch (error) {
       console.error(error);
     }
@@ -119,7 +121,7 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
   const renderDetails = (
     <>
       {mdUp && (
-        <Grid md={4}>
+        <Grid>
           <Typography variant="h6" sx={{ mb: 0.5 }}>
             Adjustment Details
           </Typography>
@@ -130,7 +132,7 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
         </Grid>
       )}
 
-      <Grid xs={12} md={8}>
+      <Grid>
         <Card>
           {!mdUp && <CardHeader title="Details" />}
 
@@ -153,7 +155,7 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
   const renderProperties = (
     <>
       {mdUp && (
-        <Grid md={4}>
+        <Grid>
           <Typography variant="h6" sx={{ mb: 0.5 }}>
             Properties
           </Typography>
@@ -163,7 +165,7 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
         </Grid>
       )}
 
-      <Grid xs={12} md={8}>
+      <Grid>
         <Card>
           {!mdUp && <CardHeader title="Properties" />}
 
@@ -235,8 +237,8 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
 
   const renderActions = (
     <>
-      {mdUp && <Grid md={4} />}
-      <Grid xs={12} md={8} sx={{ display: 'flex', alignItems: 'center' }}>
+      {mdUp && <Grid />}
+      <Grid sx={{ display: 'flex', alignItems: 'center' }}>
         <LoadingButton
           type="submit"
           variant="contained"

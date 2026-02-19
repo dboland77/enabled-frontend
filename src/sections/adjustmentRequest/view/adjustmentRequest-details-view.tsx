@@ -4,7 +4,6 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Container from '@mui/material/Container';
 
-import { paths } from '@/routes/paths';
 import { useSettingsContext } from '@/components/settings';
 import { RequestStatusTypes } from '@/types/adjustmentRequest';
 
@@ -59,8 +58,8 @@ export default function AdjustmentRequestsDetailsView({ id }: Props) {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <AdjustmentRequestDetailsToolbar
-        backLink={paths.dashboard.adjustmentRequests.root}
-        editLink={paths.dashboard.adjustmentRequests.edit(id)}
+        backLink={'/dashboard/adjustmentRequests'}
+        editLink={'/dashboard/adjustmentRequests/edit(id)'}
         liveLink="#"
       />
       {renderTabs}

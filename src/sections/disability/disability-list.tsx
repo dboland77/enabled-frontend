@@ -1,10 +1,10 @@
+'use client';
 import { useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Pagination from '@mui/material/Pagination';
 
-import { paths } from '@/routes/paths';
-import { useRouter } from '@/routes/hooks';
+import { useRouter } from 'next/navigation';
 import { IDisabilityItem } from '@/types/disability';
 import { usePagination } from '@/hooks/use-pagination';
 
@@ -14,6 +14,18 @@ type Props = {
   disabilities: IDisabilityItem[];
 };
 
+// TODO - change to state
+
+const disabilities = [
+  {
+    id: '123',
+    name: 'dfff',
+    slug: '/sdfsdf',
+  },
+];
+
+const disabilitiesLoading = false;
+
 export default function DisabilityList({ disabilities }: Props) {
   const router = useRouter();
 
@@ -22,14 +34,14 @@ export default function DisabilityList({ disabilities }: Props) {
 
   const handleView = useCallback(
     (id: string) => {
-      router.push(paths.dashboard.disability.details);
+      router.push('/dashboard/disability/details');
     },
     [router]
   );
 
   const handleEdit = useCallback(
     (id: string) => {
-      router.push(paths.dashboard.disability.edit);
+      router.push('/dashboard/disability/edit');
     },
     [router]
   );

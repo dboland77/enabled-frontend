@@ -1,13 +1,11 @@
+'use client';
 import { useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Pagination, { paginationClasses } from '@mui/material/Pagination';
 
-import { paths } from '@/routes/paths';
-import { useRouter } from '@/routes/hooks';
-import { getDisabilities } from '@/slices';
+import { useRouter } from 'next/navigation';
 import { IDisabilityItem } from '@/types/disability';
-import { useAppDispatch, useAppSelector } from '@/hooks';
 
 import DisabilityItem from './disability-item';
 
@@ -18,34 +16,25 @@ type Props = {
 export default function DisabilityCards({ disabilities }: Props) {
   const router = useRouter();
 
-  const dispatch = useAppDispatch();
-  const nhsData = useAppSelector((state) => state.nhsData);
-
-  useEffect(() => {
-    dispatch(getDisabilities());
-  }, [dispatch]);
+  useEffect(() => {}, []);
 
   const handleView = useCallback(
     (id: string) => {
-      router.push(paths.dashboard.disability.details);
+      router.push('/dashboard/disability/details');
     },
     [router]
   );
 
   const handleEdit = useCallback(
     (id: string) => {
-      router.push(paths.dashboard.disability.edit);
+      router.push('/dashboard/disability/edit');
     },
     [router]
   );
 
-  const handleDelete = useCallback(
-    (id: string) => {
-      console.log(nhsData);
-      console.info('DELETE', id);
-    },
-    [nhsData]
-  );
+  const handleDelete = useCallback((id: string) => {
+    console.info('DELETE', id);
+  }, []);
 
   return (
     <>

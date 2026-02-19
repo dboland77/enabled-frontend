@@ -12,7 +12,6 @@ import ListItemText from '@mui/material/ListItemText';
 // import { paths } from '@/routes/paths';
 import Iconify from '@/components/iconify';
 import { fDate } from '@/utils/format-time';
-import { RouterLink } from '@/routes/components';
 import { IDisabilityItem } from '@/types/disability';
 import CustomPopover, { usePopover } from '@/components/custom-popover';
 
@@ -46,12 +45,7 @@ export default function DisabilityItem({ disability, onView, onEdit, onDelete }:
           <ListItemText
             sx={{ mb: 1 }}
             primary={
-              <Link
-                component={RouterLink}
-                href={`http://www.nhs.uk/conditions/${slug}`}
-                color="inherit"
-                target="_blank"
-              >
+              <Link href={`http://www.nhs.uk/conditions/${slug}`} color="inherit" target="_blank">
                 {name}
               </Link>
             }

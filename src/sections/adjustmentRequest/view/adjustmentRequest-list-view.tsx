@@ -1,3 +1,4 @@
+'use client';
 import { useEffect, useCallback } from 'react';
 
 import Card from '@mui/material/Card';
@@ -9,22 +10,15 @@ import TableBody from '@mui/material/TableBody';
 import IconButton from '@mui/material/IconButton';
 import TableContainer from '@mui/material/TableContainer';
 
-import { paths } from '@/routes/paths';
-import { useRouter } from '@/routes/hooks';
+import { useRouter } from 'next/navigation';
 import Iconify from '@/components/iconify';
 import Scrollbar from '@/components/scrollbar';
-import { RouterLink } from '@/routes/components';
 import { useBoolean } from '@/hooks/use-boolean';
 import ProgressBar from '@/components/progress-bar';
-import { useAppDispatch, useAppSelector } from '@/hooks';
 import { ConfirmDialog } from '@/components/custom-dialog';
 import { useSettingsContext } from '@/components/settings';
 import CustomBreadcrumbs from '@/components/custom-breadcrumbs';
-import {
-  getAdjustmentRequests,
-  deleteAdjustmentRequest,
-  deleteManyAdjustmentRequests,
-} from '@/slices';
+
 import {
   useTable,
   emptyRows,
@@ -43,25 +37,33 @@ const TABLE_HEAD = [
   { id: 'status', label: 'Status' },
 ];
 
+//TODO - change this to state
+const adjustmentRequests = [
+  {
+    id: 'dfd',
+    title: 'test',
+    detail: 'detail test',
+    createdAt: '',
+    adjustmentType: 'adj type',
+    requiredDate: new Date().toISOString(),
+    workfunction: 'test function',
+    benefit: 'ben1',
+    location: 'here',
+    disability: 'd1',
+    status: null,
+  },
+];
+
+const adjustmentRequestsLoading = false;
+
 export default function AdjustmentRequestListView() {
   const table = useTable();
 
   const settings = useSettingsContext();
 
-  const dispatch = useAppDispatch();
-
   const router = useRouter();
 
   const confirm = useBoolean();
-
-  const { id } = useAppSelector((state) => state.auth);
-  const { adjustmentRequests, adjustmentRequestsLoading } = useAppSelector(
-    (state) => state.adjustmentRequests
-  );
-
-  useEffect(() => {
-    dispatch(getAdjustmentRequests(id!));
-  }, [id, dispatch]);
 
   const dataFiltered = adjustmentRequests.length > 0 ? adjustmentRequests : [];
 
@@ -75,7 +77,6 @@ export default function AdjustmentRequestListView() {
   const denseHeight = table.dense ? 52 : 72;
 
   const handleDeleteRow = async (rowId: string) => {
-    await dispatch(deleteAdjustmentRequest(rowId));
     table.onUpdatePageDeleteRow(dataInPage.length);
   };
 
@@ -83,9 +84,6 @@ export default function AdjustmentRequestListView() {
     const deleteRows = adjustmentRequests
       .filter((row) => table.selected.includes(row.id))
       .map((r) => r.id);
-
-    await dispatch(deleteManyAdjustmentRequests(deleteRows));
-    dispatch(getAdjustmentRequests(id!));
 
     table.onUpdatePageDeleteRows({
       totalRows: adjustmentRequests.length,
@@ -96,7 +94,7 @@ export default function AdjustmentRequestListView() {
 
   const handleEditRow = useCallback(
     (rowId: string) => {
-      router.push(paths.dashboard.adjustmentRequests.edit(rowId));
+      router.push('/dashboard/adjustmentRequests/edit:rowId');
     },
     [router]
   );
@@ -109,14 +107,13 @@ export default function AdjustmentRequestListView() {
         <CustomBreadcrumbs
           heading="My Adjustment Requests"
           links={[
-            { name: 'Home', href: paths.dashboard.root },
-            { name: 'Adjustment Requests', href: paths.dashboard.adjustmentRequests.root },
+            { name: 'Home', href: '/dashboard' },
+            { name: 'Adjustment Requests', href: '/dashboard/adjustmentRequests' },
             { name: 'List' },
           ]}
           action={
             <Button
-              component={RouterLink}
-              href={paths.dashboard.adjustmentRequests.new}
+              href={'/dashboard/adjustmentRequests/new'}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
