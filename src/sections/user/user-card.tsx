@@ -6,10 +6,10 @@ import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
 import { alpha, useTheme } from '@mui/material/styles';
 
-import Image from '../../components/image';
-import { IUserCard } from '../../types/user';
-import { fShortenNumber } from '../../utils/format-number';
-import { AvatarShape } from '../../../assets/illustrations';
+import Image from '@/components/image';
+import { IUserCard } from '@/types/user';
+import { fShortenNumber } from '@/utils/format-number';
+import { AvatarShape } from '@/assets/illustrations';
 
 // ----------------------------------------------------------------------
 

@@ -13,10 +13,10 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 
-import { IUserItem } from '../../types/user';
-import Iconify from '../../components/iconify';
-import { countries } from '../../../assets/data';
-import { useSnackbar } from '../../components/snackbar';
+import { IUserItem } from '@/types/user';
+import Iconify from '@/components/iconify';
+import { countries } from '@/assets/data';
+import { useSnackbar } from '@/components/snackbar';
 import FormProvider, { RHFSelect, RHFTextField, RHFAutocomplete } from '../../components/hook-form';
 
 // ----------------------------------------------------------------------

@@ -1,3 +1,4 @@
+'use client';
 import * as Yup from 'yup';
 import { useMemo, useCallback } from 'react';
 import { useForm, Controller } from 'react-hook-form';
@@ -8,25 +9,24 @@ import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
-import { paths } from '../../routes/paths';
-import Label from '../../components/label';
-import { IUserItem } from '../../types/user';
-import { useRouter } from '../../routes/hooks';
-import Iconify from '../../components/iconify';
-import { countries } from '../../../assets/data';
-import { fData } from '../../utils/format-number';
-import { useSnackbar } from '../../components/snackbar';
+import Label from '@/components/label';
+import { IUserItem } from '@/types/user';
+import { useRouter } from 'next/navigation';
+import Iconify from '@/components/iconify';
+import { countries } from '@/assets/data';
+import { fData } from '@/utils/format-number';
+import { useSnackbar } from '@/components/snackbar';
 import FormProvider, {
   RHFSwitch,
   RHFTextField,
   RHFUploadAvatar,
   RHFAutocomplete,
-} from '../../components/hook-form';
+} from '@/components/hook-form';
 
 type Props = {
   currentUser?: IUserItem;
@@ -94,7 +94,7 @@ export default function UserNewEditForm({ currentUser }: Props) {
       await new Promise((resolve) => setTimeout(resolve, 500));
       reset();
       enqueueSnackbar(currentUser ? 'Update success!' : 'Create success!');
-      router.push(paths.dashboard.user.list);
+      router.push('/dashboard/user/list');
       console.info('DATA', data);
     } catch (error) {
       console.error(error);
@@ -119,7 +119,7 @@ export default function UserNewEditForm({ currentUser }: Props) {
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
-        <Grid xs={12} md={4}>
+        <Grid>
           <Card sx={{ pt: 10, pb: 5, px: 3 }}>
             {currentUser && (
               <Label
@@ -215,7 +215,7 @@ export default function UserNewEditForm({ currentUser }: Props) {
           </Card>
         </Grid>
 
-        <Grid xs={12} md={8}>
+        <Grid>
           <Card sx={{ p: 3 }}>
             <Box
               rowGap={3}
