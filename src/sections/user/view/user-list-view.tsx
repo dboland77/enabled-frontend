@@ -1,5 +1,6 @@
-import isEqual from 'lodash/isEqual';
+'use client';
 import { useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -14,19 +15,16 @@ import IconButton from '@mui/material/IconButton';
 import TableContainer from '@mui/material/TableContainer';
 
 import UserTableRow from '../user-table-row';
-import { paths } from '../../../routes/paths';
-import Label from '../../../components/label';
-import { useRouter } from '../../../routes/hooks';
-import Iconify from '../../../components/iconify';
+import Label from '@/components/label';
+import Iconify from '@/components/iconify';
 import UserTableToolbar from '../user-table-toolbar';
-import Scrollbar from '../../../components/scrollbar';
-import { RouterLink } from '../../../routes/components';
-import { useBoolean } from '../../../hooks/use-boolean';
-import { ConfirmDialog } from '../../../components/custom-dialog';
-import { useSettingsContext } from '../../../components/settings';
+import Scrollbar from '@/components/scrollbar';
+import { useBoolean } from '@/hooks/use-boolean';
+import { ConfirmDialog } from '@/components/custom-dialog';
+import { useSettingsContext } from '@/components/settings';
 import UserTableFiltersResult from '../user-table-filters-result';
-import CustomBreadcrumbs from '../../../components/custom-breadcrumbs';
-import { IUserItem, IUserTableFilters, IUserTableFilterValue } from '../../../types/user';
+import CustomBreadcrumbs from '@/components/custom-breadcrumbs';
+import { IUserItem, IUserTableFilters, IUserTableFilterValue } from '@/types/user';
 import {
   useTable,
   emptyRows,
@@ -36,7 +34,7 @@ import {
   TableHeadCustom,
   TableSelectedAction,
   TablePaginationCustom,
-} from '../../../components/table';
+} from '@/components/table';
 
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }];
 
@@ -76,10 +74,9 @@ const defaultFilters: IUserTableFilters = {
 
 export default function UserListView() {
   const table = useTable();
+  const router = useRouter();
 
   const settings = useSettingsContext();
-
-  const router = useRouter();
 
   const confirm = useBoolean();
 
@@ -100,7 +97,7 @@ export default function UserListView() {
 
   const denseHeight = table.dense ? 52 : 72;
 
-  const canReset = !isEqual(defaultFilters, filters);
+  const canReset = JSON.stringify(defaultFilters) === JSON.stringify(filters);
 
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
@@ -138,7 +135,7 @@ export default function UserListView() {
 
   const handleEditRow = useCallback(
     (id: string) => {
-      router.push(paths.dashboard.user.edit);
+      router.push('/dashboard/user');
     },
     [router]
   );
@@ -160,14 +157,13 @@ export default function UserListView() {
         <CustomBreadcrumbs
           heading="List"
           links={[
-            { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'User', href: paths.dashboard.user.root },
+            { name: 'Dashboard', href: '/dashboard' },
+            { name: 'User', href: '/dashboard/user' },
             { name: 'List' },
           ]}
           action={
             <Button
-              component={RouterLink}
-              href={paths.dashboard.user.new}
+              href={'/dashboard/user/new'}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >

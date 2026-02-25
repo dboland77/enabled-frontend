@@ -5,11 +5,8 @@ import Card from '@mui/material/Card';
 import Container from '@mui/material/Container';
 import Tabs, { tabsClasses } from '@mui/material/Tabs';
 
-import { useAppSelector } from '@/hooks';
-
 import Iconify from '../../../components/iconify';
 import ProfileCover from '../profile-cover';
-import { paths } from '../../../routes/paths';
 import { ProfileImageUploader } from '../../../components/profile-image-uploader';
 import { useSettingsContext } from '../../../components/settings';
 import CustomBreadcrumbs from '../../../components/custom-breadcrumbs';
@@ -26,8 +23,11 @@ const TABS = [
 export default function UserProfileView() {
   const settings = useSettingsContext();
 
-  const { firstname, lastname, avatarUrl } = useAppSelector((state) => state.userProfile);
-  const { role } = useAppSelector((state) => state.auth);
+  const firstname = 'f';
+  const lastname = 'l';
+  const avatarUrl = 'sdfsd';
+
+  const role = 'EMPLOYEE';
 
   const [currentTab, setCurrentTab] = useState('profile');
 
@@ -40,8 +40,8 @@ export default function UserProfileView() {
       <CustomBreadcrumbs
         heading="Profile"
         links={[
-          { name: 'Home', href: paths.dashboard.root },
-          { name: 'User', href: paths.dashboard.user.root },
+          { name: 'Home', href: '/dashboard' },
+          { name: 'User', href: '/dashboard/user' },
           { name: `${firstname} ${lastname}` },
         ]}
         sx={{

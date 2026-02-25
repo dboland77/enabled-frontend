@@ -2,11 +2,9 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 
 import UserCardList from '../user-card-list';
-import { paths } from '../../../routes/paths';
-import Iconify from '../../../components/iconify';
-import { RouterLink } from '../../../routes/components';
-import { useSettingsContext } from '../../../components/settings';
-import CustomBreadcrumbs from '../../../components/custom-breadcrumbs';
+import Iconify from '@/components/iconify';
+import { useSettingsContext } from '@/components/settings';
+import CustomBreadcrumbs from '@/components/custom-breadcrumbs';
 
 // ----------------------------------------------------------------------
 
@@ -18,14 +16,13 @@ export default function UserCardsView() {
       <CustomBreadcrumbs
         heading="User Cards"
         links={[
-          { name: 'Home', href: paths.dashboard.root },
-          { name: 'User', href: paths.dashboard.user.root },
+          { name: 'Home', href: '/dashboard' },
+          { name: 'User', href: 'paths/dashboard/user' },
           { name: 'Cards' },
         ]}
         action={
           <Button
-            component={RouterLink}
-            href={paths.dashboard.user.new}
+            href={'/dashboard/user/new'}
             variant="contained"
             startIcon={<Iconify icon="mingcute:add-line" />}
           >

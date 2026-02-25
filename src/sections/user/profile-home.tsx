@@ -2,10 +2,10 @@ import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid';
 import CardHeader from '@mui/material/CardHeader';
 
-import Iconify from '../../components/iconify';
+import Iconify from '@/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -59,7 +59,7 @@ export default function ProfileHome({ info }: Props) {
 
   return (
     <Grid container spacing={3}>
-      <Grid xs={12} md={4}>
+      <Grid>
         <Stack spacing={3}>{renderAbout}</Stack>
       </Grid>
     </Grid>

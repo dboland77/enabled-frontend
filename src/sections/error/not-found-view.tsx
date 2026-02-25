@@ -3,9 +3,8 @@ import { m } from 'framer-motion';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
-import { RouterLink } from '../../routes/components';
-import { varBounce, MotionContainer } from '../../components/animate';
-import { PageNotFoundIllustration } from '../../../assets/illustrations';
+import { varBounce, MotionContainer } from '@/components/animate';
+import { PageNotFoundIllustration } from '@/assets/illustrations';
 
 // ----------------------------------------------------------------------
 
@@ -34,7 +33,7 @@ export default function NotFoundView() {
         />
       </m.div>
 
-      <Button component={RouterLink} href="/" size="large" variant="contained">
+      <Button href="/" size="large" variant="contained">
         Go to Home
       </Button>
     </MotionContainer>

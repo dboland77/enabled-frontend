@@ -3,9 +3,8 @@ import { m } from 'framer-motion';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
-import { RouterLink } from '../../routes/components';
-import { ForbiddenIllustration } from '../../../assets/illustrations';
-import { varBounce, MotionContainer } from '../../components/animate';
+import { ForbiddenIllustration } from '@/assets/illustrations';
+import { varBounce, MotionContainer } from '@/components/animate';
 
 // ----------------------------------------------------------------------
 
@@ -30,7 +29,7 @@ export default function View403() {
         <ForbiddenIllustration sx={{ height: 260, my: { xs: 5, sm: 10 } }} />
       </m.div>
 
-      <Button component={RouterLink} href="/" size="large" variant="contained">
+      <Button href="/" size="large" variant="contained">
         Go to Home
       </Button>
     </MotionContainer>

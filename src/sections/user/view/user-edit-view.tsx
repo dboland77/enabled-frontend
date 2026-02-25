@@ -1,9 +1,8 @@
 import Container from '@mui/material/Container';
 
-import { paths } from '../../../routes/paths';
 import UserNewEditForm from '../user-new-edit-form';
-import { useSettingsContext } from '../../../components/settings';
-import CustomBreadcrumbs from '../../../components/custom-breadcrumbs';
+import { useSettingsContext } from '@/components/settings';
+import CustomBreadcrumbs from '@/components/custom-breadcrumbs';
 
 // ----------------------------------------------------------------------
 
@@ -42,11 +41,11 @@ export default function UserEditView({ id }: Props) {
         links={[
           {
             name: 'Home',
-            href: paths.dashboard.root,
+            href: '/dashboard',
           },
           {
             name: 'User',
-            href: paths.dashboard.user.root,
+            href: '/dashboard/user',
           },
           { name: currentUser?.name },
         ]}

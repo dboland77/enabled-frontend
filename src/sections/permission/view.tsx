@@ -8,11 +8,8 @@ import Typography from '@mui/material/Typography';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
-import { RoleBasedGuard } from '@/routes/auth/guard';
 import { useSettingsContext } from '@/components/settings';
 import CustomBreadcrumbs from '@/components/custom-breadcrumbs';
-
-import { paths } from '../../routes/paths';
 
 export default function PermissionDeniedView() {
   const settings = useSettingsContext();
@@ -35,7 +32,7 @@ export default function PermissionDeniedView() {
         links={[
           {
             name: 'Home',
-            href: paths.dashboard.root,
+            href: '/dashboard',
           },
           {
             name: 'Permission Denied',
@@ -62,21 +59,21 @@ export default function PermissionDeniedView() {
         </ToggleButton>
       </ToggleButtonGroup>
 
-      <RoleBasedGuard hasContent roles={['HR_ADMIN', 'EMPLOYER']} sx={{ py: 10 }}>
-        <Box gap={3} display="grid" gridTemplateColumns="repeat(2, 1fr)">
-          {[...Array(8)].map((_, index) => (
-            <Card key={index}>
-              <CardHeader title={`Card ${index + 1}`} subheader="Proin viverra ligula" />
+      {/* <RoleBasedGuard hasContent roles={['HR_ADMIN', 'EMPLOYER']} sx={{ py: 10 }}> */}
+      <Box gap={3} display="grid" gridTemplateColumns="repeat(2, 1fr)">
+        {[...Array(8)].map((_, index) => (
+          <Card key={index}>
+            <CardHeader title={`Card ${index + 1}`} subheader="Proin viverra ligula" />
 
-              <Typography variant="body2" sx={{ px: 3, py: 2, color: 'text.secondary' }}>
-                Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. In enim justo,
-                rhoncus ut, imperdiet a, venenatis vitae, justo. Vestibulum fringilla pede sit amet
-                augue.
-              </Typography>
-            </Card>
-          ))}
-        </Box>
-      </RoleBasedGuard>
+            <Typography variant="body2" sx={{ px: 3, py: 2, color: 'text.secondary' }}>
+              Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. In enim justo,
+              rhoncus ut, imperdiet a, venenatis vitae, justo. Vestibulum fringilla pede sit amet
+              augue.
+            </Typography>
+          </Card>
+        ))}
+      </Box>
+      {/* </RoleBasedGuard> */}
     </Container>
   );
 }
