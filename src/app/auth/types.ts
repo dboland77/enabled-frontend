@@ -32,3 +32,13 @@ export type AuthContextType = {
   register: (email: string, password: string, firstName: string, lastName: string) => Promise<void>;
   logout: () => Promise<void>;
 };
+
+export type SignInFormValues = {
+  email: string;
+  password: string;
+};
+
+export type SignUpFormValues = {
+  email: string;
+  password: string;
+};

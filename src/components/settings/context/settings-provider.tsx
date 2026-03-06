@@ -1,4 +1,3 @@
-import isEqual from 'lodash/isEqual';
 import { useMemo, useState, useEffect, useCallback } from 'react';
 
 import { SettingsValueProps } from '@/components/settings/types';
@@ -46,7 +45,7 @@ export function SettingsProvider({ children, defaultSettings }: SettingsProvider
     setOpenDrawer(false);
   }, []);
 
-  const canReset = !isEqual(state, defaultSettings);
+  const canReset = !(JSON.stringify(state) === JSON.stringify(defaultSettings));
 
   const memoizedValue = useMemo(
     () => ({

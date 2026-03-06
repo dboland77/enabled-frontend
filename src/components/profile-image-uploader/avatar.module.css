@@ -1,0 +1,53 @@
+.profileUserImg {
+  width: 75px;
+  height: 75px;
+  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.12);
+  border-radius: 50%;
+}
+
+.avatarUpload {
+  position: relative;
+  max-width: 205px;
+  margin: auto;
+  margin-bottom: 20px;
+}
+
+.avatarEdit {
+  position: absolute;
+  right: 40px;
+  z-index: 1;
+  top: 90px;
+}
+
+.avatarInput {
+  display: none;
+  + label {
+    display: inline-block;
+    width: 34px;
+    height: 34px;
+    margin-bottom: 0;
+    border-radius: 100%;
+    background: #ffffff;
+    border: 1px solid #d2d6de;
+    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    font-weight: normal;
+    transition: all 0.2s ease-in-out;
+  }
+  .avatarInput:hover {
+    background: #f1f1f1;
+    border-color: #d6d6d6;
+  }
+
+  .avatarInput:after {
+    content: '\f030';
+    font-family: 'FontAwesome';
+    color: #337ab7;
+    position: absolute;
+    left: 0;
+    right: 0;
+    text-align: center;
+    line-height: 34px;
+    margin: auto;
+  }
+}
