@@ -21,7 +21,7 @@ export default function Avatar({
   useEffect(() => {
     async function downloadImage(path: string) {
       try {
-        const { data, error } = await supabase.storage.from('avatars').download(path);
+        const { data, error } = await supabase.storage.from('enabled-storage').download(path);
         if (error) {
           throw error;
         }
@@ -38,6 +38,7 @@ export default function Avatar({
 
   const uploadAvatar: React.ChangeEventHandler<HTMLInputElement> = async (event) => {
     try {
+      console.log('Avatar upload');
       setUploading(true);
 
       if (!event.target.files || event.target.files.length === 0) {
@@ -48,7 +49,9 @@ export default function Avatar({
       const fileExt = file.name.split('.').pop();
       const filePath = `${uid}-${Math.random()}.${fileExt}`;
 
-      const { error: uploadError } = await supabase.storage.from('avatars').upload(filePath, file);
+      const { error: uploadError } = await supabase.storage
+        .from('enabled-storage')
+        .upload(filePath, file);
 
       if (uploadError) {
         throw uploadError;

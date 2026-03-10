@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { type User } from '@supabase/supabase-js';
+import {cookies} from 'next/headers';
 import Avatar from '@/app/account/avatar';
 
 export default function AccountForm({ user }: { user: User | null }) {
