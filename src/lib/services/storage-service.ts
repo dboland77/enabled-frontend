@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { createClient } from '@/lib/supabase/client';
 
 export type UploadProgressEvent = {
   progress: number;
@@ -19,35 +19,29 @@ export type UploadResult = {
   url: string;
 };
 
+const supabase = createClient();
 /**
  * Uploads a file to Supabase Storage with progress tracking
  */
-export async function uploadFile(
-  file: File,
-  options: UploadOptions = {},
-): Promise<UploadResult> {
+export async function uploadFile(file: File, options: UploadOptions = {}): Promise<UploadResult> {
   const {
-    bucketName = "enabled-storage",
-    path = "",
+    bucketName = 'enabled-storage',
+    path = '',
     onProgress,
-    cacheControl = "3600",
+    cacheControl = '3600',
     upsert = false,
   } = options;
 
   try {
     // Create a unique file name if path is not provided
-    const filePath = path || `${Date.now()}_${file.name.replace(/\s+/g, "_")}`;
-    const fullPath = path
-      ? `${path}/${file.name.replace(/\s+/g, "_")}`
-      : filePath;
+    const filePath = path || `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+    const fullPath = path ? `${path}/${file.name.replace(/\s+/g, '_')}` : filePath;
 
     // Upload file to Supabase Storage
-    const { data, error } = await supabase.storage
-      .from(bucketName)
-      .upload(fullPath, file, {
-        cacheControl,
-        upsert,
-      });
+    const { data, error } = await supabase.storage.from(bucketName).upload(fullPath, file, {
+      cacheControl,
+      upsert,
+    });
 
     // Note: As of the latest Supabase version, upload progress tracking is handled differently
     // Progress tracking would need to be implemented using a custom solution or XHR
@@ -57,16 +51,14 @@ export async function uploadFile(
     }
 
     // Get public URL for the uploaded file
-    const { data: publicUrlData } = supabase.storage
-      .from(bucketName)
-      .getPublicUrl(fullPath);
+    const { data: publicUrlData } = supabase.storage.from(bucketName).getPublicUrl(fullPath);
 
     return {
       path: fullPath,
       url: publicUrlData.publicUrl,
     };
   } catch (error) {
-    console.error("Error uploading file:", error);
+    console.error('Error uploading file:', error);
     throw error;
   }
 }
@@ -74,10 +66,7 @@ export async function uploadFile(
 /**
  * Deletes a file from Supabase Storage
  */
-export async function deleteFile(
-  path: string,
-  bucketName: string,
-): Promise<void> {
+export async function deleteFile(path: string, bucketName: string): Promise<void> {
   try {
     const { error } = await supabase.storage.from(bucketName).remove([path]);
 
@@ -85,7 +74,7 @@ export async function deleteFile(
       throw error;
     }
   } catch (error) {
-    console.error("Error deleting file:", error);
+    console.error('Error deleting file:', error);
     throw error;
   }
 }
@@ -93,10 +82,7 @@ export async function deleteFile(
 /**
  * Lists all files in a bucket or folder
  */
-export async function listFiles(
-  bucketName: string = "enabled-storage",
-  path: string = "",
-) {
+export async function listFiles(bucketName: string = 'enabled-storage', path: string = '') {
   try {
     const { data, error } = await supabase.storage.from(bucketName).list(path);
 
@@ -106,7 +92,7 @@ export async function listFiles(
 
     return data;
   } catch (error) {
-    console.error("Error listing files:", error);
+    console.error('Error listing files:', error);
     throw error;
   }
 }

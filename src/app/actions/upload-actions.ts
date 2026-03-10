@@ -57,11 +57,11 @@ export async function uploadFile(formData: FormData): Promise<UploadResult> {
     // Validate file using Zod schema
     try {
       fileSchema.parse(file);
-    } catch (validationError) {
+    } catch (validationError: any) {
       if (validationError instanceof z.ZodError) {
         return {
           success: false,
-          error: validationError.errors[0].message,
+          error: validationError.message,
         };
       }
     }
