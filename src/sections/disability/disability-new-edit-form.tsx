@@ -14,7 +14,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import { useRouter } from 'next/navigation';
 import { useSnackbar } from '@/components/snackbar';
 import { IDisabilityItem } from '@/types/disability';
-import { useResponsive } from '@/hooks/use-responsive';
+import { useResponsive } from '@/lib/hooks/use-responsive';
 import FormProvider, { RHFEditor, RHFTextField } from '@/components/hook-form';
 
 type Props = {

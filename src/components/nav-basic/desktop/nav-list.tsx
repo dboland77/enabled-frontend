@@ -2,7 +2,7 @@ import { useRef, useState, useEffect, useCallback } from 'react';
 
 import Stack from '@mui/material/Stack';
 import Popover from '@mui/material/Popover';
-import { useBoolean } from '@/hooks';
+import { useBoolean } from '@/lib/hooks';
 
 import NavItem from '@/components/nav-basic/desktop/nav-item';
 import { NavListProps, NavSubListProps } from '@/components/nav-basic/types';

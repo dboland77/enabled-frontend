@@ -9,7 +9,7 @@ import ListItemText from '@mui/material/ListItemText';
 
 import Label from '@/components/label';
 import Iconify from '@/components/iconify';
-import { useBoolean } from '@/hooks/use-boolean';
+import { useBoolean } from '@/lib/hooks/use-boolean';
 import { ConfirmDialog } from '@/components/custom-dialog';
 import CustomPopover, { usePopover } from '@/components/custom-popover';
 import { RequestStatusTypes, IAdjustmentRequestItem } from '@/types/adjustmentRequest';

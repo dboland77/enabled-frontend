@@ -4,7 +4,7 @@ import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 
 import Logo from '@/components/logo';
-import { useResponsive } from '@/hooks/use-responsive';
+import { useResponsive } from '@/lib/hooks/use-responsive';
 
 // ----------------------------------------------------------------------
 

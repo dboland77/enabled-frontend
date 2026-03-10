@@ -15,7 +15,7 @@ import Button from '@mui/material/Button';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import Iconify from '@/components/iconify';
-import { useBoolean } from '@/hooks';
+import { useBoolean } from '@/lib/hooks';
 import FormProvider, { RHFTextField } from '@/components/hook-form';
 
 import { createClient } from '@/lib/supabase/client';

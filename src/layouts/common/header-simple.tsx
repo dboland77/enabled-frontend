@@ -8,7 +8,7 @@ import Logo from '@/components/logo';
 import { HEADER } from '@/layouts/config-layout';
 import HeaderShadow from '@/layouts/common/header-shadow';
 import SettingsButton from '@/layouts/common/settings-button';
-import { useOffSetTop } from '@/hooks/use-off-set-top';
+import { useOffSetTop } from '@/lib/hooks/use-off-set-top';
 
 // ----------------------------------------------------------------------
 

@@ -11,7 +11,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Label from '@/components/label';
 import { IUserItem } from '@/types/user';
 import Iconify from '@/components/iconify';
-import { useBoolean } from '@/hooks/use-boolean';
+import { useBoolean } from '@/lib/hooks/use-boolean';
 import UserQuickEditForm from './user-quick-edit-form';
 import { ConfirmDialog } from '@/components/custom-dialog';
 import CustomPopover, { usePopover } from '@/components/custom-popover';

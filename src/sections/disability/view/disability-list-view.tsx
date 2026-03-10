@@ -13,7 +13,7 @@ import TableContainer from '@mui/material/TableContainer';
 import { useRouter } from 'next/navigation';
 import Iconify from '@/components/iconify';
 import Scrollbar from '@/components/scrollbar';
-import { useBoolean } from '@/hooks/use-boolean';
+import { useBoolean } from '@/lib/hooks/use-boolean';
 import ProgressBar from '@/components/progress-bar';
 import { ConfirmDialog } from '@/components/custom-dialog';
 import { useSettingsContext } from '@/components/settings';

@@ -2,7 +2,7 @@ import { useMemo, useState, useEffect, useCallback } from 'react';
 
 import { SettingsValueProps } from '@/components/settings/types';
 import { SettingsContext } from '@/components/settings/context/settings-context';
-import { useLocalStorage } from '@/hooks/use-local-storage';
+import { useLocalStorage } from '@/lib/hooks/use-local-storage';
 import { localStorageGetItem } from '@/utils/storage-available';
 
 // ----------------------------------------------------------------------

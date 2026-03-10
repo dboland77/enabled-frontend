@@ -9,7 +9,7 @@ import Logo from '@/components/logo';
 import { usePathname } from 'next/navigation';
 import { NAV } from '@/layouts/config-layout';
 import Scrollbar from '@/components/scrollbar';
-import { useResponsive } from '@/hooks/use-responsive';
+import { useResponsive } from '@/lib/hooks/use-responsive';
 import { NavSectionVertical } from '@/components/nav-section';
 import NavToggleButton from '@/layouts/common/nav-toggle-button';
 

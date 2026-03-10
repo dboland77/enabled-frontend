@@ -13,8 +13,8 @@ import SettingsButton from '../common/settings-button';
 import AccountPopover from '../common/account-popover';
 // import ContactsPopover from '../common/contacts-popover';
 // import LanguagePopover from '../common/language-popover';
-import { useOffSetTop } from '../../hooks/use-off-set-top';
-import { useResponsive } from '../../hooks/use-responsive';
+import { useOffSetTop } from '../../lib/hooks/use-off-set-top';
+import { useResponsive } from '../../lib/hooks/use-responsive';
 import { useSettingsContext } from '../../components/settings';
 import NotificationsPopover from '../common/notifications-popover';
 

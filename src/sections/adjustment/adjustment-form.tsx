@@ -13,7 +13,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 
 import { useRouter } from 'next/navigation';
 import { useSnackbar } from '@/components/snackbar';
-import { useResponsive } from '@/hooks/use-responsive';
+import { useResponsive } from '@/lib/hooks/use-responsive';
 import FormProvider, { RHFEditor, RHFTextField, RHFAutocomplete } from '@/components/hook-form';
 
 export default function CreateAdjustmentForm() {

@@ -14,7 +14,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import { useRouter } from 'next/navigation';
 import { useSnackbar } from '@/components/snackbar';
-import { useResponsive } from '@/hooks/use-responsive';
+import { useResponsive } from '@/lib/hooks/use-responsive';
 import { IAdjustmentRequestItem } from '@/types/adjustmentRequest';
 import FormProvider, { RHFEditor, RHFTextField, RHFAutocomplete } from '@/components/hook-form';
 

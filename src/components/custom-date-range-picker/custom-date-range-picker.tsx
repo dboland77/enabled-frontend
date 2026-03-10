@@ -10,7 +10,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 
 import { DateRangePickerProps } from './types';
-import { useResponsive } from '../../hooks/use-responsive';
+import { useResponsive } from '../../lib/hooks/use-responsive';
 
 // ----------------------------------------------------------------------
 

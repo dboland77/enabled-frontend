@@ -5,8 +5,8 @@ import Header from './header';
 import NavMini from './nav-mini';
 import NavVertical from './nav-vertical';
 import NavHorizontal from './nav-horizontal';
-import { useBoolean } from '@/hooks/use-boolean';
-import { useResponsive } from '@/hooks/use-responsive';
+import { useBoolean } from '@/lib/hooks/use-boolean';
+import { useResponsive } from '@/lib/hooks/use-responsive';
 import { useSettingsContext } from '@/components/settings';
 
 type Props = {

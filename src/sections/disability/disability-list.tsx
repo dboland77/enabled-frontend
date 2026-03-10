@@ -6,7 +6,7 @@ import Pagination from '@mui/material/Pagination';
 
 import { useRouter } from 'next/navigation';
 import { IDisabilityItem } from '@/types/disability';
-import { usePagination } from '@/hooks/use-pagination';
+import { usePagination } from '@/lib/hooks/use-pagination';
 
 import DisabilityItem from './disability-item';
 
