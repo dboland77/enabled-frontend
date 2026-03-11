@@ -1,10 +1,10 @@
 'use client';
-import Link from '@mui/material/Link';
 import ThemeProvider from '@/theme';
 import ProgressBar from '@/components/progress-bar';
 import { SettingsDrawer, SettingsProvider } from '@/components/settings';
 import SnackbarProvider from '@/components/snackbar/snackbar-provider';
-import LandingPage from '@/app/LandingPage';
+import AuthModernLayout from '@/app/auth/layout';
+import SignInView from '@/app/auth/signin/page';
 
 export default function Home() {
   return (
@@ -22,7 +22,9 @@ export default function Home() {
         <SnackbarProvider>
           <SettingsDrawer />
           <ProgressBar />
-          <LandingPage />
+          <AuthModernLayout>
+            <SignInView />
+          </AuthModernLayout>
         </SnackbarProvider>
       </ThemeProvider>
     </SettingsProvider>

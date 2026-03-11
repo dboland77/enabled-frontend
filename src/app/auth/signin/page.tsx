@@ -55,9 +55,10 @@ export default function SignInView() {
 
     if (error) {
       router.push('/error');
+      return;
     }
 
-    router.push('/account');
+    router.push('/dashboard/app');
   };
 
   const renderHead = (
