@@ -32,7 +32,7 @@ const OneTapComponent = () => {
       console.error('Error getting session', error);
     }
     if (data.session) {
-      router.push('/account');
+      router.push('/dashboard');
       return true;
     }
 
@@ -51,7 +51,7 @@ const OneTapComponent = () => {
           if (error) throw error;
 
           // redirect to protected page
-          router.push('/account');
+          router.push('/dashboard');
         } catch (error) {
           console.error('Error logging in with Google One Tap', error);
         }

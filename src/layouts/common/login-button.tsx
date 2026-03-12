@@ -1,7 +1,7 @@
 import Link from '@mui/material/Link';
 import { Theme, SxProps } from '@mui/material/styles';
 
-const PATH_AFTER_LOGIN = '/account';
+const PATH_AFTER_LOGIN = '/dashboard';
 
 type Props = {
   sx?: SxProps<Theme>;
