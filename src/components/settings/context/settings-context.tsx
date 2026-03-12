@@ -1,3 +1,4 @@
+'use client';
 import { useContext, createContext } from 'react';
 
 import { SettingsContextProps } from '@/components/settings/types';

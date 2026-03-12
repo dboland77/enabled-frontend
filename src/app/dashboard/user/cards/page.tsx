@@ -1,3 +1,4 @@
+'use client';
 import { UserCardsView } from '@/sections/user/view';
 
 // ----------------------------------------------------------------------

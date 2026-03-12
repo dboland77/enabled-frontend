@@ -1,3 +1,4 @@
+'use client';
 import { DisabilityCardsView } from '@/sections/disability/view';
 
 // ----------------------------------------------------------------------

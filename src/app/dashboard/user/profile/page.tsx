@@ -1,3 +1,4 @@
+'use profile';
 import { UserProfileView } from '@/sections/user/view';
 
 // ----------------------------------------------------------------------

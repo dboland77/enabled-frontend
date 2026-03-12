@@ -1,3 +1,4 @@
+'use client';
 import { AdjustmentRequestCreateView } from '@/sections/adjustmentRequest/view';
 
 // ----------------------------------------------------------------------

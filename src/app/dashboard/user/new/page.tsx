@@ -1,3 +1,4 @@
+'use client';
 import { UserCreateView } from '@/sections/user/view';
 
 // ----------------------------------------------------------------------
