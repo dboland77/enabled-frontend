@@ -8,8 +8,8 @@ import Alert from '@mui/material/Alert';
 import LinearProgress from '@mui/material/LinearProgress';
 import Typography from '@mui/material/Typography';
 
-import Iconify from '../../iconify';
-import { createClient } from '../../../lib/supabase/client';
+import Iconify from '@/components/iconify';
+import { createClient } from '@/lib/supabase/client';
 
 interface ProfileImageUploaderProps {
   onUploadComplete?: (url: string) => void;
@@ -188,10 +188,13 @@ export default function ProfileImageUploader({
           textAlign: 'center',
           transition: 'all 0.3s ease',
           bgcolor: isDragging ? 'action.hover' : 'transparent',
-          '&:hover': !selectedFile && !uploading ? {
-            borderColor: 'primary.main',
-            bgcolor: 'action.hover',
-          } : {},
+          '&:hover':
+            !selectedFile && !uploading
+              ? {
+                  borderColor: 'primary.main',
+                  bgcolor: 'action.hover',
+                }
+              : {},
         }}
       >
         <input
@@ -263,4 +266,3 @@ export default function ProfileImageUploader({
     </Stack>
   );
 }
-
