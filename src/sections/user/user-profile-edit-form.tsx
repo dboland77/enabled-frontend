@@ -9,7 +9,7 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
-import LoadingButton from '@mui/lab/LoadingButton';
+import Button from '@mui/material/Button';
 
 import { useSnackbar } from '@/components/snackbar';
 import FormProvider, { RHFTextField } from '@/components/hook-form';
@@ -61,7 +61,7 @@ export default function UserProfileEditForm() {
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
-        <Grid xs={12}>
+        <Grid size={{ xs: 12 }}>
           <Card sx={{ p: 3 }}>
             <Box
               rowGap={3}
@@ -77,14 +77,13 @@ export default function UserProfileEditForm() {
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-              <LoadingButton
+              <Button
                 type="submit"
                 variant="contained"
-                loading={isSubmitting}
-                disabled={loading}
+                disabled={loading || isSubmitting}
               >
                 Save Changes
-              </LoadingButton>
+              </Button>
             </Stack>
           </Card>
         </Grid>

@@ -9,7 +9,7 @@ import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
-import LoadingButton from '@mui/lab/LoadingButton';
+import Button from '@mui/material/Button';
 
 import { useRouter } from 'next/navigation';
 import { useSnackbar } from '@/components/snackbar';
@@ -95,7 +95,7 @@ export default function DisabilityNewEditForm({ currentDisability }: Props) {
   const renderDetails = (
     <>
       {mdUp && (
-        <Grid>
+        <Grid size={{ xs: 12 }}>
           <Typography variant="h6" sx={{ mb: 0.5 }}>
             Disability Details
           </Typography>
@@ -105,7 +105,7 @@ export default function DisabilityNewEditForm({ currentDisability }: Props) {
         </Grid>
       )}
 
-      <Grid>
+      <Grid size={{ xs: 12 }}>
         <Card>
           {!mdUp && <CardHeader title="Details" />}
 
@@ -131,17 +131,17 @@ export default function DisabilityNewEditForm({ currentDisability }: Props) {
 
   const renderActions = (
     <>
-      {mdUp && <Grid />}
-      <Grid sx={{ display: 'flex', alignItems: 'center' }}>
-        <LoadingButton
+      {mdUp && <Grid size={{ xs: 12 }} />}
+      <Grid size={{ xs: 12 }} sx={{ display: 'flex', alignItems: 'center' }}>
+        <Button
           type="submit"
           variant="contained"
           size="large"
-          loading={isSubmitting}
+          disabled={isSubmitting}
           sx={{ ml: 2 }}
         >
           {!currentDisability ? 'Create Disability Entry' : 'Save Changes'}
-        </LoadingButton>
+        </Button>
       </Grid>
     </>
   );
