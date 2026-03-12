@@ -5,12 +5,16 @@ import Tab from '@mui/material/Tab';
 import Card from '@mui/material/Card';
 import Container from '@mui/material/Container';
 import Tabs, { tabsClasses } from '@mui/material/Tabs';
+import Skeleton from '@mui/material/Skeleton';
+import Box from '@mui/material/Box';
 
 import Iconify from '../../../components/iconify';
 import ProfileCover from '../profile-cover';
 import { ProfileImageUploader } from '../../../components/profile-image-uploader';
 import { useSettingsContext } from '../../../components/settings';
 import CustomBreadcrumbs from '../../../components/custom-breadcrumbs';
+import { useUserProfile } from '../../../hooks/use-user-profile';
+
 // ----------------------------------------------------------------------
 
 const TABS = [
@@ -23,18 +27,18 @@ const TABS = [
 
 export default function UserProfileView() {
   const settings = useSettingsContext();
-
-  const firstname = 'f';
-  const lastname = 'l';
-  const avatarUrl = 'sdfsd';
-
-  const role = 'EMPLOYEE';
+  const { profile, loading, updateAvatar } = useUserProfile();
 
   const [currentTab, setCurrentTab] = useState('profile');
 
   const handleChangeTab = useCallback((event: React.SyntheticEvent, newValue: string) => {
     setCurrentTab(newValue);
   }, []);
+
+  const firstname = profile?.firstname ?? '';
+  const lastname = profile?.lastname ?? '';
+  const avatarUrl = profile?.avatar ?? '';
+  const role = 'EMPLOYEE';
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
@@ -43,7 +47,7 @@ export default function UserProfileView() {
         links={[
           { name: 'Home', href: '/dashboard' },
           { name: 'User', href: '/dashboard/user' },
-          { name: `${firstname} ${lastname}` },
+          { name: loading ? '...' : `${firstname} ${lastname}` },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },
@@ -56,14 +60,22 @@ export default function UserProfileView() {
           height: 290,
         }}
       >
-        <ProfileImageUploader />
+        {loading ? (
+          <Box sx={{ p: 3 }}>
+            <Skeleton variant="rectangular" width="100%" height={200} />
+          </Box>
+        ) : (
+          <>
+            <ProfileImageUploader onUploadComplete={updateAvatar} />
 
-        <ProfileCover
-          role={role ?? null}
-          name={`${firstname} ${lastname}`}
-          avatarUrl={avatarUrl ?? ''}
-          coverUrl="coverUrl"
-        />
+            <ProfileCover
+              role={role}
+              name={`${firstname} ${lastname}`}
+              avatarUrl={avatarUrl}
+              coverUrl=""
+            />
+          </>
+        )}
 
         <Tabs
           value={currentTab}
@@ -88,8 +100,6 @@ export default function UserProfileView() {
           ))}
         </Tabs>
       </Card>
-
-      {/* {currentTab === 'profile' && <ProfileHome info={null} posts={_userFeeds} />} */}
     </Container>
   );
 }

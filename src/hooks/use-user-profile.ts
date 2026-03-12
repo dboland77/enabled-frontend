@@ -1,0 +1,88 @@
+'use client';
+
+import { useState, useEffect, useCallback } from 'react';
+
+import { createClient } from '@/lib/supabase/client';
+
+// ----------------------------------------------------------------------
+
+export interface UserProfile {
+  userId: string;
+  firstname: string;
+  lastname: string;
+  avatar: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export function useUserProfile() {
+  const supabase = createClient();
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchProfile = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Get the currently authenticated user
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
+
+      if (authError || !user) {
+        setError('Not authenticated');
+        setLoading(false);
+        return;
+      }
+
+      const { data, error: profileError } = await supabase
+        .from('user_profile')
+        .select('*')
+        .eq('userId', user.id)
+        .single();
+
+      if (profileError) {
+        setError(profileError.message);
+      } else {
+        setProfile(data as UserProfile);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch profile');
+    } finally {
+      setLoading(false);
+    }
+  }, [supabase]);
+
+  const updateAvatar = useCallback(
+    async (avatarUrl: string) => {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        if (!user) return;
+
+        const { error: updateError } = await supabase
+          .from('user_profile')
+          .update({ avatar: avatarUrl, updatedAt: new Date().toISOString() })
+          .eq('userId', user.id);
+
+        if (!updateError) {
+          setProfile((prev) => (prev ? { ...prev, avatar: avatarUrl } : prev));
+        }
+      } catch (err) {
+        console.error('Failed to update avatar:', err);
+      }
+    },
+    [supabase]
+  );
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
+
+  return { profile, loading, error, refetch: fetchProfile, updateAvatar };
+}
