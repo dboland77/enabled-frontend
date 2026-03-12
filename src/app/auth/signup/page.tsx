@@ -111,6 +111,13 @@ export default function SignUpView() {
         type="submit"
         variant="contained"
         loading={isSubmitting}
+        sx={{
+          bgcolor: (theme) => theme.palette.mode === 'light' ? theme.palette.grey[800] : theme.palette.common.white,
+          color: (theme) => theme.palette.mode === 'light' ? theme.palette.common.white : theme.palette.grey[800],
+          '&:hover': {
+            bgcolor: (theme) => theme.palette.mode === 'light' ? theme.palette.grey[700] : theme.palette.grey[400],
+          },
+        }}
       >
         Sign Up
       </Button>
