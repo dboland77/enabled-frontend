@@ -15,6 +15,11 @@ export interface UserProfile {
   updatedAt: string;
 }
 
+export interface UserProfileUpdate {
+  firstname: string;
+  lastname: string;
+}
+
 export function useUserProfile() {
   const supabase = createClient();
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -80,9 +85,35 @@ export function useUserProfile() {
     [supabase]
   );
 
+  const updateProfile = useCallback(
+    async (updates: UserProfileUpdate) => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) throw new Error('Not authenticated');
+
+      const { error: updateError } = await supabase
+        .from('user_profile')
+        .update({
+          firstname: updates.firstname,
+          lastname: updates.lastname,
+          updatedAt: new Date().toISOString(),
+        })
+        .eq('userId', user.id);
+
+      if (updateError) throw updateError;
+
+      setProfile((prev) =>
+        prev ? { ...prev, firstname: updates.firstname, lastname: updates.lastname } : prev
+      );
+    },
+    [supabase]
+  );
+
   useEffect(() => {
     fetchProfile();
   }, [fetchProfile]);
 
-  return { profile, loading, error, refetch: fetchProfile, updateAvatar };
+  return { profile, loading, error, refetch: fetchProfile, updateAvatar, updateProfile };
 }
