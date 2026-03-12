@@ -31,13 +31,13 @@ export function useNavData() {
 
           {
             title: 'Me',
-            path: '/dashboard/user',
+            path: '/dashboard/user/profile',
             icon: ICONS.user,
             children: [
               { title: 'profile', path: '/dashboard/user/profile' },
-              { title: 'cards', path: '/dashboard/user/profile' },
-              { title: 'create', path: '/dashboard/user/profile' },
-              { title: 'list', path: '/dashboard/user/profile' },
+              { title: 'cards', path: '/dashboard/user/cards' },
+              { title: 'create', path: '/dashboard/user/new' },
+              { title: 'list', path: '/dashboard/user/list' },
             ],
           },
           {
@@ -58,22 +58,22 @@ export function useNavData() {
         items: [
           {
             title: 'Disability Information',
-            path: 'dashboard/disability',
+            path: '/dashboard/disability',
             icon: ICONS.disability,
             children: [
-              { title: 'browse', path: 'dashboard/disability' },
-              { title: 'list', path: 'dashboard/disability/list' },
-              { title: 'create', path: 'dashboard/disability/new' },
+              { title: 'browse', path: '/dashboard/disability' },
+              { title: 'list', path: '/dashboard/disability/list' },
+              { title: 'create', path: '/dashboard/disability/new' },
             ],
           },
           {
             title: 'Available Adjustments',
-            path: 'dashboard/adjustments',
+            path: '/dashboard/adjustments',
             icon: ICONS.file,
             children: [
-              { title: 'browse', path: 'dashboard/adjustments' },
-              { title: 'choose', path: 'dashboard/adjustments/cards' },
-              { title: 'create', path: 'dashboard/adjustments/create' },
+              { title: 'browse', path: '/dashboard/adjustments' },
+              { title: 'choose', path: '/dashboard/adjustments/cards' },
+              { title: 'create', path: '/dashboard/adjustments/new' },
             ],
           },
         ],
