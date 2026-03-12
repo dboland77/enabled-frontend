@@ -18,10 +18,5 @@ export default function Error({
     console.error(error);
   }, [error]);
 
-  return (
-    <>
-      <title>500 Internal Server Error</title>
-      <View500 />
-    </>
-  );
+  return <View500 />;
 }
