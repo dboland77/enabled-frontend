@@ -1,14 +1,13 @@
 import { m } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
-
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import { redirect } from 'next/navigation';
 
 import { varHover } from '@/components/animate';
 import { useSnackbar } from '@/components/snackbar';
@@ -30,18 +29,23 @@ const OPTIONS = [
 ];
 
 export default function AccountPopover() {
-  const logout = () => {};
-
+  const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
-
   const popover = usePopover();
 
   const handleLogout = async () => {
     try {
-      await logout();
-      popover.onClose();
-      redirect('/signout');
-      window.location.reload();
+      const response = await fetch('/auth/signout', {
+        method: 'POST',
+      });
+
+      if (response.ok) {
+        popover.onClose();
+        router.push('/');
+        router.refresh();
+      } else {
+        throw new Error('Logout failed');
+      }
     } catch (error) {
       console.error(error);
       enqueueSnackbar('Unable to logout!', { variant: 'error' });
@@ -50,7 +54,7 @@ export default function AccountPopover() {
 
   const handleClickItem = (path: string) => {
     popover.onClose();
-    redirect(path);
+    router.push(path);
   };
 
   const firstname = 'Change me';
