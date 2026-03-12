@@ -70,6 +70,7 @@ export default function SignInView() {
 
         <Link
           component="button"
+          type="button"
           variant="body2"
           onClick={() => {
             router.push('/auth/signup');
