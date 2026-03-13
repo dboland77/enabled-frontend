@@ -19,6 +19,8 @@ import { useSnackbar } from '@/components/snackbar';
 import FormProvider, { RHFTextField, RHFSwitch, RHFAutocomplete } from '@/components/hook-form';
 import { useUserProfile, UserDisability, UserAdjustment } from '@/hooks/use-user-profile';
 import { useDisabilities } from '@/hooks/use-disabilities';
+import { useRoles } from '@/hooks/use-roles';
+import { useDepartments } from '@/hooks/use-departments';
 
 // ----------------------------------------------------------------------
 
@@ -26,6 +28,8 @@ export default function UserProfileEditForm() {
   const { enqueueSnackbar } = useSnackbar();
   const { profile, loading, updateProfile, fetchUserDisabilities, fetchUserAdjustments, addUserDisability, removeUserDisability } = useUserProfile();
   const { disabilities: allDisabilities } = useDisabilities();
+  const { roles, loading: rolesLoading } = useRoles();
+  const { departments, loading: departmentsLoading } = useDepartments();
 
   const [userDisabilities, setUserDisabilities] = useState<UserDisability[]>([]);
   const [userAdjustments, setUserAdjustments] = useState<UserAdjustment[]>([]);
@@ -90,12 +94,20 @@ export default function UserProfileEditForm() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
+      // Handle autocomplete values - extract string from object if needed
+      const roleValue = typeof data.role === 'object' && data.role !== null 
+        ? (data.role as { role_name: string }).role_name 
+        : data.role;
+      const departmentValue = typeof data.department === 'object' && data.department !== null
+        ? (data.department as { department_name: string }).department_name
+        : data.department;
+
       await updateProfile({
         firstname: data.firstname,
         lastname: data.lastname,
         job_title: data.job_title || null,
-        role: data.role || null,
-        department: data.department || null,
+        role: roleValue || null,
+        department: departmentValue || null,
         line_manager_id: data.line_manager_id || null,
         is_disabled: data.is_disabled,
       });
@@ -175,8 +187,40 @@ export default function UserProfileEditForm() {
               }}
             >
               <RHFTextField name="job_title" label="Job Title" disabled={loading} />
-              <RHFTextField name="role" label="Role" disabled={loading} />
-              <RHFTextField name="department" label="Department" disabled={loading} />
+              <RHFAutocomplete
+                name="role"
+                label="Role"
+                options={roles}
+                loading={rolesLoading}
+                getOptionLabel={(option) => typeof option === 'string' ? option : option.role_name}
+                isOptionEqualToValue={(option, value) => {
+                  if (typeof value === 'string') return option.role_name === value;
+                  return option.id === value.id;
+                }}
+                renderOption={(props, option) => (
+                  <li {...props} key={option.id}>
+                    {option.role_name}
+                  </li>
+                )}
+                disabled={loading}
+              />
+              <RHFAutocomplete
+                name="department"
+                label="Department"
+                options={departments}
+                loading={departmentsLoading}
+                getOptionLabel={(option) => typeof option === 'string' ? option : option.department_name}
+                isOptionEqualToValue={(option, value) => {
+                  if (typeof value === 'string') return option.department_name === value;
+                  return option.id === value.id;
+                }}
+                renderOption={(props, option) => (
+                  <li {...props} key={option.id}>
+                    {option.department_name}
+                  </li>
+                )}
+                disabled={loading}
+              />
               <RHFTextField name="line_manager_id" label="Line Manager ID" disabled={loading} helperText="Enter your line manager's user ID" />
             </Box>
           </Card>

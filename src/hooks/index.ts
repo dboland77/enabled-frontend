@@ -13,3 +13,5 @@ export * from '@/hooks/use-copy-to-clipboard';
 export * from '@/hooks/use-disabilities';
 export * from '@/hooks/use-adjustments';
 export * from '@/hooks/use-user-profile';
+export * from '@/hooks/use-roles';
+export * from '@/hooks/use-departments';
