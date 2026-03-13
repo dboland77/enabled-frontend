@@ -1,15 +1,18 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
+import Avatar from '@mui/material/Avatar';
 import LinearProgress from '@mui/material/LinearProgress';
 import Typography from '@mui/material/Typography';
+import Card from '@mui/material/Card';
 
 import Iconify from '@/components/iconify';
 import { createClient } from '@/lib/supabase/client';
+import { useUserProfile } from '@/hooks/use-user-profile';
 
 interface ProfileImageUploaderProps {
   onUploadComplete?: (url: string) => void;
@@ -23,6 +26,7 @@ export default function ProfileImageUploader({
   bucketName = 'enabled-storage',
 }: ProfileImageUploaderProps) {
   const supabase = createClient();
+  const { profile } = useUserProfile();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -30,6 +34,14 @@ export default function ProfileImageUploader({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [progress, setProgress] = useState(0);
+
+  // Create preview URL for selected file
+  const previewUrl = useMemo(() => {
+    if (selectedFile) {
+      return URL.createObjectURL(selectedFile);
+    }
+    return null;
+  }, [selectedFile]);
 
   const validateFile = (file: File): boolean => {
     // Validate file type
@@ -172,66 +184,95 @@ export default function ProfileImageUploader({
   };
 
   return (
-    <Stack spacing={2} sx={{ p: 3 }}>
-      <Box
-        onDragEnter={handleDragEnter}
-        onDragLeave={handleDragLeave}
-        onDragOver={handleDragOver}
-        onDrop={handleDrop}
-        onClick={!selectedFile && !uploading ? handleClick : undefined}
-        sx={{
-          p: 3,
-          border: '2px dashed',
-          borderColor: isDragging ? 'primary.main' : 'divider',
-          borderRadius: 1,
-          cursor: !selectedFile && !uploading ? 'pointer' : 'default',
-          textAlign: 'center',
-          transition: 'all 0.3s ease',
-          bgcolor: isDragging ? 'action.hover' : 'transparent',
-          '&:hover':
-            !selectedFile && !uploading
-              ? {
-                  borderColor: 'primary.main',
-                  bgcolor: 'action.hover',
-                }
-              : {},
-        }}
-      >
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          hidden
-          onChange={handleInputChange}
-          disabled={uploading}
-        />
-
-        {!selectedFile ? (
-          <Stack spacing={1} alignItems="center">
-            <Iconify icon="solar:gallery-add-bold" width={48} sx={{ color: 'primary.main' }} />
-            <Box>
-              <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                Click to upload or drag and drop
-              </Typography>
-            </Box>
-            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              PNG, JPG, GIF up to 5MB
+    <Card sx={{ p: 3 }}>
+      <Stack spacing={3}>
+        {/* Current Avatar Display */}
+        <Stack direction="row" spacing={3} alignItems="center">
+          <Avatar
+            src={previewUrl || profile?.avatar || ''}
+            alt="Profile"
+            sx={{
+              width: 120,
+              height: 120,
+              border: (theme) => `solid 3px ${theme.palette.background.paper}`,
+              boxShadow: (theme) => theme.shadows[8],
+            }}
+          >
+            {profile?.firstname?.charAt(0)?.toUpperCase() || 'U'}
+          </Avatar>
+          <Box>
+            <Typography variant="h6">Profile Photo</Typography>
+            <Typography variant="body2" color="text.secondary">
+              {previewUrl ? 'Preview of selected image' : 'Your current profile picture'}
             </Typography>
-          </Stack>
-        ) : (
-          <Stack spacing={2} alignItems="center">
-            <Iconify icon="solar:check-circle-bold" width={48} sx={{ color: 'success.main' }} />
-            <Box>
-              <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                {selectedFile.name}
+            {previewUrl && (
+              <Typography variant="caption" color="primary.main" sx={{ display: 'block', mt: 0.5 }}>
+                Click Upload to save this image
               </Typography>
+            )}
+          </Box>
+        </Stack>
+
+        {/* Upload Area */}
+        <Box
+          onDragEnter={handleDragEnter}
+          onDragLeave={handleDragLeave}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          onClick={!selectedFile && !uploading ? handleClick : undefined}
+          sx={{
+            p: 3,
+            border: '2px dashed',
+            borderColor: isDragging ? 'primary.main' : 'divider',
+            borderRadius: 1,
+            cursor: !selectedFile && !uploading ? 'pointer' : 'default',
+            textAlign: 'center',
+            transition: 'all 0.3s ease',
+            bgcolor: isDragging ? 'action.hover' : 'transparent',
+            '&:hover':
+              !selectedFile && !uploading
+                ? {
+                    borderColor: 'primary.main',
+                    bgcolor: 'action.hover',
+                  }
+                : {},
+          }}
+        >
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            hidden
+            onChange={handleInputChange}
+            disabled={uploading}
+          />
+
+          {!selectedFile ? (
+            <Stack spacing={1} alignItems="center">
+              <Iconify icon="solar:gallery-add-bold" width={48} sx={{ color: 'primary.main' }} />
+              <Box>
+                <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                  Click to upload or drag and drop
+                </Typography>
+              </Box>
               <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                PNG, JPG, GIF up to 5MB
               </Typography>
-            </Box>
-          </Stack>
-        )}
-      </Box>
+            </Stack>
+          ) : (
+            <Stack spacing={2} alignItems="center">
+              <Iconify icon="solar:check-circle-bold" width={48} sx={{ color: 'success.main' }} />
+              <Box>
+                <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                  {selectedFile.name}
+                </Typography>
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                  {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                </Typography>
+              </Box>
+            </Stack>
+          )}
+        </Box>
 
       {uploading && (
         <Stack spacing={1}>
@@ -263,6 +304,7 @@ export default function ProfileImageUploader({
           </Button>
         )}
       </Stack>
-    </Stack>
+      </Stack>
+    </Card>
   );
 }

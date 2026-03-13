@@ -47,12 +47,10 @@ export default function UserProfileEditForm() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      console.log('[v0] onSubmit - Form data:', data);
       await updateProfile(data);
-      console.log('[v0] onSubmit - Profile updated successfully');
       enqueueSnackbar('Profile updated successfully!');
     } catch (error) {
-      console.error('[v0] onSubmit - Error:', error);
+      console.error(error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to update profile';
       enqueueSnackbar(errorMessage, { variant: 'error' });
     }

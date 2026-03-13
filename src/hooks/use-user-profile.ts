@@ -93,10 +93,7 @@ export function useUserProfile() {
 
       if (!user) throw new Error('Not authenticated');
 
-      console.log('[v0] updateProfile - User ID:', user.id);
-      console.log('[v0] updateProfile - Updates:', updates);
-
-      const { data, error: updateError } = await supabase
+      const { error: updateError } = await supabase
         .from('user_profile')
         .update({
           firstname: updates.firstname,
@@ -104,9 +101,6 @@ export function useUserProfile() {
           updatedAt: new Date().toISOString(),
         })
         .eq('userId', user.id);
-
-      console.log('[v0] updateProfile - Response data:', data);
-      console.log('[v0] updateProfile - Error:', updateError);
 
       if (updateError) throw updateError;
 
