@@ -95,19 +95,26 @@ export default function UserProfileEditForm() {
   const onSubmit = handleSubmit(async (data) => {
     try {
       // Handle autocomplete values - extract string from object if needed
-      const roleValue = typeof data.role === 'object' && data.role !== null 
-        ? (data.role as { role_name: string }).role_name 
-        : data.role;
-      const departmentValue = typeof data.department === 'object' && data.department !== null
-        ? (data.department as { department_name: string }).department_name
-        : data.department;
+      let roleValue: string | null = null;
+      if (typeof data.role === 'object' && data.role !== null) {
+        roleValue = (data.role as { role_name: string }).role_name;
+      } else if (typeof data.role === 'string') {
+        roleValue = data.role || null;
+      }
+
+      let departmentValue: string | null = null;
+      if (typeof data.department === 'object' && data.department !== null) {
+        departmentValue = (data.department as { department_name: string }).department_name;
+      } else if (typeof data.department === 'string') {
+        departmentValue = data.department || null;
+      }
 
       await updateProfile({
         firstname: data.firstname,
         lastname: data.lastname,
         job_title: data.job_title || null,
-        role: roleValue || null,
-        department: departmentValue || null,
+        role: roleValue,
+        department: departmentValue,
         line_manager_id: data.line_manager_id || null,
         is_disabled: data.is_disabled,
       });
