@@ -76,18 +76,14 @@ export function useUserProfile() {
           return;
         }
 
-        // Use upsert to create the profile if it doesn't exist
-        const now = new Date().toISOString();
+        // Use UPDATE since the profile should already exist (created via updateProfile)
         const { data, error: updateError } = await supabase
           .from('user_profile')
-          .upsert({
-            userId: user.id,
+          .update({
             avatar: avatarUrl,
-            createdAt: now,
-            updatedAt: now,
-          }, {
-            onConflict: 'userId',
+            updatedAt: new Date().toISOString(),
           })
+          .eq('userId', user.id)
           .select();
 
         console.log('[v0] updateAvatar - Response data:', data);
@@ -95,6 +91,8 @@ export function useUserProfile() {
 
         if (!updateError && data && data.length > 0) {
           setProfile((prev) => prev ? { ...prev, avatar: avatarUrl } : data[0] as UserProfile);
+        } else if (data && data.length === 0) {
+          console.log('[v0] updateAvatar - No profile found. Please save your profile first.');
         }
       } catch (err) {
         console.error('[v0] Failed to update avatar:', err);
