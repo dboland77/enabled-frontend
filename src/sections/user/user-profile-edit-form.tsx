@@ -59,8 +59,8 @@ export default function UserProfileEditForm() {
     firstname: Yup.string().required('First name is required'),
     lastname: Yup.string().required('Last name is required'),
     job_title: Yup.string().nullable(),
-    role: Yup.string().nullable(),
-    department: Yup.string().nullable(),
+    role: Yup.mixed().nullable(),
+    department: Yup.mixed().nullable(),
     line_manager_id: Yup.string().nullable(),
     is_disabled: Yup.boolean(),
   });
