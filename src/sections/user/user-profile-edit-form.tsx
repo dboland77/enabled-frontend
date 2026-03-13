@@ -1,7 +1,7 @@
 'use client';
 
 import * as Yup from 'yup';
-import { useMemo } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
@@ -10,26 +10,66 @@ import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+import Chip from '@mui/material/Chip';
+import Alert from '@mui/material/Alert';
 
 import { useSnackbar } from '@/components/snackbar';
-import FormProvider, { RHFTextField } from '@/components/hook-form';
-import { useUserProfile } from '@/hooks/use-user-profile';
+import FormProvider, { RHFTextField, RHFSwitch, RHFAutocomplete } from '@/components/hook-form';
+import { useUserProfile, UserDisability, UserAdjustment } from '@/hooks/use-user-profile';
+import { useDisabilities } from '@/hooks/use-disabilities';
 
 // ----------------------------------------------------------------------
 
 export default function UserProfileEditForm() {
   const { enqueueSnackbar } = useSnackbar();
-  const { profile, loading, updateProfile } = useUserProfile();
+  const { profile, loading, updateProfile, fetchUserDisabilities, fetchUserAdjustments, addUserDisability, removeUserDisability } = useUserProfile();
+  const { disabilities: allDisabilities } = useDisabilities();
+
+  const [userDisabilities, setUserDisabilities] = useState<UserDisability[]>([]);
+  const [userAdjustments, setUserAdjustments] = useState<UserAdjustment[]>([]);
+  const [loadingDisabilities, setLoadingDisabilities] = useState(true);
+
+  // Fetch user disabilities and adjustments on mount
+  useEffect(() => {
+    const loadUserData = async () => {
+      setLoadingDisabilities(true);
+      try {
+        const [disabilities, adjustments] = await Promise.all([
+          fetchUserDisabilities(),
+          fetchUserAdjustments(),
+        ]);
+        setUserDisabilities(disabilities);
+        setUserAdjustments(adjustments);
+      } catch (error) {
+        console.error('Failed to load user data:', error);
+      } finally {
+        setLoadingDisabilities(false);
+      }
+    };
+    loadUserData();
+  }, [fetchUserDisabilities, fetchUserAdjustments]);
 
   const ProfileSchema = Yup.object().shape({
     firstname: Yup.string().required('First name is required'),
     lastname: Yup.string().required('Last name is required'),
+    job_title: Yup.string().nullable(),
+    role: Yup.string().nullable(),
+    department: Yup.string().nullable(),
+    line_manager_id: Yup.string().nullable(),
+    is_disabled: Yup.boolean(),
   });
 
   const defaultValues = useMemo(
     () => ({
       firstname: profile?.firstname ?? '',
       lastname: profile?.lastname ?? '',
+      job_title: profile?.job_title ?? '',
+      role: profile?.role ?? '',
+      department: profile?.department ?? '',
+      line_manager_id: profile?.line_manager_id ?? '',
+      is_disabled: profile?.is_disabled ?? false,
     }),
     [profile]
   );
@@ -42,12 +82,23 @@ export default function UserProfileEditForm() {
 
   const {
     handleSubmit,
+    watch,
     formState: { isSubmitting },
   } = methods;
 
+  const isDisabled = watch('is_disabled');
+
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await updateProfile(data);
+      await updateProfile({
+        firstname: data.firstname,
+        lastname: data.lastname,
+        job_title: data.job_title || null,
+        role: data.role || null,
+        department: data.department || null,
+        line_manager_id: data.line_manager_id || null,
+        is_disabled: data.is_disabled,
+      });
       enqueueSnackbar('Profile updated successfully!');
     } catch (error) {
       console.error(error);
@@ -56,11 +107,43 @@ export default function UserProfileEditForm() {
     }
   });
 
+  const handleAddDisability = async (disabilityId: string) => {
+    try {
+      await addUserDisability(disabilityId);
+      const updatedDisabilities = await fetchUserDisabilities();
+      setUserDisabilities(updatedDisabilities);
+      enqueueSnackbar('Disability added successfully!');
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to add disability';
+      enqueueSnackbar(errorMessage, { variant: 'error' });
+    }
+  };
+
+  const handleRemoveDisability = async (userDisabilityId: string) => {
+    try {
+      await removeUserDisability(userDisabilityId);
+      setUserDisabilities((prev) => prev.filter((d) => d.id !== userDisabilityId));
+      enqueueSnackbar('Disability removed successfully!');
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to remove disability';
+      enqueueSnackbar(errorMessage, { variant: 'error' });
+    }
+  };
+
+  // Filter out already selected disabilities
+  const availableDisabilities = allDisabilities.filter(
+    (d) => !userDisabilities.some((ud) => ud.disability_id === d.id)
+  );
+
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
+        {/* Personal Information Section */}
         <Grid size={{ xs: 12 }}>
           <Card sx={{ p: 3 }}>
+            <Typography variant="h6" sx={{ mb: 3 }}>
+              Personal Information
+            </Typography>
             <Box
               rowGap={3}
               columnGap={2}
@@ -73,17 +156,156 @@ export default function UserProfileEditForm() {
               <RHFTextField name="firstname" label="First Name" disabled={loading} />
               <RHFTextField name="lastname" label="Last Name" disabled={loading} />
             </Box>
-
-            <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-              <Button
-                type="submit"
-                variant="contained"
-                disabled={loading || isSubmitting}
-              >
-                Save Changes
-              </Button>
-            </Stack>
           </Card>
+        </Grid>
+
+        {/* Job Details Section */}
+        <Grid size={{ xs: 12 }}>
+          <Card sx={{ p: 3 }}>
+            <Typography variant="h6" sx={{ mb: 3 }}>
+              Job Details
+            </Typography>
+            <Box
+              rowGap={3}
+              columnGap={2}
+              display="grid"
+              gridTemplateColumns={{
+                xs: 'repeat(1, 1fr)',
+                sm: 'repeat(2, 1fr)',
+              }}
+            >
+              <RHFTextField name="job_title" label="Job Title" disabled={loading} />
+              <RHFTextField name="role" label="Role" disabled={loading} />
+              <RHFTextField name="department" label="Department" disabled={loading} />
+              <RHFTextField name="line_manager_id" label="Line Manager ID" disabled={loading} helperText="Enter your line manager's user ID" />
+            </Box>
+          </Card>
+        </Grid>
+
+        {/* Disability Information Section */}
+        <Grid size={{ xs: 12 }}>
+          <Card sx={{ p: 3 }}>
+            <Typography variant="h6" sx={{ mb: 3 }}>
+              Disability Information
+            </Typography>
+            
+            <RHFSwitch name="is_disabled" label="I have a disability or long-term health condition" />
+
+            {isDisabled && (
+              <Box sx={{ mt: 3 }}>
+                <Divider sx={{ my: 2 }} />
+                
+                <Typography variant="subtitle1" sx={{ mb: 2 }}>
+                  My Disabilities
+                </Typography>
+
+                {loadingDisabilities ? (
+                  <Typography color="text.secondary">Loading...</Typography>
+                ) : (
+                  <>
+                    {userDisabilities.length > 0 ? (
+                      <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mb: 2 }}>
+                        {userDisabilities.map((disability) => (
+                          <Chip
+                            key={disability.id}
+                            label={disability.disability_name}
+                            onDelete={() => handleRemoveDisability(disability.id)}
+                            color="primary"
+                            variant="outlined"
+                          />
+                        ))}
+                      </Stack>
+                    ) : (
+                      <Alert severity="info" sx={{ mb: 2 }}>
+                        No disabilities added yet. Use the dropdown below to add your disabilities.
+                      </Alert>
+                    )}
+
+                    {availableDisabilities.length > 0 && (
+                      <RHFAutocomplete
+                        name="selectedDisability"
+                        label="Add Disability"
+                        options={availableDisabilities}
+                        getOptionLabel={(option) => typeof option === 'string' ? option : option.disability_name}
+                        isOptionEqualToValue={(option, value) => option.id === value.id}
+                        onChange={(_, newValue) => {
+                          if (newValue && typeof newValue !== 'string') {
+                            handleAddDisability(newValue.id);
+                          }
+                        }}
+                        renderOption={(props, option) => (
+                          <li {...props} key={option.id}>
+                            {option.disability_name}
+                          </li>
+                        )}
+                      />
+                    )}
+                  </>
+                )}
+              </Box>
+            )}
+          </Card>
+        </Grid>
+
+        {/* Approved Adjustments Section */}
+        <Grid size={{ xs: 12 }}>
+          <Card sx={{ p: 3 }}>
+            <Typography variant="h6" sx={{ mb: 3 }}>
+              Approved Adjustments
+            </Typography>
+
+            {loadingDisabilities ? (
+              <Typography color="text.secondary">Loading...</Typography>
+            ) : userAdjustments.length > 0 ? (
+              <Stack spacing={2}>
+                {userAdjustments.map((adjustment) => (
+                  <Card key={adjustment.id} variant="outlined" sx={{ p: 2 }}>
+                    <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+                      <Box>
+                        <Typography variant="subtitle1">{adjustment.adjustment_title}</Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Type: {adjustment.adjustment_type}
+                        </Typography>
+                        {adjustment.adjustment_detail && (
+                          <Typography variant="body2" color="text.secondary">
+                            {adjustment.adjustment_detail}
+                          </Typography>
+                        )}
+                        {adjustment.notes && (
+                          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                            Notes: {adjustment.notes}
+                          </Typography>
+                        )}
+                      </Box>
+                      <Chip
+                        label={`Approved ${new Date(adjustment.approved_at).toLocaleDateString()}`}
+                        color="success"
+                        size="small"
+                      />
+                    </Stack>
+                  </Card>
+                ))}
+              </Stack>
+            ) : (
+              <Alert severity="info">
+                No approved adjustments yet. Request adjustments through the Adjustment Requests section.
+              </Alert>
+            )}
+          </Card>
+        </Grid>
+
+        {/* Save Button */}
+        <Grid size={{ xs: 12 }}>
+          <Stack alignItems="flex-end">
+            <Button
+              type="submit"
+              variant="contained"
+              size="large"
+              disabled={loading || isSubmitting}
+            >
+              Save Changes
+            </Button>
+          </Stack>
         </Grid>
       </Grid>
     </FormProvider>
