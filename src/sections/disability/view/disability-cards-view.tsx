@@ -1,42 +1,40 @@
 'use client';
 
-import { useEffect } from 'react';
-
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
+import Alert from '@mui/material/Alert';
 
 import Iconify from '@/components/iconify';
 import EmptyContent from '@/components/empty-content';
+import ProgressBar from '@/components/progress-bar';
 import { useSettingsContext } from '@/components/settings';
 import CustomBreadcrumbs from '@/components/custom-breadcrumbs';
+import { useDisabilities } from '@/hooks/use-disabilities';
 
 import DisabilityList from '../disability-list';
 import NHSContainerLogo from '../NHSContainerLogo';
 
-// TODO - change to state
-
-const disabilities = [
-  {
-    id: '123',
-    name: 'dfff',
-    slug: '/sdfsdf',
-  },
-];
-
-const disabilitiesLoading = false;
-
 export default function DisabilityCardsView() {
   const settings = useSettingsContext();
 
-  const notFound = !disabilities.length;
+  const { disabilities, loading: disabilitiesLoading, error } = useDisabilities();
 
-  useEffect(() => {}, []);
+  const notFound = !disabilitiesLoading && !disabilities.length;
+
+  if (disabilitiesLoading) {
+    return <ProgressBar />;
+  }
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          {error}
+        </Alert>
+      )}
       <Link href="https://www.nhs.uk/" target="_blank" rel="noreferrer">
         <Box
           sx={{

@@ -8,12 +8,15 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
 import TableContainer from '@mui/material/TableContainer';
+import Alert from '@mui/material/Alert';
 
 import Iconify from '@/components/iconify';
 import Scrollbar from '@/components/scrollbar';
 import ProgressBar from '@/components/progress-bar';
 import { useSettingsContext } from '@/components/settings';
 import CustomBreadcrumbs from '@/components/custom-breadcrumbs';
+import { useAdjustments } from '@/hooks/use-adjustments';
+import { IAdjustmentItem } from '@/types/adjustment';
 import {
   useTable,
   emptyRows,
@@ -27,9 +30,9 @@ import {
 import AdjustmentTableRow from '../adjustment-table-row';
 
 const TABLE_HEAD = [
-  { id: 'Adjustment', label: 'Adjustment' },
-  { id: 'adjustmentType', label: 'Type' },
-  { id: 'detail', label: 'Detail' },
+  { id: 'adjustment_title', label: 'Adjustment' },
+  { id: 'adjustment_type', label: 'Type' },
+  { id: 'adjustment_detail', label: 'Detail' },
 ];
 
 export default function AdjustmentListView() {
@@ -37,18 +40,18 @@ export default function AdjustmentListView() {
 
   const settings = useSettingsContext();
 
-  const [tableData] = useState([
-    { id: '1', adjustment_title: 'a', adjustment_detail: 'sdfsdf', adjustment_type: 'asdfsd' },
-    { id: '2', adjustment_title: 'b', adjustment_detail: 'sdfsdf', adjustment_type: 'asdfsd' },
-  ]);
+  const { adjustments, loading: adjustmentsLoading, error, deleteAdjustment, refetch } = useAdjustments();
 
-  useEffect(() => {}, []);
+  const [tableData, setTableData] = useState<IAdjustmentItem[]>([]);
+
+  // Sync tableData with adjustments from hook
+  useEffect(() => {
+    setTableData(adjustments);
+  }, [adjustments]);
 
   const dataFiltered = tableData.length > 0 ? tableData : [];
 
-  const notFound = !(dataFiltered.length > 0);
-
-  const adjustmentsLoading = false;
+  const notFound = !adjustmentsLoading && !(dataFiltered.length > 0);
 
   // const dataInPage = dataFiltered.slice(
   //   table.page * table.rowsPerPage,
@@ -81,6 +84,12 @@ export default function AdjustmentListView() {
           mb: { xs: 3, md: 5 },
         }}
       />
+
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          {error}
+        </Alert>
+      )}
 
       <Card>
         <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
