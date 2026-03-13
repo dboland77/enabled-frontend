@@ -4,8 +4,9 @@ import Script from 'next/script';
 import { createClient } from '@/lib/supabase/client';
 import type { accounts, CredentialResponse } from 'google-one-tap';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
-declare const google: { accounts: accounts };
+declare const google: { accounts: accounts } | undefined;
 
 // generate nonce to use for google id token sign-in
 const generateNonce = async (): Promise<string[]> => {
@@ -21,52 +22,78 @@ const generateNonce = async (): Promise<string[]> => {
 
 const OneTapComponent = () => {
   const router = useRouter();
+  const [isEnabled, setIsEnabled] = useState(true);
 
+  // Check if Google Client ID is configured
+  const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+  
   const initializeGoogleOneTap = async () => {
-    const supabase = await createClient();
-    const [nonce, hashedNonce] = await generateNonce();
-
-    // check if there's already an existing session before initializing the one-tap UI
-    const { data, error } = await supabase.auth.getSession();
-    if (error) {
-      console.error('Error getting session', error);
-    }
-    if (data.session) {
-      router.push('/dashboard');
-      return true;
+    // Skip initialization if no client ID is configured or google is not loaded
+    if (!clientId || typeof google === 'undefined') {
+      setIsEnabled(false);
+      return;
     }
 
-    /* global google */
-    google.accounts.id.initialize({
-      client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
-      callback: async (response: CredentialResponse) => {
-        try {
-          // send id token returned in response.credential to supabase
-          const { data, error } = await supabase.auth.signInWithIdToken({
-            provider: 'google',
-            token: response.credential,
-            nonce,
-          });
+    try {
+      const supabase = await createClient();
+      const [nonce, hashedNonce] = await generateNonce();
 
-          if (error) throw error;
+      // check if there's already an existing session before initializing the one-tap UI
+      const { data, error } = await supabase.auth.getSession();
+      if (error) {
+        console.error('Error getting session', error);
+      }
+      if (data.session) {
+        router.push('/dashboard');
+        return true;
+      }
 
-          // redirect to protected page
-          router.push('/dashboard');
-        } catch (error) {
-          console.error('Error logging in with Google One Tap', error);
-        }
-      },
-      nonce: hashedNonce,
-      // with chrome's removal of third-party cookies, we need to use FedCM instead (https://developers.google.com/identity/gsi/web/guides/fedcm-migration)
-      use_fedcm_for_prompt: true,
-    });
-    google.accounts.id.prompt(); // Display the One Tap UI
+      /* global google */
+      google.accounts.id.initialize({
+        client_id: clientId,
+        callback: async (response: CredentialResponse) => {
+          try {
+            // send id token returned in response.credential to supabase
+            const { data, error } = await supabase.auth.signInWithIdToken({
+              provider: 'google',
+              token: response.credential,
+              nonce,
+            });
+
+            if (error) throw error;
+
+            // redirect to protected page
+            router.push('/dashboard');
+          } catch (error) {
+            console.error('Error logging in with Google One Tap', error);
+          }
+        },
+        nonce: hashedNonce,
+        // with chrome's removal of third-party cookies, we need to use FedCM instead (https://developers.google.com/identity/gsi/web/guides/fedcm-migration)
+        use_fedcm_for_prompt: true,
+      });
+      google.accounts.id.prompt(); // Display the One Tap UI
+    } catch (error) {
+      // Silently handle errors when origin is not allowed for the client ID
+      // This commonly happens in development/preview environments
+      console.warn('Google One Tap initialization skipped:', error);
+      setIsEnabled(false);
+    }
   };
+
+  // Don't render the script if no client ID is configured
+  if (!clientId || !isEnabled) {
+    return null;
+  }
 
   return (
     <Script
       onReady={() => {
         initializeGoogleOneTap();
+      }}
+      onError={() => {
+        // Handle script loading errors gracefully
+        setIsEnabled(false);
       }}
       src="https://accounts.google.com/gsi/client"
     />
