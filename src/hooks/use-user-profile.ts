@@ -76,17 +76,23 @@ export function useUserProfile() {
           return;
         }
 
+        // Use upsert to create the profile if it doesn't exist
         const { data, error: updateError } = await supabase
           .from('user_profile')
-          .update({ avatar: avatarUrl, updatedAt: new Date().toISOString() })
-          .eq('userId', user.id)
+          .upsert({
+            userId: user.id,
+            avatar: avatarUrl,
+            updatedAt: new Date().toISOString(),
+          }, {
+            onConflict: 'userId',
+          })
           .select();
 
         console.log('[v0] updateAvatar - Response data:', data);
         console.log('[v0] updateAvatar - Error:', updateError);
 
-        if (!updateError) {
-          setProfile((prev) => (prev ? { ...prev, avatar: avatarUrl } : prev));
+        if (!updateError && data && data.length > 0) {
+          setProfile((prev) => prev ? { ...prev, avatar: avatarUrl } : data[0] as UserProfile);
         }
       } catch (err) {
         console.error('[v0] Failed to update avatar:', err);
@@ -106,14 +112,17 @@ export function useUserProfile() {
 
       if (!user) throw new Error('Not authenticated');
 
+      // Use upsert to create the profile if it doesn't exist
       const { data, error: updateError } = await supabase
         .from('user_profile')
-        .update({
+        .upsert({
+          userId: user.id,
           firstname: updates.firstname,
           lastname: updates.lastname,
           updatedAt: new Date().toISOString(),
+        }, {
+          onConflict: 'userId',
         })
-        .eq('userId', user.id)
         .select();
 
       console.log('[v0] updateProfile - Response data:', data);
@@ -122,7 +131,9 @@ export function useUserProfile() {
       if (updateError) throw updateError;
 
       setProfile((prev) =>
-        prev ? { ...prev, firstname: updates.firstname, lastname: updates.lastname } : prev
+        prev 
+          ? { ...prev, firstname: updates.firstname, lastname: updates.lastname } 
+          : data?.[0] as UserProfile
       );
     },
     [supabase]
