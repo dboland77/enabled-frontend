@@ -77,12 +77,14 @@ export function useUserProfile() {
         }
 
         // Use upsert to create the profile if it doesn't exist
+        const now = new Date().toISOString();
         const { data, error: updateError } = await supabase
           .from('user_profile')
           .upsert({
             userId: user.id,
             avatar: avatarUrl,
-            updatedAt: new Date().toISOString(),
+            createdAt: now,
+            updatedAt: now,
           }, {
             onConflict: 'userId',
           })
@@ -113,13 +115,15 @@ export function useUserProfile() {
       if (!user) throw new Error('Not authenticated');
 
       // Use upsert to create the profile if it doesn't exist
+      const now = new Date().toISOString();
       const { data, error: updateError } = await supabase
         .from('user_profile')
         .upsert({
           userId: user.id,
           firstname: updates.firstname,
           lastname: updates.lastname,
-          updatedAt: new Date().toISOString(),
+          createdAt: now,
+          updatedAt: now,
         }, {
           onConflict: 'userId',
         })
