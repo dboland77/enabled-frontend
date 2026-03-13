@@ -68,18 +68,28 @@ export function useUserProfile() {
           data: { user },
         } = await supabase.auth.getUser();
 
-        if (!user) return;
+        console.log('[v0] updateAvatar - User:', user?.id);
+        console.log('[v0] updateAvatar - Avatar URL:', avatarUrl);
 
-        const { error: updateError } = await supabase
+        if (!user) {
+          console.log('[v0] updateAvatar - No user found');
+          return;
+        }
+
+        const { data, error: updateError } = await supabase
           .from('user_profile')
           .update({ avatar: avatarUrl, updatedAt: new Date().toISOString() })
-          .eq('userId', user.id);
+          .eq('userId', user.id)
+          .select();
+
+        console.log('[v0] updateAvatar - Response data:', data);
+        console.log('[v0] updateAvatar - Error:', updateError);
 
         if (!updateError) {
           setProfile((prev) => (prev ? { ...prev, avatar: avatarUrl } : prev));
         }
       } catch (err) {
-        console.error('Failed to update avatar:', err);
+        console.error('[v0] Failed to update avatar:', err);
       }
     },
     [supabase]
@@ -91,16 +101,23 @@ export function useUserProfile() {
         data: { user },
       } = await supabase.auth.getUser();
 
+      console.log('[v0] updateProfile - User:', user?.id);
+      console.log('[v0] updateProfile - Updates:', updates);
+
       if (!user) throw new Error('Not authenticated');
 
-      const { error: updateError } = await supabase
+      const { data, error: updateError } = await supabase
         .from('user_profile')
         .update({
           firstname: updates.firstname,
           lastname: updates.lastname,
           updatedAt: new Date().toISOString(),
         })
-        .eq('userId', user.id);
+        .eq('userId', user.id)
+        .select();
+
+      console.log('[v0] updateProfile - Response data:', data);
+      console.log('[v0] updateProfile - Error:', updateError);
 
       if (updateError) throw updateError;
 
