@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect } from 'react';
 
 import Box from '@mui/material/Box';

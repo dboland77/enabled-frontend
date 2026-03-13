@@ -3,6 +3,8 @@ import { merge } from '@/utils/merge';
 
 import CssBaseline from '@mui/material/CssBaseline';
 import { createTheme, ThemeOptions, ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 import { palette } from '@/theme/palette';
 import { shadows } from '@/theme/shadows';
@@ -55,8 +57,10 @@ export default function ThemeProvider({ children }: Props) {
 
   return (
     <MuiThemeProvider theme={theme}>
-      <CssBaseline />
-      {children}
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <CssBaseline />
+        {children}
+      </LocalizationProvider>
     </MuiThemeProvider>
   );
 }

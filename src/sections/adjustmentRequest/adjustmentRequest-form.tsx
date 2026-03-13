@@ -9,7 +9,7 @@ import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
-import LoadingButton from '@mui/lab/LoadingButton';
+import Button from '@mui/material/Button';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import { useRouter } from 'next/navigation';
@@ -121,7 +121,7 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
   const renderDetails = (
     <>
       {mdUp && (
-        <Grid>
+        <Grid size={{ xs: 12 }}>
           <Typography variant="h6" sx={{ mb: 0.5 }}>
             Adjustment Details
           </Typography>
@@ -132,7 +132,7 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
         </Grid>
       )}
 
-      <Grid>
+      <Grid size={{ xs: 12 }}>
         <Card>
           {!mdUp && <CardHeader title="Details" />}
 
@@ -155,7 +155,7 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
   const renderProperties = (
     <>
       {mdUp && (
-        <Grid>
+        <Grid size={{ xs: 12 }}>
           <Typography variant="h6" sx={{ mb: 0.5 }}>
             Properties
           </Typography>
@@ -165,7 +165,7 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
         </Grid>
       )}
 
-      <Grid>
+      <Grid size={{ xs: 12 }}>
         <Card>
           {!mdUp && <CardHeader title="Properties" />}
 
@@ -237,17 +237,17 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
 
   const renderActions = (
     <>
-      {mdUp && <Grid />}
-      <Grid sx={{ display: 'flex', alignItems: 'center' }}>
-        <LoadingButton
+      {mdUp && <Grid size={{ xs: 12 }} />}
+      <Grid size={{ xs: 12 }} sx={{ display: 'flex', alignItems: 'center' }}>
+        <Button
           type="submit"
           variant="contained"
           size="large"
-          loading={isSubmitting}
+          disabled={isSubmitting}
           sx={{ ml: 2 }}
         >
           {!currentAdjustmentRequest ? 'Request Adjustment' : 'Save Changes'}
-        </LoadingButton>
+        </Button>
       </Grid>
     </>
   );

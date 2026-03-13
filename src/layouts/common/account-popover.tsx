@@ -1,18 +1,19 @@
 import { m } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
-
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import { redirect } from 'next/navigation';
+import Skeleton from '@mui/material/Skeleton';
 
 import { varHover } from '@/components/animate';
 import { useSnackbar } from '@/components/snackbar';
 import CustomPopover, { usePopover } from '@/components/custom-popover';
+import { useUserProfile } from '@/hooks/use-user-profile';
 
 import { alpha } from '@mui/system';
 
@@ -25,23 +26,29 @@ const OPTIONS = [
   },
   {
     label: 'Profile',
-    linkTo: '/account',
+    linkTo: '/dashboard/user/profile',
   },
 ];
 
 export default function AccountPopover() {
-  const logout = () => {};
-
+  const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
-
   const popover = usePopover();
+  const { profile, loading } = useUserProfile();
 
   const handleLogout = async () => {
     try {
-      await logout();
-      popover.onClose();
-      redirect('/signout');
-      window.location.reload();
+      const response = await fetch('/auth/signout', {
+        method: 'POST',
+      });
+
+      if (response.ok) {
+        popover.onClose();
+        router.push('/');
+        router.refresh();
+      } else {
+        throw new Error('Logout failed');
+      }
     } catch (error) {
       console.error(error);
       enqueueSnackbar('Unable to logout!', { variant: 'error' });
@@ -50,13 +57,12 @@ export default function AccountPopover() {
 
   const handleClickItem = (path: string) => {
     popover.onClose();
-    redirect(path);
+    router.push(path);
   };
 
-  const firstname = 'Change me';
-  const lastname = 'Change me';
-  const avatarUrl = 'Change me';
-  const email = 'sdfsdf';
+  const firstname = profile?.firstname ?? '';
+  const lastname = profile?.lastname ?? '';
+  const avatarUrl = profile?.avatar ?? '';
 
   return (
     <>
@@ -76,28 +82,40 @@ export default function AccountPopover() {
           }),
         }}
       >
-        <Avatar
-          src={avatarUrl ?? ''}
-          alt={firstname}
-          sx={{
-            width: 36,
-            height: 36,
-            border: (theme) => `solid 2px ${theme.palette.background.default}`,
-          }}
-        >
-          {firstname.charAt(0).toUpperCase()}
-        </Avatar>
+        {loading ? (
+          <Skeleton variant="circular" width={36} height={36} />
+        ) : (
+          <Avatar
+            src={avatarUrl}
+            alt={firstname}
+            sx={{
+              width: 36,
+              height: 36,
+              border: (theme) => `solid 2px ${theme.palette.background.default}`,
+            }}
+          >
+            {firstname.charAt(0).toUpperCase()}
+          </Avatar>
+        )}
       </IconButton>
 
       <CustomPopover open={popover.open} onClose={popover.onClose} sx={{ width: 200, p: 0 }}>
         <Box sx={{ p: 2, pb: 1.5 }}>
-          <Typography variant="subtitle2" noWrap>
-            {firstname} {lastname}
-          </Typography>
-
-          <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {email}
-          </Typography>
+          {loading ? (
+            <Stack spacing={0.5}>
+              <Skeleton variant="text" width={120} />
+              <Skeleton variant="text" width={160} />
+            </Stack>
+          ) : (
+            <>
+              <Typography variant="subtitle2" noWrap>
+                {firstname} {lastname}
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
+                {profile?.userId ?? ''}
+              </Typography>
+            </>
+          )}
         </Box>
 
         <Divider sx={{ borderStyle: 'dashed' }} />

@@ -2,7 +2,6 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
-import LoadingButton from '@mui/lab/LoadingButton';
 import Stack, { StackProps } from '@mui/material/Stack';
 
 import Iconify from '@/components/iconify';
@@ -45,14 +44,15 @@ export default function AdjustmentRequestDetailsToolbar({
         </IconButton>
       </Tooltip>
 
-      <LoadingButton
+      <Button
         color="inherit"
         variant="contained"
-        loadingIndicator="Loading…"
         endIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}
         onClick={popover.onOpen}
         sx={{ textTransform: 'capitalize' }}
-      />
+      >
+        More
+      </Button>
     </Stack>
   );
 }

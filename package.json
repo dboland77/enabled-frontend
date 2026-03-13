@@ -18,11 +18,12 @@
     "@mui/material": "^7.3.7",
     "@mui/system": "^7.3.7",
     "@mui/x-date-pickers": "^8.27.0",
-    "@supabase/ssr": "^0.8.0",
-    "@supabase/supabase-js": "^2.90.0",
+    "@supabase/ssr": "0.5.2",
+    "@supabase/supabase-js": "2.47.10",
     "@types/autosuggest-highlight": "^3.2.3",
     "@types/google-one-tap": "^1.2.7",
     "autosuggest-highlight": "^3.3.4",
+    "cookie": "^0.7.2",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.29.3",
     "google-one-tap": "^1.0.6",
@@ -47,6 +48,7 @@
     "yup": "^1.7.1"
   },
   "devDependencies": {
+    "@types/cookie": "^0.6.0",
     "@types/date-fns": "^2.5.3",
     "@types/lodash": "^4.17.23",
     "@types/nprogress": "^0.2.3",

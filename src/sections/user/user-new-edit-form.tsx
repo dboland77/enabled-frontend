@@ -11,7 +11,6 @@ import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import LoadingButton from '@mui/lab/LoadingButton';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
 import Label from '@/components/label';
@@ -119,7 +118,7 @@ export default function UserNewEditForm({ currentUser }: Props) {
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
-        <Grid>
+        <Grid size={{ xs: 12 }}>
           <Card sx={{ pt: 10, pb: 5, px: 3 }}>
             {currentUser && (
               <Label
@@ -215,7 +214,7 @@ export default function UserNewEditForm({ currentUser }: Props) {
           </Card>
         </Grid>
 
-        <Grid>
+        <Grid size={{ xs: 12 }}>
           <Card sx={{ p: 3 }}>
             <Box
               rowGap={3}
@@ -268,9 +267,9 @@ export default function UserNewEditForm({ currentUser }: Props) {
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
-              <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+              <Button type="submit" variant="contained" disabled={isSubmitting}>
                 {!currentUser ? 'Create User' : 'Save Changes'}
-              </LoadingButton>
+              </Button>
             </Stack>
           </Card>
         </Grid>
