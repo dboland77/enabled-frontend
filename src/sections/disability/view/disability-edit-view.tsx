@@ -2,6 +2,7 @@ import Container from '@mui/material/Container';
 
 import { useSettingsContext } from '@/components/settings';
 import CustomBreadcrumbs from '@/components/custom-breadcrumbs';
+import { IDisabilityItem } from '@/types/disability';
 
 import DisabilityNewEditForm from '../disability-new-edit-form';
 
@@ -12,10 +13,10 @@ type Props = {
 export default function DisabilityEditView({ id }: Props) {
   const settings = useSettingsContext();
 
-  const currentDisability = {
+  const currentDisability: IDisabilityItem = {
     id: '',
-    name: '',
-    slug: '',
+    disability_name: '',
+    disability_nhs_slug: '',
   };
 
   return (
@@ -31,7 +32,7 @@ export default function DisabilityEditView({ id }: Props) {
             name: 'Disability',
             href: '/dashboard/disability',
           },
-          { name: currentDisability?.name },
+          { name: currentDisability?.disability_name },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },
