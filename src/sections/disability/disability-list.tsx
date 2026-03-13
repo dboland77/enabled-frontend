@@ -14,18 +14,6 @@ type Props = {
   disabilities: IDisabilityItem[];
 };
 
-// TODO - change to state
-
-const disabilities = [
-  {
-    id: '123',
-    name: 'dfff',
-    slug: '/sdfsdf',
-  },
-];
-
-const disabilitiesLoading = false;
-
 export default function DisabilityList({ disabilities }: Props) {
   const router = useRouter();
 

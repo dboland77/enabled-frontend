@@ -19,7 +19,7 @@ export function useDisabilities() {
       const { data, error: fetchError } = await supabase
         .from('disability_index')
         .select('*')
-        .order('name', { ascending: true });
+        .order('disability_name', { ascending: true });
 
       if (fetchError) {
         setError(fetchError.message);

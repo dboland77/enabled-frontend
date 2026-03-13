@@ -25,7 +25,7 @@ type Props = {
 export default function DisabilityItem({ disability, onView, onEdit, onDelete }: Props) {
   const popover = usePopover();
 
-  const { name, slug } = disability;
+  const { disability_name, disability_nhs_slug } = disability;
 
   return (
     <>
@@ -45,8 +45,8 @@ export default function DisabilityItem({ disability, onView, onEdit, onDelete }:
           <ListItemText
             sx={{ mb: 1 }}
             primary={
-              <Link href={`http://www.nhs.uk/conditions/${slug}`} color="inherit" target="_blank">
-                {name}
+              <Link href={`http://www.nhs.uk/conditions/${disability_nhs_slug}`} color="inherit" target="_blank">
+                {disability_name}
               </Link>
             }
             secondary={`Posted date: ${fDate(new Date())}`}

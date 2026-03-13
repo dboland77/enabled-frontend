@@ -36,8 +36,8 @@ import {
 } from '@/components/table';
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name' },
-  { id: 'slug', label: 'Slug' },
+  { id: 'disability_name', label: 'Name' },
+  { id: 'disability_nhs_slug', label: 'NHS Slug' },
   { id: '', label: '' },
 ];
 
@@ -182,8 +182,8 @@ export default function DisabilityListView() {
                             onClick={() => table.onSelectRow(row.id)}
                           />
                         </TableCell>
-                        <TableCell>{row.name}</TableCell>
-                        <TableCell>{row.slug}</TableCell>
+                        <TableCell>{row.disability_name}</TableCell>
+                        <TableCell>{row.disability_nhs_slug}</TableCell>
                         <TableCell align="right">
                           <IconButton onClick={() => handleEditRow(row.id)}>
                             <Iconify icon="solar:pen-bold" />
