@@ -54,8 +54,8 @@ const LOCATION_OPTIONS = [
   'Other',
 ];
 
-// Fallback adjustment type options (used when database is empty)
-const FALLBACK_ADJUSTMENT_TYPE_OPTIONS = [
+// Adjustment type options
+const ADJUSTMENT_TYPE_OPTIONS = [
   'Assistive Technology',
   'Communication Support',
   'Equipment',
@@ -77,14 +77,14 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
   const { adjustments, loading: adjustmentsLoading } = useAdjustments();
   const { createAdjustmentRequest, updateAdjustmentRequest } = useAdjustmentRequests();
 
-  // Get unique adjustment types from the adjustments data, with fallback options
+  // Get unique adjustment types - combine database types with static options
   const adjustmentTypeOptions = useMemo(() => {
-    const types = adjustments
+    const dbTypes = adjustments
       .map((a) => a.adjustment_type)
       .filter((type): type is string => type !== null && type.trim() !== '');
-    const uniqueTypes = Array.from(new Set(types));
-    // Use fallback options if no types found in database
-    return uniqueTypes.length > 0 ? uniqueTypes : FALLBACK_ADJUSTMENT_TYPE_OPTIONS;
+    // Combine database types with static options, removing duplicates
+    const allTypes = [...new Set([...ADJUSTMENT_TYPE_OPTIONS, ...dbTypes])];
+    return allTypes.sort();
   }, [adjustments]);
 
   const NewAdjustmentSchema = Yup.object().shape({
