@@ -4,9 +4,25 @@ import Script from 'next/script';
 import { createClient } from '@/lib/supabase/client';
 import type { accounts, CredentialResponse } from 'google-one-tap';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 declare const google: { accounts: accounts } | undefined;
+
+// List of allowed origins for Google One Tap
+// Add your production domain and localhost here
+const ALLOWED_ORIGINS = [
+  'http://localhost:3000',
+  'https://localhost:3000',
+  // Add your production domain here, e.g.:
+  // 'https://yourdomain.com',
+];
+
+// Check if current origin is allowed for Google One Tap
+const isOriginAllowed = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  const currentOrigin = window.location.origin;
+  return ALLOWED_ORIGINS.some(origin => currentOrigin.startsWith(origin));
+};
 
 // generate nonce to use for google id token sign-in
 const generateNonce = async (): Promise<string[]> => {
@@ -22,14 +38,21 @@ const generateNonce = async (): Promise<string[]> => {
 
 const OneTapComponent = () => {
   const router = useRouter();
-  const [isEnabled, setIsEnabled] = useState(true);
+  const [isEnabled, setIsEnabled] = useState(false);
 
   // Check if Google Client ID is configured
   const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+
+  // Only enable on allowed origins
+  useEffect(() => {
+    if (clientId && isOriginAllowed()) {
+      setIsEnabled(true);
+    }
+  }, [clientId]);
   
   const initializeGoogleOneTap = async () => {
-    // Skip initialization if no client ID is configured or google is not loaded
-    if (!clientId || typeof google === 'undefined') {
+    // Skip initialization if google is not loaded
+    if (typeof google === 'undefined') {
       setIsEnabled(false);
       return;
     }
@@ -50,7 +73,7 @@ const OneTapComponent = () => {
 
       /* global google */
       google.accounts.id.initialize({
-        client_id: clientId,
+        client_id: clientId!,
         callback: async (response: CredentialResponse) => {
           try {
             // send id token returned in response.credential to supabase
@@ -76,13 +99,12 @@ const OneTapComponent = () => {
     } catch (error) {
       // Silently handle errors when origin is not allowed for the client ID
       // This commonly happens in development/preview environments
-      console.warn('Google One Tap initialization skipped:', error);
       setIsEnabled(false);
     }
   };
 
-  // Don't render the script if no client ID is configured
-  if (!clientId || !isEnabled) {
+  // Don't render the script if not enabled
+  if (!isEnabled) {
     return null;
   }
 
