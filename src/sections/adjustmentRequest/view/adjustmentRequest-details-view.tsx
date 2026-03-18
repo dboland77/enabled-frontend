@@ -29,6 +29,8 @@ const _adjustmentRequests = [
     location: 'here',
     disability: 'd1',
     status: RequestStatusTypes.NEW,
+    approverName: 'jk',
+    approverId: '34',
   },
 ];
 

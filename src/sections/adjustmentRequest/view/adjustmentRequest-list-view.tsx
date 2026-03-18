@@ -51,6 +51,8 @@ const adjustmentRequests = [
     location: 'here',
     disability: 'd1',
     status: null,
+    approverName: 'putog',
+    approverId: '232',
   },
 ];
 

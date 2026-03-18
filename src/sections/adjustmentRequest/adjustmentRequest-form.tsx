@@ -105,9 +105,7 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
       .nullable()
       .required('Please tell us when you need this adjustment')
       .min(new Date(), 'Required date must be in the future'),
-    approver: Yup.object()
-      .nullable()
-      .required('Please select an approver for your request'),
+    approver: Yup.object().nullable().required('Please select an approver for your request'),
     approver_id: Yup.string().nullable().default(''),
   });
 
@@ -119,9 +117,9 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
       workfunction: currentAdjustmentRequest?.workfunction || '',
       location: currentAdjustmentRequest?.location || '',
       requiredDate: new Date(currentAdjustmentRequest?.requiredDate || ''),
-      approver: currentAdjustmentRequest?.approverId 
-        ? MOCK_APPROVERS.find(a => a.id === currentAdjustmentRequest.approverId) || null
-        : null,
+      approver: currentAdjustmentRequest?.approverId
+        ? MOCK_APPROVERS.find((a) => a.id === currentAdjustmentRequest.approverId) || {}
+        : '',
       approver_id: currentAdjustmentRequest?.approverId || '',
     }),
     [currentAdjustmentRequest]
