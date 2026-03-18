@@ -177,6 +177,15 @@ export function useUserProfile() {
 
     if (!user) return [];
 
+    type DisabilityQueryResult = {
+      id: string;
+      disability_id: string;
+      disability_index: {
+        disability_name: string;
+        disability_nhs_slug: string;
+      } | null;
+    };
+
     const { data, error: fetchError } = await supabase
       .from('user_disabilities')
       .select(`
@@ -191,19 +200,12 @@ export function useUserProfile() {
 
     if (fetchError || !data) return [];
 
-    return data.map((item) => {
-      // Supabase returns joined data - handle both array and object formats
-      const disabilityData = Array.isArray(item.disability_index) 
-        ? item.disability_index[0] 
-        : item.disability_index;
-      
-      return {
-        id: item.id,
-        disability_id: item.disability_id,
-        disability_name: disabilityData?.disability_name ?? '',
-        disability_nhs_slug: disabilityData?.disability_nhs_slug ?? '',
-      };
-    });
+    return (data as unknown as DisabilityQueryResult[]).map((item) => ({
+      id: item.id,
+      disability_id: item.disability_id,
+      disability_name: item.disability_index?.disability_name ?? '',
+      disability_nhs_slug: item.disability_index?.disability_nhs_slug ?? '',
+    }));
   }, [supabase]);
 
   // Fetch user's approved adjustments
@@ -213,6 +215,18 @@ export function useUserProfile() {
     } = await supabase.auth.getUser();
 
     if (!user) return [];
+
+    type AdjustmentQueryResult = {
+      id: string;
+      adjustment_id: string;
+      approved_at: string;
+      notes: string | null;
+      adjustments: {
+        adjustment_title: string;
+        adjustment_type: string;
+        adjustment_detail: string | null;
+      } | null;
+    };
 
     const { data, error: fetchError } = await supabase
       .from('user_adjustments')
@@ -231,22 +245,15 @@ export function useUserProfile() {
 
     if (fetchError || !data) return [];
 
-    return data.map((item) => {
-      // Supabase returns joined data - handle both array and object formats
-      const adjustmentData = Array.isArray(item.adjustments) 
-        ? item.adjustments[0] 
-        : item.adjustments;
-
-      return {
-        id: item.id,
-        adjustment_id: item.adjustment_id,
-        adjustment_title: adjustmentData?.adjustment_title ?? '',
-        adjustment_type: adjustmentData?.adjustment_type ?? '',
-        adjustment_detail: adjustmentData?.adjustment_detail ?? null,
-        approved_at: item.approved_at,
-        notes: item.notes,
-      };
-    });
+    return (data as unknown as AdjustmentQueryResult[]).map((item) => ({
+      id: item.id,
+      adjustment_id: item.adjustment_id,
+      adjustment_title: item.adjustments?.adjustment_title ?? '',
+      adjustment_type: item.adjustments?.adjustment_type ?? '',
+      adjustment_detail: item.adjustments?.adjustment_detail ?? null,
+      approved_at: item.approved_at,
+      notes: item.notes,
+    }));
   }, [supabase]);
 
   // Add disability to user
