@@ -18,6 +18,7 @@ import { useResponsive } from '@/hooks/use-responsive';
 import { useAdjustments } from '@/hooks/use-adjustments';
 import { useAdjustmentRequests } from '@/hooks/use-adjustment-requests';
 import { IAdjustmentRequestItem } from '@/types/adjustmentRequest';
+import { MOCK_APPROVERS, IApprover } from '@/types/user';
 import FormProvider, { RHFEditor, RHFTextField, RHFAutocomplete } from '@/components/hook-form';
 
 // ----------------------------------------------------------------------
@@ -54,8 +55,8 @@ const LOCATION_OPTIONS = [
   'Other',
 ];
 
-// Fallback adjustment type options (used when database is empty)
-const FALLBACK_ADJUSTMENT_TYPE_OPTIONS = [
+// Adjustment type options
+const ADJUSTMENT_TYPE_OPTIONS = [
   'Assistive Technology',
   'Communication Support',
   'Equipment',
@@ -77,14 +78,14 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
   const { adjustments, loading: adjustmentsLoading } = useAdjustments();
   const { createAdjustmentRequest, updateAdjustmentRequest } = useAdjustmentRequests();
 
-  // Get unique adjustment types from the adjustments data, with fallback options
+  // Get unique adjustment types - combine database types with static options
   const adjustmentTypeOptions = useMemo(() => {
-    const types = adjustments
+    const dbTypes = adjustments
       .map((a) => a.adjustment_type)
       .filter((type): type is string => type !== null && type.trim() !== '');
-    const uniqueTypes = Array.from(new Set(types));
-    // Use fallback options if no types found in database
-    return uniqueTypes.length > 0 ? uniqueTypes : FALLBACK_ADJUSTMENT_TYPE_OPTIONS;
+    // Combine database types with static options, removing duplicates
+    const allTypes = [...new Set([...ADJUSTMENT_TYPE_OPTIONS, ...dbTypes])];
+    return allTypes.sort();
   }, [adjustments]);
 
   const NewAdjustmentSchema = Yup.object().shape({
@@ -104,6 +105,10 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
       .nullable()
       .required('Please tell us when you need this adjustment')
       .min(new Date(), 'Required date must be in the future'),
+    approver: Yup.object()
+      .nullable()
+      .required('Please select an approver for your request'),
+    approver_id: Yup.string().nullable().default(''),
   });
 
   const defaultValues = useMemo(
@@ -114,6 +119,10 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
       workfunction: currentAdjustmentRequest?.workfunction || '',
       location: currentAdjustmentRequest?.location || '',
       requiredDate: new Date(currentAdjustmentRequest?.requiredDate || ''),
+      approver: currentAdjustmentRequest?.approverId 
+        ? MOCK_APPROVERS.find(a => a.id === currentAdjustmentRequest.approverId) || null
+        : null,
+      approver_id: currentAdjustmentRequest?.approverId || '',
     }),
     [currentAdjustmentRequest]
   );
@@ -138,6 +147,7 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
 
   const onSubmit = handleSubmit(async (data) => {
     try {
+      const selectedApprover = data.approver as IApprover;
       const requestData = {
         title: data.title,
         detail: data.detail,
@@ -145,6 +155,8 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
         workfunction: data.workfunction as string,
         location: data.location as string,
         requiredDate: data.requiredDate as Date,
+        approverId: selectedApprover.id,
+        approverName: selectedApprover.name,
       };
 
       if (currentAdjustmentRequest) {
@@ -290,6 +302,33 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
               />
               <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                 Where will you primarily use this adjustment?
+              </Typography>
+            </Stack>
+
+            <Stack spacing={1.5}>
+              <RHFAutocomplete
+                name="approver"
+                label="Approver *"
+                placeholder="Select who should approve this request"
+                options={MOCK_APPROVERS}
+                getOptionLabel={(option) => {
+                  if (typeof option === 'string') return option;
+                  return `${option.name} - ${option.department || option.role}`;
+                }}
+                isOptionEqualToValue={(option, value) => option.id === value?.id}
+                renderOption={(props, option) => (
+                  <li {...props} key={option.id}>
+                    <Stack>
+                      <Typography variant="body2">{option.name}</Typography>
+                      <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                        {option.department} ({option.role})
+                      </Typography>
+                    </Stack>
+                  </li>
+                )}
+              />
+              <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                Select the manager or approver who will review your request.
               </Typography>
             </Stack>
 

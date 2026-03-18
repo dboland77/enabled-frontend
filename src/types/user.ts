@@ -1,3 +1,37 @@
+// User role types for the application
+export type UserRoleType = 'admin' | 'approver' | 'manager' | 'employee';
+
+export interface IUserRole {
+  value: UserRoleType;
+  label: string;
+  description: string;
+  canApprove: boolean;
+}
+
+export const USER_ROLES: IUserRole[] = [
+  { value: 'admin', label: 'Administrator', description: 'Full system access', canApprove: true },
+  { value: 'approver', label: 'Approver', description: 'Can approve adjustment requests', canApprove: true },
+  { value: 'manager', label: 'Manager', description: 'Team management and approval', canApprove: true },
+  { value: 'employee', label: 'Employee', description: 'Standard user access', canApprove: false },
+];
+
+// Mock approvers list (users who can approve requests)
+export interface IApprover {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRoleType;
+  department?: string;
+}
+
+export const MOCK_APPROVERS: IApprover[] = [
+  { id: '1', name: 'Sarah Johnson', email: 'sarah.johnson@company.com', role: 'manager', department: 'Human Resources' },
+  { id: '2', name: 'Michael Chen', email: 'michael.chen@company.com', role: 'approver', department: 'Operations' },
+  { id: '3', name: 'Emma Williams', email: 'emma.williams@company.com', role: 'manager', department: 'IT Services' },
+  { id: '4', name: 'James Brown', email: 'james.brown@company.com', role: 'admin', department: 'Administration' },
+  { id: '5', name: 'Lisa Davis', email: 'lisa.davis@company.com', role: 'approver', department: 'Facilities' },
+];
+
 export type IUserTableFilterValue = string | string[];
 
 export type IUserTableFilters = {

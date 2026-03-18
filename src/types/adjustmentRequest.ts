@@ -29,4 +29,6 @@ export type IAdjustmentRequestItem = {
   location: string | null;
   disability: string | null;
   status: RequestStatusTypes | null;
+  approverId: string | null;
+  approverName: string | null;
 };

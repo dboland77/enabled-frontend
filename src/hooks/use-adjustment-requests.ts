@@ -14,6 +14,8 @@ export interface CreateAdjustmentRequestData {
   workfunction: string;
   location: string;
   requiredDate: Date;
+  approverId: string;
+  approverName: string;
 }
 
 export interface UpdateAdjustmentRequestData extends CreateAdjustmentRequestData {
@@ -86,6 +88,8 @@ export function useAdjustmentRequests() {
           required_date: requestData.requiredDate.toISOString(),
           status: RequestStatusTypes.NEW,
           created_at: now,
+          approver_id: requestData.approverId,
+          approver_name: requestData.approverName,
         };
 
         console.log('[v0] Inserting adjustment request:', insertData);
@@ -133,6 +137,8 @@ export function useAdjustmentRequests() {
             location: requestData.location,
             required_date: requestData.requiredDate.toISOString(),
             status: requestData.status || RequestStatusTypes.PENDING,
+            approver_id: requestData.approverId,
+            approver_name: requestData.approverName,
           })
           .eq('id', requestData.id)
           .eq('user_id', user.id)
