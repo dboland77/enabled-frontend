@@ -19,7 +19,7 @@
     "@mui/system": "^7.3.7",
     "@mui/x-date-pickers": "^8.27.0",
     "@supabase/ssr": "0.5.2",
-    "@supabase/supabase-js": "2.47.10",
+    "@supabase/supabase-js": "^2.99.2",
     "@types/autosuggest-highlight": "^3.2.3",
     "@types/google-one-tap": "^1.2.7",
     "autosuggest-highlight": "^3.3.4",
