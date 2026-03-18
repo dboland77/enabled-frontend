@@ -18,6 +18,7 @@ import { useResponsive } from '@/hooks/use-responsive';
 import { useAdjustments } from '@/hooks/use-adjustments';
 import { useAdjustmentRequests } from '@/hooks/use-adjustment-requests';
 import { IAdjustmentRequestItem } from '@/types/adjustmentRequest';
+import { MOCK_APPROVERS, IApprover } from '@/types/user';
 import FormProvider, { RHFEditor, RHFTextField, RHFAutocomplete } from '@/components/hook-form';
 
 // ----------------------------------------------------------------------
@@ -104,6 +105,9 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
       .nullable()
       .required('Please tell us when you need this adjustment')
       .min(new Date(), 'Required date must be in the future'),
+    approver: Yup.object()
+      .nullable()
+      .required('Please select an approver for your request'),
   });
 
   const defaultValues = useMemo(
@@ -114,6 +118,9 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
       workfunction: currentAdjustmentRequest?.workfunction || '',
       location: currentAdjustmentRequest?.location || '',
       requiredDate: new Date(currentAdjustmentRequest?.requiredDate || ''),
+      approver: currentAdjustmentRequest?.approverId 
+        ? MOCK_APPROVERS.find(a => a.id === currentAdjustmentRequest.approverId) || null
+        : null,
     }),
     [currentAdjustmentRequest]
   );
@@ -138,6 +145,7 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
 
   const onSubmit = handleSubmit(async (data) => {
     try {
+      const selectedApprover = data.approver as IApprover;
       const requestData = {
         title: data.title,
         detail: data.detail,
@@ -145,6 +153,8 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
         workfunction: data.workfunction as string,
         location: data.location as string,
         requiredDate: data.requiredDate as Date,
+        approverId: selectedApprover.id,
+        approverName: selectedApprover.name,
       };
 
       if (currentAdjustmentRequest) {
@@ -290,6 +300,33 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
               />
               <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                 Where will you primarily use this adjustment?
+              </Typography>
+            </Stack>
+
+            <Stack spacing={1.5}>
+              <RHFAutocomplete
+                name="approver"
+                label="Approver *"
+                placeholder="Select who should approve this request"
+                options={MOCK_APPROVERS}
+                getOptionLabel={(option) => {
+                  if (typeof option === 'string') return option;
+                  return `${option.name} - ${option.department || option.role}`;
+                }}
+                isOptionEqualToValue={(option, value) => option.id === value?.id}
+                renderOption={(props, option) => (
+                  <li {...props} key={option.id}>
+                    <Stack>
+                      <Typography variant="body2">{option.name}</Typography>
+                      <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                        {option.department} ({option.role})
+                      </Typography>
+                    </Stack>
+                  </li>
+                )}
+              />
+              <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                Select the manager or approver who will review your request.
               </Typography>
             </Stack>
 
