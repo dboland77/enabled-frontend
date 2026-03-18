@@ -3,9 +3,10 @@ import { Controller, useFormContext } from 'react-hook-form';
 
 import FormHelperText from '@mui/material/FormHelperText';
 
-import Editor, { EditorProps } from '@/components/editor';
+import Editor from '@/components/editor';
+import { EditorProps } from '@/components/editor/types';
 
-type Props = Omit<EditorProps, 'value' | 'onChange' | 'id'> & {
+type Props = Omit<EditorProps, 'value' | 'onChange'> & {
   name: string;
   placeholder?: string;
   id?: string;
@@ -28,7 +29,8 @@ export default function RHFEditor({
   const values = watch();
 
   useEffect(() => {
-    if (values[name] === '<p><br></p>') {
+    // Handle empty Tiptap content (empty paragraph tag)
+    if (values[name] === '<p></p>') {
       setValue(name, '', {
         shouldValidate: !isSubmitSuccessful,
       });

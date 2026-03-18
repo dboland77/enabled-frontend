@@ -8,24 +8,69 @@ export const StyledEditor = styled(Box)(({ theme }: any) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
   border: `solid 1px ${alpha(theme.palette.grey[500], 0.2)}`,
-  '& .ql-container.ql-snow': {
-    border: 'none',
-    ...theme.typography.body2,
-    fontFamily: theme.typography.fontFamily,
+  '& .tiptap-toolbar': {
+    display: 'flex',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    gap: theme.spacing(0.5),
+    padding: theme.spacing(1),
+    borderBottom: `solid 1px ${alpha(theme.palette.grey[500], 0.2)}`,
+    backgroundColor: theme.palette.background.paper,
   },
-  '& .ql-editor': {
+  '& .tiptap-toolbar-group': {
+    display: 'flex',
+    alignItems: 'center',
+    gap: theme.spacing(0.25),
+    '&:not(:last-of-type)': {
+      marginRight: theme.spacing(1),
+      paddingRight: theme.spacing(1),
+      borderRight: `solid 1px ${alpha(theme.palette.grey[500], 0.2)}`,
+    },
+  },
+  '& .tiptap-toolbar button': {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 32,
+    height: 32,
+    padding: 0,
+    border: 'none',
+    borderRadius: 4,
+    backgroundColor: 'transparent',
+    color: theme.palette.text.primary,
+    cursor: 'pointer',
+    transition: theme.transitions.create(['background-color', 'color']),
+    '&:hover': {
+      backgroundColor: alpha(theme.palette.grey[500], 0.08),
+    },
+    '&.is-active': {
+      backgroundColor: alpha(theme.palette.primary.main, 0.12),
+      color: theme.palette.primary.main,
+    },
+    '&:disabled': {
+      opacity: 0.5,
+      cursor: 'not-allowed',
+    },
+    '& svg': {
+      width: 18,
+      height: 18,
+    },
+  },
+  '& .tiptap': {
     minHeight: 160,
     maxHeight: 640,
+    overflow: 'auto',
+    padding: theme.spacing(2),
     backgroundColor: alpha(theme.palette.grey[500], 0.08),
-    '&.ql-blank:before': {
-      fontStyle: 'normal',
+    ...theme.typography.body2,
+    fontFamily: theme.typography.fontFamily,
+    outline: 'none',
+    '& p.is-editor-empty:first-child::before': {
+      content: 'attr(data-placeholder)',
+      float: 'left',
       color: theme.palette.text.disabled,
-    },
-    '& pre.ql-syntax': {
-      ...theme.typography.body2,
-      padding: theme.spacing(2),
-      borderRadius: theme.shape.borderRadius,
-      backgroundColor: theme.palette.grey[900],
+      pointerEvents: 'none',
+      height: 0,
     },
     '& h1': {
       ...theme.typography.h1,
@@ -45,136 +90,59 @@ export const StyledEditor = styled(Box)(({ theme }: any) => ({
     '& h6': {
       ...theme.typography.h6,
     },
-    '& p, li': {
+    '& p': {
       ...theme.typography.body2,
+      margin: 0,
+      marginBottom: theme.spacing(1),
+    },
+    '& ul, & ol': {
+      paddingLeft: theme.spacing(3),
+      marginBottom: theme.spacing(1),
+    },
+    '& li': {
+      ...theme.typography.body2,
+    },
+    '& blockquote': {
+      borderLeft: `4px solid ${theme.palette.grey[300]}`,
+      paddingLeft: theme.spacing(2),
+      marginLeft: 0,
+      marginRight: 0,
+      fontStyle: 'italic',
+      color: theme.palette.text.secondary,
+    },
+    '& pre': {
+      ...theme.typography.body2,
+      padding: theme.spacing(2),
+      borderRadius: theme.shape.borderRadius,
+      backgroundColor: theme.palette.grey[900],
+      color: theme.palette.common.white,
+      fontFamily: 'monospace',
+      overflow: 'auto',
+    },
+    '& code': {
+      backgroundColor: alpha(theme.palette.grey[500], 0.16),
+      borderRadius: 4,
+      padding: '2px 4px',
+      fontFamily: 'monospace',
+      fontSize: '0.875em',
+    },
+    '& pre code': {
+      backgroundColor: 'transparent',
+      padding: 0,
+    },
+    '& a': {
+      color: theme.palette.primary.main,
+      textDecoration: 'underline',
+      cursor: 'pointer',
+    },
+    '& hr': {
+      border: 'none',
+      borderTop: `1px solid ${theme.palette.divider}`,
+      margin: theme.spacing(2, 0),
     },
   },
 }));
 
-export const StyledEditorToolbar = styled('div')(({ theme }: any) => {
-  const isRTL = theme.direction === 'rtl';
-
-  return {
-    '& .ql-snow.ql-toolbar button:hover .ql-fill, .ql-snow .ql-toolbar button:hover .ql-fill, .ql-snow.ql-toolbar button:focus .ql-fill, .ql-snow .ql-toolbar button:focus .ql-fill, .ql-snow.ql-toolbar button.ql-active .ql-fill, .ql-snow .ql-toolbar button.ql-active .ql-fill, .ql-snow.ql-toolbar .ql-picker-label:hover .ql-fill, .ql-snow .ql-toolbar .ql-picker-label:hover .ql-fill, .ql-snow.ql-toolbar .ql-picker-label.ql-active .ql-fill, .ql-snow .ql-toolbar .ql-picker-label.ql-active .ql-fill, .ql-snow.ql-toolbar .ql-picker-item:hover .ql-fill, .ql-snow .ql-toolbar .ql-picker-item:hover .ql-fill, .ql-snow.ql-toolbar .ql-picker-item.ql-selected .ql-fill, .ql-snow .ql-toolbar .ql-picker-item.ql-selected .ql-fill, .ql-snow.ql-toolbar button:hover .ql-stroke.ql-fill, .ql-snow .ql-toolbar button:hover .ql-stroke.ql-fill, .ql-snow.ql-toolbar button:focus .ql-stroke.ql-fill, .ql-snow .ql-toolbar button:focus .ql-stroke.ql-fill, .ql-snow.ql-toolbar button.ql-active .ql-stroke.ql-fill, .ql-snow .ql-toolbar button.ql-active .ql-stroke.ql-fill, .ql-snow.ql-toolbar .ql-picker-label:hover .ql-stroke.ql-fill, .ql-snow .ql-toolbar .ql-picker-label:hover .ql-stroke.ql-fill, .ql-snow.ql-toolbar .ql-picker-label.ql-active .ql-stroke.ql-fill, .ql-snow .ql-toolbar .ql-picker-label.ql-active .ql-stroke.ql-fill, .ql-snow.ql-toolbar .ql-picker-item:hover .ql-stroke.ql-fill, .ql-snow .ql-toolbar .ql-picker-item:hover .ql-stroke.ql-fill, .ql-snow.ql-toolbar .ql-picker-item.ql-selected .ql-stroke.ql-fill, .ql-snow .ql-toolbar .ql-picker-item.ql-selected .ql-stroke.ql-fill':
-      {
-        fill: theme.palette.primary.main,
-      },
-    '& .ql-snow.ql-toolbar button:hover, .ql-snow .ql-toolbar button:hover, .ql-snow.ql-toolbar button:focus, .ql-snow .ql-toolbar button:focus, .ql-snow.ql-toolbar button.ql-active, .ql-snow .ql-toolbar button.ql-active, .ql-snow.ql-toolbar .ql-picker-label:hover, .ql-snow .ql-toolbar .ql-picker-label:hover, .ql-snow.ql-toolbar .ql-picker-label.ql-active, .ql-snow .ql-toolbar .ql-picker-label.ql-active, .ql-snow.ql-toolbar .ql-picker-item:hover, .ql-snow .ql-toolbar .ql-picker-item:hover, .ql-snow.ql-toolbar .ql-picker-item.ql-selected, .ql-snow .ql-toolbar .ql-picker-item.ql-selected':
-      {
-        color: theme.palette.primary.main,
-      },
-    '& .ql-snow.ql-toolbar button:hover .ql-stroke, .ql-snow .ql-toolbar button:hover .ql-stroke, .ql-snow.ql-toolbar button:focus .ql-stroke, .ql-snow .ql-toolbar button:focus .ql-stroke, .ql-snow.ql-toolbar button.ql-active .ql-stroke, .ql-snow .ql-toolbar button.ql-active .ql-stroke, .ql-snow.ql-toolbar .ql-picker-label:hover .ql-stroke, .ql-snow .ql-toolbar .ql-picker-label:hover .ql-stroke, .ql-snow.ql-toolbar .ql-picker-label.ql-active .ql-stroke, .ql-snow .ql-toolbar .ql-picker-label.ql-active .ql-stroke, .ql-snow.ql-toolbar .ql-picker-item:hover .ql-stroke, .ql-snow .ql-toolbar .ql-picker-item:hover .ql-stroke, .ql-snow.ql-toolbar .ql-picker-item.ql-selected .ql-stroke, .ql-snow .ql-toolbar .ql-picker-item.ql-selected .ql-stroke, .ql-snow.ql-toolbar button:hover .ql-stroke-miter, .ql-snow .ql-toolbar button:hover .ql-stroke-miter, .ql-snow.ql-toolbar button:focus .ql-stroke-miter, .ql-snow .ql-toolbar button:focus .ql-stroke-miter, .ql-snow.ql-toolbar button.ql-active .ql-stroke-miter, .ql-snow .ql-toolbar button.ql-active .ql-stroke-miter, .ql-snow.ql-toolbar .ql-picker-label:hover .ql-stroke-miter, .ql-snow .ql-toolbar .ql-picker-label:hover .ql-stroke-miter, .ql-snow.ql-toolbar .ql-picker-label.ql-active .ql-stroke-miter, .ql-snow .ql-toolbar .ql-picker-label.ql-active .ql-stroke-miter, .ql-snow.ql-toolbar .ql-picker-item:hover .ql-stroke-miter, .ql-snow .ql-toolbar .ql-picker-item:hover .ql-stroke-miter, .ql-snow.ql-toolbar .ql-picker-item.ql-selected .ql-stroke-miter, .ql-snow .ql-toolbar .ql-picker-item.ql-selected .ql-stroke-miter':
-      {
-        stroke: theme.palette.primary.main,
-      },
-    '& .ql-stroke': {
-      stroke: theme.palette.text.primary,
-    },
-    '& .ql-fill, .ql-stroke.ql-fill': {
-      fill: theme.palette.text.primary,
-    },
-    '& .ql-picker, .ql-picker-options, .ql-picker-item, .ql-picker-label, button': {
-      '&:focus': { outline: 'none' },
-    },
-    '& .ql-toolbar.ql-snow': {
-      border: 'none',
-      borderBottom: `solid 1px ${alpha(theme.palette.grey[500], 0.2)}`,
-      '& .ql-formats': {
-        '&:not(:last-of-type)': {
-          marginRight: theme.spacing(2),
-        },
-      },
-
-      // Button
-      '& button': {
-        padding: 0,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: 4,
-        color: theme.palette.text.primary,
-      },
-
-      // Icon svg
-      '& button svg, span svg': {
-        width: 20,
-        height: 20,
-      },
-
-      // Select
-      '& .ql-picker-label': {
-        ...theme.typography.subtitle2,
-        color: theme.palette.text.primary,
-        '& .ql-stroke': {
-          stroke: theme.palette.text.primary,
-        },
-      },
-      '& .ql-picker-label svg': {
-        ...(isRTL && {
-          right: '0 !important',
-          left: 'auto !important',
-        }),
-      },
-      '& .ql-color,& .ql-background,& .ql-align ': {
-        '& .ql-picker-label': {
-          padding: 0,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        },
-      },
-      '& .ql-expanded': {
-        '& .ql-picker-label': {
-          borderRadius: 4,
-          color: theme.palette.text.disabled,
-          borderColor: 'transparent !important',
-          backgroundColor: theme.palette.action.focus,
-          '& .ql-stroke': { stroke: theme.palette.text.disabled },
-        },
-        '& .ql-picker-options': {
-          padding: 0,
-          marginTop: 4,
-          border: 'none',
-          maxHeight: 200,
-          overflow: 'auto',
-          boxShadow: theme.customShadows.z20,
-          borderRadius: theme.shape.borderRadius,
-          backgroundColor: theme.palette.background.paper,
-        },
-        '& .ql-picker-item': {
-          color: theme.palette.text.primary,
-        },
-
-        // Align
-        '&.ql-align': {
-          '& .ql-picker-options': { padding: 0, display: 'flex' },
-          '& .ql-picker-item': {
-            width: 32,
-            height: 32,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          },
-        },
-        // Color & Background
-        '&.ql-color, &.ql-background': {
-          '& .ql-picker-options': { padding: 8 },
-          '& .ql-picker-item': {
-            margin: 3,
-            borderRadius: 4,
-            '&.ql-selected': { border: 'solid 1px black' },
-          },
-        },
-        // Font, Size, Header
-        '&.ql-font, &.ql-size, &.ql-header': {
-          '& .ql-picker-options': {
-            padding: theme.spacing(1, 0),
-          },
-          '& .ql-picker-item': {
-            padding: theme.spacing(0.5, 1.5),
-          },
-        },
-      },
-    },
-  };
-});
+export const StyledEditorToolbar = styled('div')(({ theme }: any) => ({
+  // Keep for backwards compatibility, but Tiptap uses inline toolbar
+}));
