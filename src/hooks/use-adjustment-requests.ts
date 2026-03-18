@@ -47,7 +47,7 @@ export function useAdjustmentRequests() {
         .from('adjustment_requests')
         .select('*')
         .eq('user_id', user.id)
-        .order('createdAt', { ascending: false });
+        .order('created_at', { ascending: false });
 
       if (fetchError) {
         setError(fetchError.message);
@@ -69,32 +69,41 @@ export function useAdjustmentRequests() {
           error: authError,
         } = await supabase.auth.getUser();
 
+        console.log('[v0] createAdjustmentRequest - user:', user?.id, 'authError:', authError);
+
         if (authError || !user) {
           throw new Error('Not authenticated');
         }
 
         const now = new Date().toISOString();
+        const insertData = {
+          user_id: user.id,
+          title: requestData.title,
+          detail: requestData.detail,
+          adjustment_type: requestData.adjustmentType,
+          work_function: requestData.workfunction,
+          location: requestData.location,
+          required_date: requestData.requiredDate.toISOString(),
+          status: RequestStatusTypes.NEW,
+          created_at: now,
+        };
+
+        console.log('[v0] Inserting adjustment request:', insertData);
+
         const { data, error: insertError } = await supabase
           .from('adjustment_requests')
-          .insert({
-            user_id: user.id,
-            title: requestData.title,
-            detail: requestData.detail,
-            adjustmentType: requestData.adjustmentType,
-            workfunction: requestData.workfunction,
-            location: requestData.location,
-            requiredDate: requestData.requiredDate.toISOString(),
-            status: RequestStatusTypes.NEW,
-            createdAt: now,
-          })
+          .insert(insertData)
           .select()
           .single();
+
+        console.log('[v0] Insert result - data:', data, 'error:', insertError);
 
         if (insertError) throw insertError;
 
         setAdjustmentRequests((prev) => [data as IAdjustmentRequestItem, ...prev]);
         return data as IAdjustmentRequestItem;
       } catch (err) {
+        console.error('[v0] createAdjustmentRequest error:', err);
         setError(err instanceof Error ? err.message : 'Failed to create adjustment request');
         throw err;
       }
@@ -119,10 +128,10 @@ export function useAdjustmentRequests() {
           .update({
             title: requestData.title,
             detail: requestData.detail,
-            adjustmentType: requestData.adjustmentType,
-            workfunction: requestData.workfunction,
+            adjustment_type: requestData.adjustmentType,
+            work_function: requestData.workfunction,
             location: requestData.location,
-            requiredDate: requestData.requiredDate.toISOString(),
+            required_date: requestData.requiredDate.toISOString(),
             status: requestData.status || RequestStatusTypes.PENDING,
           })
           .eq('id', requestData.id)

@@ -1,17 +1,17 @@
 -- Create adjustment_requests table for storing user adjustment requests
+-- Run this in your Supabase SQL Editor (Dashboard > SQL Editor)
+
 CREATE TABLE IF NOT EXISTS adjustment_requests (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   title TEXT NOT NULL,
   detail TEXT,
-  "adjustmentType" TEXT,
-  workfunction TEXT,
+  adjustment_type TEXT,
+  work_function TEXT,
   location TEXT,
-  benefit TEXT,
-  disability TEXT,
-  "requiredDate" TIMESTAMPTZ,
+  required_date TIMESTAMPTZ,
   status TEXT DEFAULT 'NEW',
-  "createdAt" TIMESTAMPTZ DEFAULT NOW()
+  created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- Enable Row Level Security
@@ -40,9 +40,3 @@ CREATE POLICY "Users can delete their own adjustment requests"
   ON adjustment_requests
   FOR DELETE
   USING (auth.uid() = user_id);
-
--- Create index for faster queries by user_id
-CREATE INDEX IF NOT EXISTS idx_adjustment_requests_user_id ON adjustment_requests(user_id);
-
--- Create index for faster queries by status
-CREATE INDEX IF NOT EXISTS idx_adjustment_requests_status ON adjustment_requests(status);
