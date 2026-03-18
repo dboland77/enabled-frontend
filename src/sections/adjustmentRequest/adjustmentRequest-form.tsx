@@ -108,6 +108,7 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
     approver: Yup.object()
       .nullable()
       .required('Please select an approver for your request'),
+    approver_id: Yup.string().nullable().default(''),
   });
 
   const defaultValues = useMemo(
@@ -121,6 +122,7 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
       approver: currentAdjustmentRequest?.approverId 
         ? MOCK_APPROVERS.find(a => a.id === currentAdjustmentRequest.approverId) || null
         : null,
+      approver_id: currentAdjustmentRequest?.approverId || '',
     }),
     [currentAdjustmentRequest]
   );
