@@ -277,16 +277,16 @@ export default function UserProfileEditForm() {
                         name="selectedDisability"
                         label="Add Disability"
                         options={availableDisabilities}
-                        getOptionLabel={(option) => typeof option === 'string' ? option : option.disability_name}
-                        isOptionEqualToValue={(option, value) => option.id === value.id}
+                        getOptionLabel={(option) => typeof option === 'string' ? option : (option as { disability_name: string }).disability_name}
+                        isOptionEqualToValue={(option, value) => (option as { id: string }).id === (value as { id: string }).id}
                         onChange={(_, newValue) => {
-                          if (newValue && typeof newValue !== 'string') {
-                            handleAddDisability(newValue.id);
+                          if (newValue && typeof newValue !== 'string' && 'id' in newValue) {
+                            handleAddDisability((newValue as { id: string }).id);
                           }
                         }}
                         renderOption={(props, option) => (
-                          <li {...props} key={option.id}>
-                            {option.disability_name}
+                          <li {...props} key={(option as { id: string }).id}>
+                            {(option as { disability_name: string }).disability_name}
                           </li>
                         )}
                       />
