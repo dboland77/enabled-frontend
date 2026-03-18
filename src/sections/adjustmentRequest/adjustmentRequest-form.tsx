@@ -10,7 +10,6 @@ import Grid from '@mui/material/Grid';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import LoadingButton from '@mui/lab/LoadingButton';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import { useRouter } from 'next/navigation';
@@ -96,15 +95,11 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
     detail: Yup.string()
       .required('Please provide details about why you need this adjustment')
       .min(10, 'Please provide more detail (at least 10 characters)'),
-    adjustmentType: Yup.string()
-      .nullable()
-      .required('Please select an adjustment type'),
+    adjustmentType: Yup.string().nullable().required('Please select an adjustment type'),
     workfunction: Yup.string()
       .nullable()
       .required('Please select the work function this adjustment relates to'),
-    location: Yup.string()
-      .nullable()
-      .required('Please select where you need this adjustment'),
+    location: Yup.string().nullable().required('Please select where you need this adjustment'),
     requiredDate: Yup.date()
       .nullable()
       .required('Please tell us when you need this adjustment')
@@ -115,12 +110,10 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
     () => ({
       title: currentAdjustmentRequest?.title || '',
       detail: currentAdjustmentRequest?.detail || '',
-      adjustmentType: currentAdjustmentRequest?.adjustmentType || null,
-      workfunction: currentAdjustmentRequest?.workfunction || null,
-      location: currentAdjustmentRequest?.location || null,
-      requiredDate: currentAdjustmentRequest?.requiredDate
-        ? new Date(currentAdjustmentRequest.requiredDate)
-        : null,
+      adjustmentType: currentAdjustmentRequest?.adjustmentType || '',
+      workfunction: currentAdjustmentRequest?.workfunction || '',
+      location: currentAdjustmentRequest?.location || '',
+      requiredDate: new Date(currentAdjustmentRequest?.requiredDate || ''),
     }),
     [currentAdjustmentRequest]
   );
@@ -340,14 +333,9 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
         <Button variant="outlined" size="large" onClick={handleCancel} disabled={isSubmitting}>
           Cancel
         </Button>
-        <LoadingButton
-          type="submit"
-          variant="contained"
-          size="large"
-          loading={isSubmitting}
-        >
+        <Button type="submit" variant="contained" size="large" loading={isSubmitting}>
           {!currentAdjustmentRequest ? 'Submit Request' : 'Save Changes'}
-        </LoadingButton>
+        </Button>
       </Grid>
     </>
   );
