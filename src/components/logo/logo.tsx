@@ -53,6 +53,10 @@ const Logo = forwardRef<HTMLDivElement, LogoProps>(
             <text x="0" y="30" fill={NICE_BLUE} letterSpacing="2" fontSize="35">
               enableD
             </text>
+            <rect x="155" y="10" width="40" height="18" rx="4" fill={NICE_BLUE} />
+            <text x="175" y="23" fill="#ffffff" fontSize="10" fontWeight="600" textAnchor="middle">
+              BETA
+            </text>
           </svg>
         </svg>
       </Box>
