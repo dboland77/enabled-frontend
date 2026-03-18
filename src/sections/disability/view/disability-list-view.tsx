@@ -9,6 +9,10 @@ import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
 import IconButton from '@mui/material/IconButton';
 import TableContainer from '@mui/material/TableContainer';
+import Alert from '@mui/material/Alert';
+import TableRow from '@mui/material/TableRow';
+import TableCell from '@mui/material/TableCell';
+import Checkbox from '@mui/material/Checkbox';
 
 import { useRouter } from 'next/navigation';
 import Iconify from '@/components/iconify';
@@ -18,6 +22,8 @@ import ProgressBar from '@/components/progress-bar';
 import { ConfirmDialog } from '@/components/custom-dialog';
 import { useSettingsContext } from '@/components/settings';
 import CustomBreadcrumbs from '@/components/custom-breadcrumbs';
+import { useDisabilities } from '@/hooks/use-disabilities';
+import { IDisabilityItem } from '@/types/disability';
 
 import {
   useTable,
@@ -29,33 +35,13 @@ import {
   TablePaginationCustom,
 } from '@/components/table';
 
-import AdjustmentRequestTableRow from '../disability-table-row';
-
 const TABLE_HEAD = [
-  { id: 'Adjustment', label: 'Adjustment' },
-  { id: 'adjustmentType', label: 'Type' },
-  { id: 'status', label: 'Status' },
-];
-//TODO - change this to state
-const adjustmentRequests = [
-  {
-    id: 'dfd',
-    title: 'test',
-    detail: 'detail test',
-    createdAt: '',
-    adjustmentType: 'adj type',
-    requiredDate: new Date().toISOString(),
-    workfunction: 'test function',
-    benefit: 'ben1',
-    location: 'here',
-    disability: 'd1',
-    status: null,
-  },
+  { id: 'disability_name', label: 'Name' },
+  { id: 'disability_nhs_slug', label: 'NHS Slug' },
+  { id: '', label: '' },
 ];
 
-const adjustmentRequestsLoading = false;
-
-export default function AdjustmentRequestListView() {
+export default function DisabilityListView() {
   const table = useTable();
 
   const settings = useSettingsContext();
@@ -64,16 +50,18 @@ export default function AdjustmentRequestListView() {
 
   const confirm = useBoolean();
 
-  const [tableData, setTableData] = useState(adjustmentRequests);
+  const { disabilities, loading: disabilitiesLoading, error, deleteDisability, refetch } = useDisabilities();
 
-  // useEffect(() => {
-  //   if (id) {
-  //   }
-  // }, [id, dispatch]);
+  const [tableData, setTableData] = useState<IDisabilityItem[]>([]);
+
+  // Sync tableData with disabilities from hook
+  useEffect(() => {
+    setTableData(disabilities);
+  }, [disabilities]);
 
   const dataFiltered = tableData.length > 0 ? tableData : [];
 
-  const notFound = !(dataFiltered.length > 0);
+  const notFound = !disabilitiesLoading && !(dataFiltered.length > 0);
 
   const dataInPage = dataFiltered.slice(
     table.page * table.rowsPerPage,
@@ -83,17 +71,18 @@ export default function AdjustmentRequestListView() {
   const denseHeight = table.dense ? 52 : 72;
 
   const handleDeleteRow = async (rowId: string) => {
-    const deleteRow = tableData.filter((row) => row.id !== rowId);
-    setTableData(deleteRow);
-    table.onUpdatePageDeleteRow(dataInPage.length);
+    const success = await deleteDisability(rowId);
+    if (success) {
+      table.onUpdatePageDeleteRow(dataInPage.length);
+    }
   };
 
   const handleDeleteRows = async () => {
-    const keepRows = tableData.filter((row) => !table.selected.includes(row.id));
-
     const deleteRows = tableData.filter((row) => table.selected.includes(row.id)).map((r) => r.id);
-
-    setTableData(keepRows);
+    
+    for (const id of deleteRows) {
+      await deleteDisability(id);
+    }
 
     table.onUpdatePageDeleteRows({
       totalRows: tableData.length,
@@ -104,36 +93,42 @@ export default function AdjustmentRequestListView() {
 
   const handleEditRow = useCallback(
     (rowId: string) => {
-      router.push('/dashboard/adjustmentRequests/edit(rowId)');
+      router.push(`/dashboard/disability/${rowId}/edit`);
     },
     [router]
   );
 
-  return adjustmentRequestsLoading ? (
+  return disabilitiesLoading ? (
     <ProgressBar />
   ) : (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="My Adjustment Requests"
+          heading="Disabilities"
           links={[
             { name: 'Home', href: '/dashboard' },
-            { name: 'Adjustment Requests', href: '/dashboard/adjustmentRequests' },
+            { name: 'Disability', href: '/dashboard/disability' },
             { name: 'List' },
           ]}
           action={
             <Button
-              href={'/dashboard/adjustmentRequests/new'}
+              href={'/dashboard/disability/new'}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
-              New Adjustment Request
+              New Disability
             </Button>
           }
           sx={{
             mb: { xs: 3, md: 5 },
           }}
         />
+
+        {error && (
+          <Alert severity="error" sx={{ mb: 3 }}>
+            {error}
+          </Alert>
+        )}
 
         <Card>
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
@@ -180,14 +175,24 @@ export default function AdjustmentRequestListView() {
                       table.page * table.rowsPerPage + table.rowsPerPage
                     )
                     .map((row) => (
-                      <AdjustmentRequestTableRow
-                        key={row.id}
-                        row={row}
-                        selected={table.selected.includes(row.id)}
-                        onSelectRow={() => table.onSelectRow(row.id)}
-                        onDeleteRow={() => handleDeleteRow(row.id)}
-                        onEditRow={() => handleEditRow(row.id)}
-                      />
+                      <TableRow key={row.id} hover selected={table.selected.includes(row.id)}>
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            checked={table.selected.includes(row.id)}
+                            onClick={() => table.onSelectRow(row.id)}
+                          />
+                        </TableCell>
+                        <TableCell>{row.disability_name}</TableCell>
+                        <TableCell>{row.disability_nhs_slug}</TableCell>
+                        <TableCell align="right">
+                          <IconButton onClick={() => handleEditRow(row.id)}>
+                            <Iconify icon="solar:pen-bold" />
+                          </IconButton>
+                          <IconButton onClick={() => handleDeleteRow(row.id)} color="error">
+                            <Iconify icon="solar:trash-bin-trash-bold" />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
                     ))}
 
                   <TableEmptyRows

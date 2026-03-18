@@ -10,3 +10,8 @@ export * from '@/hooks/use-double-click';
 export * from '@/hooks/use-local-storage';
 export * from '@/hooks/use-event-listener';
 export * from '@/hooks/use-copy-to-clipboard';
+export * from '@/hooks/use-disabilities';
+export * from '@/hooks/use-adjustments';
+export * from '@/hooks/use-user-profile';
+export * from '@/hooks/use-roles';
+export * from '@/hooks/use-departments';
