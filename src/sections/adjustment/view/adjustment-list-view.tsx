@@ -30,9 +30,9 @@ import {
 import AdjustmentTableRow from '../adjustment-table-row';
 
 const TABLE_HEAD = [
-  { id: 'adjustment_title', label: 'Adjustment' },
-  { id: 'adjustment_type', label: 'Type' },
-  { id: 'adjustment_detail', label: 'Detail' },
+  { id: 'title', label: 'Adjustment' },
+  { id: 'type', label: 'Type' },
+  { id: 'detail', label: 'Detail' },
 ];
 
 export default function AdjustmentListView() {

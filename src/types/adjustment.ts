@@ -10,16 +10,16 @@ export type IAdjustmentFilters = {
 
 export type IAdjustmentItem = {
   id: string;
-  adjustment_title: string | null;
-  adjustment_detail: string | null;
-  adjustment_type: string | null;
+  title: string | null;
+  detail: string | null;
+  type: string | null;
 };
 
 export type IAdjustmentCard = {
   id: string;
-  adjustment_title: string;
-  adjustment_type: string;
-  adjustment_detail: string;
+  title: string;
+  type: string;
+  detail: string;
   coverUrl?: string;
   thumbnailUrl?: string;
 };
