@@ -12,6 +12,7 @@ import Scrollbar from '@/components/scrollbar';
 import { useResponsive } from '@/hooks/use-responsive';
 import { NavSectionVertical } from '@/components/nav-section';
 import NavToggleButton from '@/layouts/common/nav-toggle-button';
+import { useUserProfile } from '@/hooks/use-user-profile';
 
 import { useNavData } from './config-navigation';
 
@@ -20,14 +21,16 @@ type Props = {
   onCloseNav: VoidFunction;
 };
 
-const role = 'EMPLOYEE';
-
 export default function NavVertical({ openNav, onCloseNav }: Props) {
   const pathname = usePathname();
 
   const lgUp = useResponsive('up', 'lg');
 
   const navData = useNavData();
+
+  const { profile } = useUserProfile();
+
+  const role = profile?.role ?? '';
 
   useEffect(() => {
     if (openNav) {

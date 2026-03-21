@@ -7,9 +7,12 @@ import { hideScroll } from '../../theme/css';
 import { useNavData } from './config-navigation';
 import NavToggleButton from '../common/nav-toggle-button';
 import { NavSectionMini } from '../../components/nav-section';
+import { useUserProfile } from '@/hooks/use-user-profile';
 
 export default function NavMini() {
-  const role = 'EMPLOYEE';
+  const { profile } = useUserProfile();
+
+  const role = profile?.role ?? '';
 
   const navData = useNavData();
 
