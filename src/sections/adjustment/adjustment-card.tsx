@@ -16,7 +16,7 @@ type Props = {
 export default function AdjustmentCard({ adjustment }: Props) {
   const theme = useTheme();
 
-  const { adjustment_title, adjustment_type, coverUrl, thumbnailUrl } = adjustment;
+  const { title, type, coverUrl, thumbnailUrl } = adjustment;
 
   return (
     <Card sx={{ textAlign: 'center' }}>
@@ -33,7 +33,7 @@ export default function AdjustmentCard({ adjustment }: Props) {
         />
 
         <Avatar
-          alt={adjustment_title}
+          alt={title}
           src={thumbnailUrl}
           sx={{
             width: 64,
@@ -57,8 +57,8 @@ export default function AdjustmentCard({ adjustment }: Props) {
 
       <ListItemText
         sx={{ mt: 7, mb: 1 }}
-        primary={adjustment_title}
-        secondary={adjustment_type}
+        primary={title}
+        secondary={type}
         primaryTypographyProps={{ typography: 'subtitle1' }}
         secondaryTypographyProps={{ component: 'span', mt: 0.5 }}
       />

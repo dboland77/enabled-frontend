@@ -19,7 +19,7 @@ export function useAdjustments() {
       const { data, error: fetchError } = await supabase
         .from('adjustments')
         .select('*')
-        .order('adjustment_title', { ascending: true });
+        .order('title', { ascending: true });
 
       if (fetchError) {
         setError(fetchError.message);

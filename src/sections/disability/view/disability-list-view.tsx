@@ -13,6 +13,9 @@ import Alert from '@mui/material/Alert';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import Checkbox from '@mui/material/Checkbox';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
+import Stack from '@mui/material/Stack';
 
 import { useRouter } from 'next/navigation';
 import Iconify from '@/components/iconify';
@@ -53,13 +56,26 @@ export default function DisabilityListView() {
   const { disabilities, loading: disabilitiesLoading, error, deleteDisability, refetch } = useDisabilities();
 
   const [tableData, setTableData] = useState<IDisabilityItem[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Sync tableData with disabilities from hook
   useEffect(() => {
     setTableData(disabilities);
   }, [disabilities]);
 
-  const dataFiltered = tableData.length > 0 ? tableData : [];
+  const handleSearch = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+    table.onResetPage();
+  }, [table]);
+
+  const dataFiltered = tableData.filter((row) => {
+    if (!searchQuery) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      row.disability_name?.toLowerCase().includes(q) ||
+      row.disability_nhs_slug?.toLowerCase().includes(q)
+    );
+  });
 
   const notFound = !disabilitiesLoading && !(dataFiltered.length > 0);
 
@@ -131,6 +147,22 @@ export default function DisabilityListView() {
         )}
 
         <Card>
+          <Stack sx={{ p: 2.5 }}>
+            <TextField
+              fullWidth
+              value={searchQuery}
+              onChange={handleSearch}
+              placeholder="Search by name or NHS slug..."
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Stack>
+
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <TableSelectedAction
               dense={table.dense}

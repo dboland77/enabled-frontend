@@ -20,9 +20,9 @@ export default function AdjustmentCardsView() {
   // Map adjustments to card format (handle nullable fields)
   const adjustmentCards: IAdjustmentCard[] = adjustments.map((adj) => ({
     id: adj.id,
-    adjustment_title: adj.adjustment_title || '',
-    adjustment_type: adj.adjustment_type || '',
-    adjustment_detail: adj.adjustment_detail || '',
+    title: adj.title || '',
+    type: adj.type || '',
+    detail: adj.detail || '',
   }));
 
   if (adjustmentsLoading) {

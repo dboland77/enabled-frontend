@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
@@ -9,6 +9,9 @@ import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
 import TableContainer from '@mui/material/TableContainer';
 import Alert from '@mui/material/Alert';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
+import Stack from '@mui/material/Stack';
 
 import Iconify from '@/components/iconify';
 import Scrollbar from '@/components/scrollbar';
@@ -30,9 +33,9 @@ import {
 import AdjustmentTableRow from '../adjustment-table-row';
 
 const TABLE_HEAD = [
-  { id: 'adjustment_title', label: 'Adjustment' },
-  { id: 'adjustment_type', label: 'Type' },
-  { id: 'adjustment_detail', label: 'Detail' },
+  { id: 'title', label: 'Adjustment' },
+  { id: 'type', label: 'Type' },
+  { id: 'detail', label: 'Detail' },
 ];
 
 export default function AdjustmentListView() {
@@ -43,13 +46,27 @@ export default function AdjustmentListView() {
   const { adjustments, loading: adjustmentsLoading, error, deleteAdjustment, refetch } = useAdjustments();
 
   const [tableData, setTableData] = useState<IAdjustmentItem[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Sync tableData with adjustments from hook
   useEffect(() => {
     setTableData(adjustments);
   }, [adjustments]);
 
-  const dataFiltered = tableData.length > 0 ? tableData : [];
+  const handleSearch = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+    table.onResetPage();
+  }, [table]);
+
+  const dataFiltered = tableData.filter((row) => {
+    if (!searchQuery) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      (row.title?.toLowerCase().includes(q) ?? false) ||
+      (row.type?.toLowerCase().includes(q) ?? false) ||
+      (row.detail?.toLowerCase().includes(q) ?? false)
+    );
+  });
 
   const notFound = !adjustmentsLoading && !(dataFiltered.length > 0);
 
@@ -92,6 +109,22 @@ export default function AdjustmentListView() {
       )}
 
       <Card>
+          <Stack sx={{ p: 2.5 }}>
+            <TextField
+              fullWidth
+              value={searchQuery}
+              onChange={handleSearch}
+              placeholder="Search by title, type or detail..."
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Stack>
+
         <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
           <TableSelectedAction
             dense={table.dense}

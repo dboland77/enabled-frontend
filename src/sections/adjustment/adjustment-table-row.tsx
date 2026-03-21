@@ -1,7 +1,10 @@
+import { useRouter } from 'next/navigation';
+
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import TableCell from '@mui/material/TableCell';
-import ListItemText from '@mui/material/ListItemText';
+import Typography from '@mui/material/Typography';
+import Chip from '@mui/material/Chip';
 
 import { IAdjustmentItem } from '@/types/adjustment';
 
@@ -12,33 +15,63 @@ type Props = {
 };
 
 export default function AdjustmentTableRow({ row, selected, onSelectRow }: Props) {
-  const { adjustment_title, adjustment_detail, adjustment_type } = row;
+  const router = useRouter();
+
+  const { id, title, detail, type } = row;
+
+  const handleRowClick = () => {
+    router.push(`/dashboard/adjustments/${id}`);
+  };
+
+  // Truncate detail to 100 characters
+  const truncatedDetail =
+    detail && detail.length > 100
+      ? `${detail.substring(0, 100)}...`
+      : detail;
 
   return (
-    <TableRow hover selected={selected}>
+    <TableRow
+      hover
+      selected={selected}
+      onClick={handleRowClick}
+      sx={{ cursor: 'pointer' }}
+    >
       <TableCell padding="checkbox">
-        <Checkbox checked={selected} onClick={onSelectRow} />
-      </TableCell>
-
-      <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-        <ListItemText
-          primary={adjustment_title}
-          secondary={adjustment_detail}
-          primaryTypographyProps={{ typography: 'body2' }}
-          secondaryTypographyProps={{
-            component: 'span',
-            color: 'text.disabled',
+        <Checkbox
+          checked={selected}
+          onClick={(e) => {
+            e.stopPropagation();
+            onSelectRow();
           }}
         />
       </TableCell>
 
-      {/* <TableCell sx={{ whiteSpace: 'nowrap' }}>{workfunction}</TableCell> */}
-      {/* <TableCell sx={{ whiteSpace: 'nowrap' }}>{location}</TableCell> */}
-      {/* <TableCell sx={{ whiteSpace: 'nowrap' }}>{disability}</TableCell> */}
-      {/* <TableCell sx={{ whiteSpace: 'nowrap' }}>{id}</TableCell> */}
-      {/* <TableCell sx={{ whiteSpace: 'nowrap' }}>{benefit}</TableCell> */}
+      <TableCell>
+        <Typography variant="body2" fontWeight={600}>
+          {title}
+        </Typography>
+      </TableCell>
 
-      <TableCell sx={{ whiteSpace: 'nowrap' }}>{adjustment_type}</TableCell>
+      <TableCell sx={{ whiteSpace: 'nowrap' }}>
+        {type && (
+          <Chip label={type} size="small" variant="soft" color="primary" />
+        )}
+      </TableCell>
+
+      <TableCell>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{
+            maxWidth: 400,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {truncatedDetail}
+        </Typography>
+      </TableCell>
     </TableRow>
   );
 }

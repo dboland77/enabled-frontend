@@ -10,13 +10,16 @@ import { useNavData } from './config-navigation';
 import Scrollbar from '../../components/scrollbar';
 import HeaderShadow from '../common/header-shadow';
 import { NavSectionHorizontal } from '../../components/nav-section';
+import { useUserProfile } from '@/hooks/use-user-profile';
 
 // ----------------------------------------------------------------------
 
 function NavHorizontal() {
   const theme = useTheme();
 
-  const role = 'EMPLOYEE';
+  const { profile } = useUserProfile();
+
+  const role = profile?.role ?? '';
 
   const navData = useNavData();
 

@@ -22,10 +22,10 @@ export default function CreateAdjustmentForm() {
   const mdUp = useResponsive('up', 'md');
 
   const { enqueueSnackbar } = useSnackbar();
-  const adjustments = [{ adjustment_type: 'a' }];
+  const adjustments = [{ type: 'a' }];
 
   // Set Option Values for the form
-  const adjustmentTypes = adjustments.map((a) => a.adjustment_type);
+  const adjustmentTypes = adjustments.map((a) => a.type);
   const adjustmentTypeOptions = Array.from(new Set(adjustmentTypes));
 
   const NewAdjustmentSchema = Yup.object().shape({

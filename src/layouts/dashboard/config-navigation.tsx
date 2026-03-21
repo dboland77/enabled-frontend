@@ -36,8 +36,8 @@ export function useNavData() {
             children: [
               { title: 'profile', path: '/dashboard/user/profile' },
               { title: 'cards', path: '/dashboard/user/cards' },
-              { title: 'create', path: '/dashboard/user/new' },
-              { title: 'list', path: '/dashboard/user/list' },
+              { title: 'create', path: '/dashboard/user/new', roles: ['admin'] },
+              { title: 'list', path: '/dashboard/user/list', roles: ['admin'] },
             ],
           },
           {
