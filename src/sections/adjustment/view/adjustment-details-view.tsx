@@ -97,10 +97,10 @@ export default function AdjustmentDetailsView({ id }: Props) {
       <Card sx={{ p: 4 }}>
         <Stack spacing={3}>
           <Stack direction="row" alignItems="center" justifyContent="space-between">
-            <Typography variant="h4">{adjustment.adjustment_title}</Typography>
-            {adjustment.adjustment_type && (
+            <Typography variant="h4">{adjustment.title}</Typography>
+            {adjustment.type && (
               <Chip
-                label={adjustment.adjustment_type}
+                label={adjustment.type}
                 color="primary"
                 variant="soft"
               />
@@ -114,7 +114,7 @@ export default function AdjustmentDetailsView({ id }: Props) {
               Detail
             </Typography>
             <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
-              {adjustment.adjustment_detail || 'No detail provided'}
+              {adjustment.detail || 'No detail provided'}
             </Typography>
           </Stack>
         </Stack>

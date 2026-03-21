@@ -17,7 +17,7 @@ type Props = {
 export default function AdjustmentTableRow({ row, selected, onSelectRow }: Props) {
   const router = useRouter();
 
-  const { id, adjustment_title, adjustment_detail, adjustment_type } = row;
+  const { id, title, detail, type } = row;
 
   const handleRowClick = () => {
     router.push(`/dashboard/adjustments/${id}`);
@@ -25,9 +25,9 @@ export default function AdjustmentTableRow({ row, selected, onSelectRow }: Props
 
   // Truncate detail to 100 characters
   const truncatedDetail =
-    adjustment_detail && adjustment_detail.length > 100
-      ? `${adjustment_detail.substring(0, 100)}...`
-      : adjustment_detail;
+    detail && detail.length > 100
+      ? `${detail.substring(0, 100)}...`
+      : detail;
 
   return (
     <TableRow
@@ -48,13 +48,13 @@ export default function AdjustmentTableRow({ row, selected, onSelectRow }: Props
 
       <TableCell>
         <Typography variant="body2" fontWeight={600}>
-          {adjustment_title}
+          {title}
         </Typography>
       </TableCell>
 
       <TableCell sx={{ whiteSpace: 'nowrap' }}>
-        {adjustment_type && (
-          <Chip label={adjustment_type} size="small" variant="soft" color="primary" />
+        {type && (
+          <Chip label={type} size="small" variant="soft" color="primary" />
         )}
       </TableCell>
 
