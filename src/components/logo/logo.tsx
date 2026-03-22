@@ -8,41 +8,56 @@ export interface LogoProps extends BoxProps {
   disabledLink?: boolean;
 }
 
+const NICE_BLUE = '#2596be';
+
 const Logo = forwardRef<HTMLDivElement, LogoProps>(
   ({ disabledLink = false, sx, ...other }, ref) => {
     const theme = useTheme();
 
     const PRIMARY_LIGHT = theme.palette.primary.light;
+
     const PRIMARY_MAIN = theme.palette.primary.main;
+
+    const PRIMARY_DARK = theme.palette.primary.dark;
 
     const logo = (
       <Box
         ref={ref}
         component="div"
         sx={{
+          width: 200,
+          height: 20,
           display: 'inline-flex',
-          alignItems: 'center',
-          gap: 1,
           ...sx,
         }}
         {...other}
       >
-        {/* Main logo */}
-        <svg height="50" width="300" viewBox="0 0 250 50">
-          <text x="0" y="40" fill={PRIMARY_LIGHT} fontSize="40" fontWeight="500" letterSpacing="-1">
-            enable
-          </text>
-          <text x="180" y="40" fill={PRIMARY_MAIN} fontSize="40" fontWeight="600" letterSpacing="-1">
-            D
-          </text>
-        </svg>
+        <svg height="50" width="300">
+          <defs>
+            <linearGradient id="BG1" x1="100%" x2="50%" y1="9.946%" y2="50%">
+              <stop offset="0%" stopColor={PRIMARY_DARK} />
+              <stop offset="100%" stopColor={PRIMARY_MAIN} />
+            </linearGradient>
 
-        {/* Beta badge */}
-        <svg height="32" width="70" viewBox="0 0 70 32">
-          <rect x="0" y="0" width="70" height="32" rx="4" fill={PRIMARY_MAIN} />
-          <text x="35" y="22" fill="#ffffff" fontSize="12" fontWeight="600" textAnchor="middle">
-            Beta
-          </text>
+            <linearGradient id="BG2" x1="50%" x2="50%" y1="0%" y2="100%">
+              <stop offset="0%" stopColor={PRIMARY_LIGHT} />
+              <stop offset="100%" stopColor={PRIMARY_MAIN} />
+            </linearGradient>
+
+            <linearGradient id="BG3" x1="50%" x2="50%" y1="0%" y2="100%">
+              <stop offset="0%" stopColor={PRIMARY_LIGHT} />
+              <stop offset="100%" stopColor={PRIMARY_MAIN} />
+            </linearGradient>
+          </defs>
+          <svg height="50" width="300">
+            <text x="0" y="30" fill={NICE_BLUE} letterSpacing="2" fontSize="35">
+              enableD
+            </text>
+            <rect x="155" y="10" width="40" height="18" rx="4" fill={NICE_BLUE} />
+            <text x="175" y="23" fill="#ffffff" fontSize="10" fontWeight="600" textAnchor="middle">
+              BETA
+            </text>
+          </svg>
         </svg>
       </Box>
     );
