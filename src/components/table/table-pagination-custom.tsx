@@ -50,6 +50,8 @@ export default function TablePaginationCustom({
           borderTopColor: 'transparent',
           '.MuiTablePagination-toolbar': {
             justifyContent: 'center',
+            minHeight: 48,
+            py: 0,
           },
           '.MuiTablePagination-spacer': {
             display: 'none',

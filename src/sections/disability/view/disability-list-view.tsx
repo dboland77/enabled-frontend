@@ -35,9 +35,7 @@ import { IDisabilityItem } from '@/types/disability';
 
 import {
   useTable,
-  emptyRows,
   TableNoData,
-  TableEmptyRows,
   TableHeadCustom,
   TableSelectedAction,
   TablePaginationCustom,
@@ -103,8 +101,6 @@ export default function DisabilityListView() {
     table.page * table.rowsPerPage,
     table.page * table.rowsPerPage + table.rowsPerPage
   );
-
-  const denseHeight = table.dense ? 52 : 72;
 
   const handleDeleteRow = async (rowId: string) => {
     const success = await deleteDisability(rowId);
@@ -272,11 +268,6 @@ export default function DisabilityListView() {
                         </TableCell>
                       </TableRow>
                     ))}
-
-                  <TableEmptyRows
-                    height={denseHeight}
-                    emptyRows={emptyRows(table.page, table.rowsPerPage, tableData.length)}
-                  />
 
                   <TableNoData notFound={notFound} />
                 </TableBody>

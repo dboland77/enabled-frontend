@@ -26,9 +26,7 @@ import { useAdjustments } from '@/hooks/use-adjustments';
 import { IAdjustmentItem } from '@/types/adjustment';
 import {
   useTable,
-  emptyRows,
   TableNoData,
-  TableEmptyRows,
   TableHeadCustom,
   TableSelectedAction,
   TablePaginationCustom,
@@ -88,8 +86,6 @@ export default function AdjustmentListView() {
   });
 
   const notFound = !adjustmentsLoading && !(dataFiltered.length > 0);
-
-  const denseHeight = table.dense ? 52 : 72;
 
   return adjustmentsLoading ? (
     <ProgressBar />
@@ -199,11 +195,6 @@ export default function AdjustmentListView() {
                       onSelectRow={() => table.onSelectRow(row.id)}
                     />
                   ))}
-
-                <TableEmptyRows
-                  height={denseHeight}
-                  emptyRows={emptyRows(table.page, table.rowsPerPage, tableData.length)}
-                />
 
                 <TableNoData notFound={notFound} />
               </TableBody>
