@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 
 import Card from '@mui/material/Card';
 import Link from '@mui/material/Link';
@@ -17,6 +17,10 @@ import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
 
 import { useRouter } from 'next/navigation';
 import Iconify from '@/components/iconify';
@@ -58,24 +62,39 @@ export default function DisabilityListView() {
 
   const [tableData, setTableData] = useState<IDisabilityItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [letterFilter, setLetterFilter] = useState('');
 
-  // Sync tableData with disabilities from hook
   useEffect(() => {
     setTableData(disabilities);
   }, [disabilities]);
+
+  const letterOptions = useMemo(() => {
+    const letters = tableData
+      .map((row) => row.disability_name?.charAt(0).toUpperCase())
+      .filter((l): l is string => !!l);
+    return Array.from(new Set(letters)).sort();
+  }, [tableData]);
 
   const handleSearch = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
     table.onResetPage();
   }, [table]);
 
+  const handleLetterFilter = useCallback((event: SelectChangeEvent) => {
+    setLetterFilter(event.target.value);
+    table.onResetPage();
+  }, [table]);
+
   const dataFiltered = tableData.filter((row) => {
-    if (!searchQuery) return true;
-    const q = searchQuery.toLowerCase();
-    return (
-      row.disability_name?.toLowerCase().includes(q) ||
-      row.disability_nhs_slug?.toLowerCase().includes(q)
-    );
+    const matchesSearch = !searchQuery || (() => {
+      const q = searchQuery.toLowerCase();
+      return (
+        row.disability_name?.toLowerCase().includes(q) ||
+        row.disability_nhs_slug?.toLowerCase().includes(q)
+      );
+    })();
+    const matchesLetter = !letterFilter || row.disability_name?.charAt(0).toUpperCase() === letterFilter;
+    return matchesSearch && matchesLetter;
   });
 
   const notFound = !disabilitiesLoading && !(dataFiltered.length > 0);
@@ -148,7 +167,7 @@ export default function DisabilityListView() {
         )}
 
         <Card>
-          <Stack sx={{ p: 2.5 }}>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ p: 2.5 }}>
             <TextField
               fullWidth
               value={searchQuery}
@@ -162,6 +181,22 @@ export default function DisabilityListView() {
                 ),
               }}
             />
+
+            <FormControl sx={{ minWidth: 180, flexShrink: 0 }}>
+              <InputLabel>Filter by letter</InputLabel>
+              <Select
+                value={letterFilter}
+                label="Filter by letter"
+                onChange={handleLetterFilter}
+              >
+                <MenuItem value="">All</MenuItem>
+                {letterOptions.map((letter) => (
+                  <MenuItem key={letter} value={letter}>
+                    {letter}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Stack>
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
@@ -12,6 +12,10 @@ import Alert from '@mui/material/Alert';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
 
 import Iconify from '@/components/iconify';
 import Scrollbar from '@/components/scrollbar';
@@ -47,33 +51,43 @@ export default function AdjustmentListView() {
 
   const [tableData, setTableData] = useState<IAdjustmentItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [typeFilter, setTypeFilter] = useState('');
 
-  // Sync tableData with adjustments from hook
   useEffect(() => {
     setTableData(adjustments);
   }, [adjustments]);
+
+  const typeOptions = useMemo(() => {
+    const types = tableData
+      .map((row) => row.type)
+      .filter((t): t is string => !!t);
+    return Array.from(new Set(types)).sort();
+  }, [tableData]);
 
   const handleSearch = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
     table.onResetPage();
   }, [table]);
 
+  const handleTypeFilter = useCallback((event: SelectChangeEvent) => {
+    setTypeFilter(event.target.value);
+    table.onResetPage();
+  }, [table]);
+
   const dataFiltered = tableData.filter((row) => {
-    if (!searchQuery) return true;
-    const q = searchQuery.toLowerCase();
-    return (
-      (row.title?.toLowerCase().includes(q) ?? false) ||
-      (row.type?.toLowerCase().includes(q) ?? false) ||
-      (row.detail?.toLowerCase().includes(q) ?? false)
-    );
+    const matchesSearch = !searchQuery || (() => {
+      const q = searchQuery.toLowerCase();
+      return (
+        (row.title?.toLowerCase().includes(q) ?? false) ||
+        (row.type?.toLowerCase().includes(q) ?? false) ||
+        (row.detail?.toLowerCase().includes(q) ?? false)
+      );
+    })();
+    const matchesType = !typeFilter || row.type === typeFilter;
+    return matchesSearch && matchesType;
   });
 
   const notFound = !adjustmentsLoading && !(dataFiltered.length > 0);
-
-  // const dataInPage = dataFiltered.slice(
-  //   table.page * table.rowsPerPage,
-  //   table.page * table.rowsPerPage + table.rowsPerPage
-  // );
 
   const denseHeight = table.dense ? 52 : 72;
 
@@ -109,21 +123,37 @@ export default function AdjustmentListView() {
       )}
 
       <Card>
-          <Stack sx={{ p: 2.5 }}>
-            <TextField
-              fullWidth
-              value={searchQuery}
-              onChange={handleSearch}
-              placeholder="Search by title, type or detail..."
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Stack>
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ p: 2.5 }}>
+          <TextField
+            fullWidth
+            value={searchQuery}
+            onChange={handleSearch}
+            placeholder="Search by title, type or detail..."
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
+                </InputAdornment>
+              ),
+            }}
+          />
+
+          <FormControl sx={{ minWidth: 180, flexShrink: 0 }}>
+            <InputLabel>Filter by type</InputLabel>
+            <Select
+              value={typeFilter}
+              label="Filter by type"
+              onChange={handleTypeFilter}
+            >
+              <MenuItem value="">All types</MenuItem>
+              {typeOptions.map((type) => (
+                <MenuItem key={type} value={type}>
+                  {type}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Stack>
 
         <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
           <TableSelectedAction

@@ -15,35 +15,47 @@ type Props = {
 export default function TablePaginationCustom({
   dense,
   onChangeDense,
-  rowsPerPageOptions = [5, 10, 25],
+  rowsPerPageOptions = [5, 10, 15],
   sx,
   ...other
 }: Props & TablePaginationProps) {
   return (
-    <Box sx={{ position: 'relative', ...sx }}>
-      <TablePagination
-        rowsPerPageOptions={rowsPerPageOptions}
-        component="div"
-        {...other}
-        sx={{
-          borderTopColor: 'transparent',
-        }}
-      />
-
+    <Box
+      sx={{
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        mt: 0,
+        ...sx,
+      }}
+    >
       {onChangeDense && (
         <FormControlLabel
           label="Dense"
           control={<Switch checked={dense} onChange={onChangeDense} />}
           sx={{
             pl: 2,
-            py: 1.5,
-            top: 0,
-            position: {
-              sm: 'absolute',
-            },
+            position: 'absolute',
+            left: 0,
           }}
         />
       )}
+
+      <TablePagination
+        rowsPerPageOptions={rowsPerPageOptions}
+        component="div"
+        {...other}
+        sx={{
+          borderTopColor: 'transparent',
+          '.MuiTablePagination-toolbar': {
+            justifyContent: 'center',
+          },
+          '.MuiTablePagination-spacer': {
+            display: 'none',
+          },
+        }}
+      />
     </Box>
   );
 }
