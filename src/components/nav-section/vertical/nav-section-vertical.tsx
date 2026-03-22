@@ -2,6 +2,7 @@ import { memo, useState, useCallback } from 'react';
 
 import Stack from '@mui/material/Stack';
 import Collapse from '@mui/material/Collapse';
+import Divider from '@mui/material/Divider';
 import ListSubheader from '@mui/material/ListSubheader';
 
 import NavList from '@/components/nav-section/vertical/nav-list';
@@ -11,12 +12,20 @@ function NavSectionVertical({ data, slotProps, ...other }: NavProps) {
   return (
     <Stack component="nav" id="nav-section-vertical" {...other}>
       {data.map((group, index) => (
-        <Group
-          key={group.subheader || index}
-          subheader={group.subheader}
-          items={group.items}
-          slotProps={slotProps}
-        />
+        <>
+          {index > 0 && (
+            <Divider
+              key={`divider-${index}`}
+              sx={{ borderStyle: 'dashed', mx: 2, my: 1 }}
+            />
+          )}
+          <Group
+            key={group.subheader || index}
+            subheader={group.subheader}
+            items={group.items}
+            slotProps={slotProps}
+          />
+        </>
       ))}
     </Stack>
   );
