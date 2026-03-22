@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 
 import Card from '@mui/material/Card';
+import Link from '@mui/material/Link';
 import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
@@ -215,7 +216,17 @@ export default function DisabilityListView() {
                           />
                         </TableCell>
                         <TableCell>{row.disability_name}</TableCell>
-                        <TableCell>{row.disability_nhs_slug}</TableCell>
+                        <TableCell>
+                          <Link
+                            href={`https://www.nhs.uk/conditions/${row.disability_nhs_slug}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            underline="hover"
+                            color="text.secondary"
+                          >
+                            {row.disability_nhs_slug}
+                          </Link>
+                        </TableCell>
                         <TableCell align="right">
                           <IconButton onClick={() => handleEditRow(row.id)}>
                             <Iconify icon="solar:pen-bold" />

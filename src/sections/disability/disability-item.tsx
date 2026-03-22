@@ -1,5 +1,6 @@
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
+import Link from '@mui/material/Link';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
 import ListItemText from '@mui/material/ListItemText';
@@ -59,7 +60,17 @@ export default function DisabilityItem({ disability }: Props) {
       <ListItemText
         sx={{ mt: 7, mb: 1 }}
         primary={disability_name}
-        secondary={disability_nhs_slug}
+        secondary={
+          <Link
+            href={`https://www.nhs.uk/conditions/${disability_nhs_slug}`}
+            target="_blank"
+            rel="noreferrer"
+            underline="hover"
+            color="text.secondary"
+          >
+            {disability_nhs_slug}
+          </Link>
+        }
         primaryTypographyProps={{ typography: 'subtitle1' }}
         secondaryTypographyProps={{ component: 'span', mt: 0.5 }}
       />
