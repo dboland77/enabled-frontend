@@ -1,9 +1,16 @@
 'use client';
+
+import { useState, useCallback } from 'react';
+
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Alert from '@mui/material/Alert';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
+import Stack from '@mui/material/Stack';
 
 import Iconify from '@/components/iconify';
+import EmptyContent from '@/components/empty-content';
 import ProgressBar from '@/components/progress-bar';
 import { useSettingsContext } from '@/components/settings';
 import CustomBreadcrumbs from '@/components/custom-breadcrumbs';
@@ -14,8 +21,14 @@ import AdjustmentCardList from '../adjustment-card-list';
 
 export default function AdjustmentCardsView() {
   const settings = useSettingsContext();
-  
+
+  const [searchQuery, setSearchQuery] = useState('');
+
   const { adjustments, loading: adjustmentsLoading, error } = useAdjustments();
+
+  const handleSearch = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  }, []);
 
   // Map adjustments to card format (handle nullable fields)
   const adjustmentCards: IAdjustmentCard[] = adjustments.map((adj) => ({
@@ -24,6 +37,18 @@ export default function AdjustmentCardsView() {
     type: adj.type || '',
     detail: adj.detail || '',
   }));
+
+  const filteredCards = adjustmentCards.filter((card) => {
+    if (!searchQuery) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      card.title.toLowerCase().includes(q) ||
+      card.type.toLowerCase().includes(q) ||
+      card.detail.toLowerCase().includes(q)
+    );
+  });
+
+  const notFound = !adjustmentsLoading && filteredCards.length === 0;
 
   if (adjustmentsLoading) {
     return <ProgressBar />;
@@ -56,7 +81,27 @@ export default function AdjustmentCardsView() {
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <AdjustmentCardList adjustments={adjustmentCards} />
+      <Stack sx={{ mb: { xs: 3, md: 5 } }}>
+        <TextField
+          fullWidth
+          value={searchQuery}
+          onChange={handleSearch}
+          placeholder="Search adjustments..."
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
+              </InputAdornment>
+            ),
+          }}
+        />
+      </Stack>
+
+      {notFound ? (
+        <EmptyContent filled title="No adjustments found" sx={{ py: 10 }} />
+      ) : (
+        <AdjustmentCardList adjustments={filteredCards} />
+      )}
     </Container>
   );
 }
