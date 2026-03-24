@@ -17,17 +17,17 @@ type Props = {
 export default function AdjustmentTableRow({ row, selected, onSelectRow }: Props) {
   const router = useRouter();
 
-  const { id, title, detail, type } = row;
+  const { id, title, description, category } = row;
 
   const handleRowClick = () => {
     router.push(`/dashboard/adjustments/${id}`);
   };
 
-  // Truncate detail to 100 characters
-  const truncatedDetail =
-    detail && detail.length > 100
-      ? `${detail.substring(0, 100)}...`
-      : detail;
+  // Truncate description to 100 characters
+  const truncatedDescription =
+    description && description.length > 100
+      ? `${description.substring(0, 100)}...`
+      : description;
 
   return (
     <TableRow

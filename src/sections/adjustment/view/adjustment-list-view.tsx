@@ -36,8 +36,8 @@ import AdjustmentTableRow from '../adjustment-table-row';
 
 const TABLE_HEAD = [
   { id: 'title', label: 'Adjustment' },
-  { id: 'type', label: 'Type' },
-  { id: 'detail', label: 'Detail' },
+  { id: 'category', label: 'Category' },
+  { id: 'description', label: 'Description' },
 ];
 
 export default function AdjustmentListView() {
@@ -49,17 +49,17 @@ export default function AdjustmentListView() {
 
   const [tableData, setTableData] = useState<IAdjustmentItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [typeFilter, setTypeFilter] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('');
 
   useEffect(() => {
     setTableData(adjustments);
   }, [adjustments]);
 
-  const typeOptions = useMemo(() => {
-    const types = tableData
-      .map((row) => row.type)
-      .filter((t): t is string => !!t);
-    return Array.from(new Set(types)).sort();
+  const categoryOptions = useMemo(() => {
+    const categories = tableData
+      .map((row) => row.category)
+      .filter((c): c is string => !!c);
+    return Array.from(new Set(categories)).sort();
   }, [tableData]);
 
   const handleSearch = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,8 +67,8 @@ export default function AdjustmentListView() {
     table.onResetPage();
   }, [table]);
 
-  const handleTypeFilter = useCallback((event: SelectChangeEvent) => {
-    setTypeFilter(event.target.value);
+  const handleCategoryFilter = useCallback((event: SelectChangeEvent) => {
+    setCategoryFilter(event.target.value);
     table.onResetPage();
   }, [table]);
 
@@ -76,13 +76,13 @@ export default function AdjustmentListView() {
     const matchesSearch = !searchQuery || (() => {
       const q = searchQuery.toLowerCase();
       return (
-        (row.title?.toLowerCase().includes(q) ?? false) ||
-        (row.type?.toLowerCase().includes(q) ?? false) ||
-        (row.detail?.toLowerCase().includes(q) ?? false)
+        row.title?.toLowerCase().includes(q) ||
+        row.category?.toLowerCase().includes(q) ||
+        row.description?.toLowerCase().includes(q)
       );
     })();
-    const matchesType = !typeFilter || row.type === typeFilter;
-    return matchesSearch && matchesType;
+    const matchesCategory = !categoryFilter || row.category === categoryFilter;
+    return matchesSearch && matchesCategory;
   });
 
   const notFound = !adjustmentsLoading && !(dataFiltered.length > 0);
@@ -124,7 +124,7 @@ export default function AdjustmentListView() {
             fullWidth
             value={searchQuery}
             onChange={handleSearch}
-            placeholder="Search by title, type or detail..."
+            placeholder="Search by title, category or description..."
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -135,16 +135,16 @@ export default function AdjustmentListView() {
           />
 
           <FormControl sx={{ minWidth: 180, flexShrink: 0 }}>
-            <InputLabel>Filter by type</InputLabel>
+            <InputLabel>Filter by category</InputLabel>
             <Select
-              value={typeFilter}
-              label="Filter by type"
-              onChange={handleTypeFilter}
+              value={categoryFilter}
+              label="Filter by category"
+              onChange={handleCategoryFilter}
             >
-              <MenuItem value="">All types</MenuItem>
-              {typeOptions.map((type) => (
-                <MenuItem key={type} value={type}>
-                  {type}
+              <MenuItem value="">All categories</MenuItem>
+              {categoryOptions.map((category) => (
+                <MenuItem key={category} value={category}>
+                  {category}
                 </MenuItem>
               ))}
             </Select>

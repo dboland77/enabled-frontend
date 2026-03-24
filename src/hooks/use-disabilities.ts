@@ -17,7 +17,7 @@ export function useDisabilities() {
 
     try {
       const { data, error: fetchError } = await supabase
-        .from('disability_index')
+        .from('disabilities')
         .select('*')
         .order('disability_name', { ascending: true });
 
@@ -37,7 +37,7 @@ export function useDisabilities() {
     async (id: string) => {
       try {
         const { error: deleteError } = await supabase
-          .from('disability_index')
+          .from('disabilities')
           .delete()
           .eq('id', id);
 
