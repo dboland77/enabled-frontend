@@ -56,9 +56,7 @@ export default function AdjustmentListView() {
   }, [adjustments]);
 
   const categoryOptions = useMemo(() => {
-    const categories = tableData
-      .map((row) => row.category)
-      .filter((c): c is string => !!c);
+    const categories = tableData.map((row) => row.category);
     return Array.from(new Set(categories)).sort();
   }, [tableData]);
 
@@ -76,9 +74,9 @@ export default function AdjustmentListView() {
     const matchesSearch = !searchQuery || (() => {
       const q = searchQuery.toLowerCase();
       return (
-        row.title?.toLowerCase().includes(q) ||
-        row.category?.toLowerCase().includes(q) ||
-        row.description?.toLowerCase().includes(q)
+        row.title.toLowerCase().includes(q) ||
+        row.category.toLowerCase().includes(q) ||
+        row.description.toLowerCase().includes(q)
       );
     })();
     const matchesCategory = !categoryFilter || row.category === categoryFilter;

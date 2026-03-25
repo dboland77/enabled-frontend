@@ -68,9 +68,7 @@ export default function DisabilityListView() {
   }, [disabilities]);
 
   const categoryOptions = useMemo(() => {
-    const categories = tableData
-      .map((row) => row.category)
-      .filter((c): c is string => !!c);
+    const categories = tableData.map((row) => row.category);
     return Array.from(new Set(categories)).sort();
   }, [tableData]);
 
@@ -88,8 +86,8 @@ export default function DisabilityListView() {
     const matchesSearch = !searchQuery || (() => {
       const q = searchQuery.toLowerCase();
       return (
-        row.disability_name?.toLowerCase().includes(q) ||
-        row.category?.toLowerCase().includes(q) ||
+        row.disability_name.toLowerCase().includes(q) ||
+        row.category.toLowerCase().includes(q) ||
         row.disability_nhs_slug?.toLowerCase().includes(q)
       );
     })();
