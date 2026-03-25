@@ -2,7 +2,8 @@ export type IAdjustmentFilterValue = string | string[];
 
 export type IAdjustmentFilters = {
   category: string[];
-  disabilities: string[];
+  title: string[];
+  type: string[];
 };
 
 export type IAdjustmentItem = {

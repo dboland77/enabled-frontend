@@ -9,7 +9,9 @@ import { NavListProps, NavSubListProps } from '@/components/nav-section/types';
 export default function NavList({ data, depth, slotProps }: NavListProps) {
   const pathname = usePathname();
 
-  const active = data.path === pathname || (!!data.children && data.children.some((child) => child.path === pathname));
+  const active =
+    data.path === pathname ||
+    (!!data.children && data.children.some((child: any) => child.path === pathname));
 
   const [openMenu, setOpenMenu] = useState(active);
 
@@ -22,7 +24,7 @@ export default function NavList({ data, depth, slotProps }: NavListProps) {
 
   const handleToggleMenu = useCallback(() => {
     if (data.children) {
-      setOpenMenu((prev) => !prev);
+      setOpenMenu((prev: any) => !prev);
     }
   }, [data.children]);
 

@@ -98,12 +98,8 @@ export default function AdjustmentDetailsView({ id }: Props) {
         <Stack spacing={3}>
           <Stack direction="row" alignItems="center" justifyContent="space-between">
             <Typography variant="h4">{adjustment.title}</Typography>
-            {adjustment.type && (
-              <Chip
-                label={adjustment.type}
-                color="primary"
-                variant="soft"
-              />
+            {adjustment.category && (
+              <Chip label={adjustment.category} color="primary" variant="soft" />
             )}
           </Stack>
 
@@ -111,10 +107,10 @@ export default function AdjustmentDetailsView({ id }: Props) {
 
           <Stack spacing={1}>
             <Typography variant="subtitle1" color="text.secondary">
-              Detail
+              Description
             </Typography>
             <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
-              {adjustment.detail || 'No detail provided'}
+              {adjustment.description || 'No description provided'}
             </Typography>
           </Stack>
         </Stack>

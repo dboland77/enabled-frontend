@@ -12,6 +12,9 @@ import { IDisabilityItem } from '@/types/disability';
 
 type Props = {
   disability: IDisabilityItem;
+  onView?: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
 };
 
 export default function DisabilityItem({ disability }: Props) {
@@ -57,13 +60,7 @@ export default function DisabilityItem({ disability }: Props) {
         />
       </Box>
 
-      <ListItemText
-        sx={{ mt: 7, mb: 1 }}
-        primary={disability_name}
-        secondary={category}
-        primaryTypographyProps={{ typography: 'subtitle1' }}
-        secondaryTypographyProps={{ component: 'span', mt: 0.5 }}
-      />
+      <ListItemText sx={{ mt: 7, mb: 1 }} primary={disability_name} secondary={category} />
 
       {disability_nhs_slug && (
         <Link

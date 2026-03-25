@@ -27,18 +27,13 @@ export default function AdjustmentFiltersResult({
     onFilters('adjustmentType', inputValue);
   };
 
-  const handleRemoveLocations = (inputValue: string) => {
-    const newValue = filters.locations.filter((item: any) => item !== inputValue);
+  const handleRemoveAdjustments = (inputValue: string) => {
+    const newValue = filters.title.filter((item: any) => item !== inputValue);
     onFilters('locations', newValue);
   };
 
-  const handleRemoveBenefits = (inputValue: string) => {
-    const newValue = filters.benefits.filter((item: any) => item !== inputValue);
-    onFilters('benefits', newValue);
-  };
-
-  const handleRemoveDisabilities = (inputValue: string) => {
-    const newValue = filters.disabilities.filter((item: any) => item !== inputValue);
+  const handleRemoveCategories = (inputValue: string) => {
+    const newValue = filters.category.filter((item: any) => item !== inputValue);
     onFilters('disabilities', newValue);
   };
 
@@ -52,9 +47,9 @@ export default function AdjustmentFiltersResult({
       </Box>
 
       <Stack flexGrow={1} spacing={1} direction="row" flexWrap="wrap" alignItems="center">
-        {!!filters.adjustmentType.length && (
+        {!!filters.type.length && (
           <Block label="Adjustment Types:">
-            {filters.adjustmentType.map((item: any) => (
+            {filters.type.map((item: any) => (
               <Chip
                 key={item}
                 label={item}
@@ -65,40 +60,27 @@ export default function AdjustmentFiltersResult({
           </Block>
         )}
 
-        {!!filters.disabilities.length && (
-          <Block label="Disabilities:">
-            {filters.disabilities.map((item: any) => (
+        {!!filters.category.length && (
+          <Block label="Categories:">
+            {filters.category.map((item: any) => (
               <Chip
                 key={item}
                 label={item}
                 size="small"
-                onDelete={() => handleRemoveDisabilities(item)}
+                onDelete={() => handleRemoveCategories(item)}
               />
             ))}
           </Block>
         )}
 
-        {!!filters.locations.length && (
-          <Block label="Locations:">
-            {filters.locations.map((item: any) => (
+        {!!filters.title.length && (
+          <Block label="Titles:">
+            {filters.title.map((item: any) => (
               <Chip
                 key={item}
                 label={item}
                 size="small"
-                onDelete={() => handleRemoveLocations(item)}
-              />
-            ))}
-          </Block>
-        )}
-
-        {!!filters.benefits.length && (
-          <Block label="Benefits:">
-            {filters.benefits.map((item: any) => (
-              <Chip
-                key={item}
-                label={item}
-                size="small"
-                onDelete={() => handleRemoveBenefits(item)}
+                onDelete={() => handleRemoveAdjustments(item)}
               />
             ))}
           </Block>
