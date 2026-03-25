@@ -30,12 +30,12 @@ export default function AdjustmentCardsView() {
     setSearchQuery(event.target.value);
   }, []);
 
-  // Map adjustments to card format (handle nullable fields)
+  // Map adjustments to card format
   const adjustmentCards: IAdjustmentCard[] = adjustments.map((adj) => ({
     id: adj.id,
-    title: adj.title || '',
-    type: adj.type || '',
-    detail: adj.detail || '',
+    title: adj.title,
+    category: adj.category,
+    description: adj.description,
   }));
 
   const filteredCards = adjustmentCards.filter((card) => {
@@ -43,8 +43,8 @@ export default function AdjustmentCardsView() {
     const q = searchQuery.toLowerCase();
     return (
       card.title.toLowerCase().includes(q) ||
-      card.type.toLowerCase().includes(q) ||
-      card.detail.toLowerCase().includes(q)
+      card.category.toLowerCase().includes(q) ||
+      card.description.toLowerCase().includes(q)
     );
   });
 

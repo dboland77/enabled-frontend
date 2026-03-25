@@ -53,8 +53,8 @@ export default function AdjustmentTableRow({ row, selected, onSelectRow }: Props
       </TableCell>
 
       <TableCell sx={{ whiteSpace: 'nowrap' }}>
-        {type && (
-          <Chip label={type} size="small" variant="soft" color="primary" />
+        {category && (
+          <Chip label={category} size="small" variant="soft" color="primary" />
         )}
       </TableCell>
 
@@ -69,7 +69,7 @@ export default function AdjustmentTableRow({ row, selected, onSelectRow }: Props
             whiteSpace: 'nowrap',
           }}
         >
-          {truncatedDetail}
+          {truncatedDescription}
         </Typography>
       </TableCell>
     </TableRow>

@@ -36,7 +36,8 @@ export default function DisabilityCardsView() {
     const q = searchQuery.toLowerCase();
     return (
       d.disability_name.toLowerCase().includes(q) ||
-      d.disability_nhs_slug.toLowerCase().includes(q)
+      d.category?.toLowerCase().includes(q) ||
+      d.disability_nhs_slug?.toLowerCase().includes(q)
     );
   });
 

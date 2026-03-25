@@ -16,7 +16,7 @@ type Props = {
 export default function AdjustmentCard({ adjustment }: Props) {
   const theme = useTheme();
 
-  const { title, type, coverUrl, thumbnailUrl } = adjustment;
+  const { title, category, coverUrl, thumbnailUrl } = adjustment;
 
   return (
     <Card sx={{ textAlign: 'center' }}>
@@ -58,7 +58,7 @@ export default function AdjustmentCard({ adjustment }: Props) {
       <ListItemText
         sx={{ mt: 7, mb: 1 }}
         primary={title}
-        secondary={type}
+        secondary={category}
         primaryTypographyProps={{ typography: 'subtitle1' }}
         secondaryTypographyProps={{ component: 'span', mt: 0.5 }}
       />

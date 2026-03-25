@@ -43,6 +43,7 @@ import {
 
 const TABLE_HEAD = [
   { id: 'disability_name', label: 'Name' },
+  { id: 'category', label: 'Category' },
   { id: 'disability_nhs_slug', label: 'NHS Slug' },
   { id: '', label: '' },
 ];
@@ -60,17 +61,17 @@ export default function DisabilityListView() {
 
   const [tableData, setTableData] = useState<IDisabilityItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [letterFilter, setLetterFilter] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('');
 
   useEffect(() => {
     setTableData(disabilities);
   }, [disabilities]);
 
-  const letterOptions = useMemo(() => {
-    const letters = tableData
-      .map((row) => row.disability_name?.charAt(0).toUpperCase())
-      .filter((l): l is string => !!l);
-    return Array.from(new Set(letters)).sort();
+  const categoryOptions = useMemo(() => {
+    const categories = tableData
+      .map((row) => row.category)
+      .filter((c): c is string => !!c);
+    return Array.from(new Set(categories)).sort();
   }, [tableData]);
 
   const handleSearch = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
@@ -78,8 +79,8 @@ export default function DisabilityListView() {
     table.onResetPage();
   }, [table]);
 
-  const handleLetterFilter = useCallback((event: SelectChangeEvent) => {
-    setLetterFilter(event.target.value);
+  const handleCategoryFilter = useCallback((event: SelectChangeEvent) => {
+    setCategoryFilter(event.target.value);
     table.onResetPage();
   }, [table]);
 
@@ -88,11 +89,12 @@ export default function DisabilityListView() {
       const q = searchQuery.toLowerCase();
       return (
         row.disability_name?.toLowerCase().includes(q) ||
+        row.category?.toLowerCase().includes(q) ||
         row.disability_nhs_slug?.toLowerCase().includes(q)
       );
     })();
-    const matchesLetter = !letterFilter || row.disability_name?.charAt(0).toUpperCase() === letterFilter;
-    return matchesSearch && matchesLetter;
+    const matchesCategory = !categoryFilter || row.category === categoryFilter;
+    return matchesSearch && matchesCategory;
   });
 
   const notFound = !disabilitiesLoading && !(dataFiltered.length > 0);
@@ -179,16 +181,16 @@ export default function DisabilityListView() {
             />
 
             <FormControl sx={{ minWidth: 180, flexShrink: 0 }}>
-              <InputLabel>Filter by letter</InputLabel>
+              <InputLabel>Filter by category</InputLabel>
               <Select
-                value={letterFilter}
-                label="Filter by letter"
-                onChange={handleLetterFilter}
+                value={categoryFilter}
+                label="Filter by category"
+                onChange={handleCategoryFilter}
               >
-                <MenuItem value="">All</MenuItem>
-                {letterOptions.map((letter) => (
-                  <MenuItem key={letter} value={letter}>
-                    {letter}
+                <MenuItem value="">All categories</MenuItem>
+                {categoryOptions.map((category) => (
+                  <MenuItem key={category} value={category}>
+                    {category}
                   </MenuItem>
                 ))}
               </Select>
@@ -247,16 +249,21 @@ export default function DisabilityListView() {
                           />
                         </TableCell>
                         <TableCell>{row.disability_name}</TableCell>
+                        <TableCell>{row.category}</TableCell>
                         <TableCell>
-                          <Link
-                            href={`https://www.nhs.uk/conditions/${row.disability_nhs_slug}`}
-                            target="_blank"
-                            rel="noreferrer"
-                            underline="hover"
-                            color="text.secondary"
-                          >
-                            {row.disability_nhs_slug}
-                          </Link>
+                          {row.disability_nhs_slug ? (
+                            <Link
+                              href={`https://www.nhs.uk/conditions/${row.disability_nhs_slug}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              underline="hover"
+                              color="text.secondary"
+                            >
+                              {row.disability_nhs_slug}
+                            </Link>
+                          ) : (
+                            '-'
+                          )}
                         </TableCell>
                         <TableCell align="right">
                           <IconButton onClick={() => handleEditRow(row.id)}>

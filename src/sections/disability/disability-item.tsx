@@ -17,7 +17,7 @@ type Props = {
 export default function DisabilityItem({ disability }: Props) {
   const theme = useTheme();
 
-  const { disability_name, disability_nhs_slug } = disability;
+  const { disability_name, disability_nhs_slug, category } = disability;
 
   return (
     <Card sx={{ textAlign: 'center' }}>
@@ -60,20 +60,24 @@ export default function DisabilityItem({ disability }: Props) {
       <ListItemText
         sx={{ mt: 7, mb: 1 }}
         primary={disability_name}
-        secondary={
-          <Link
-            href={`https://www.nhs.uk/conditions/${disability_nhs_slug}`}
-            target="_blank"
-            rel="noreferrer"
-            underline="hover"
-            color="text.secondary"
-          >
-            {disability_nhs_slug}
-          </Link>
-        }
+        secondary={category}
         primaryTypographyProps={{ typography: 'subtitle1' }}
         secondaryTypographyProps={{ component: 'span', mt: 0.5 }}
       />
+
+      {disability_nhs_slug && (
+        <Link
+          href={`https://www.nhs.uk/conditions/${disability_nhs_slug}`}
+          target="_blank"
+          rel="noreferrer"
+          underline="hover"
+          variant="caption"
+          color="text.secondary"
+          sx={{ display: 'block', mb: 1 }}
+        >
+          NHS: {disability_nhs_slug}
+        </Link>
+      )}
 
       <Divider sx={{ borderStyle: 'dashed' }} />
     </Card>
