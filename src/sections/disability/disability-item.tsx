@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography';
 import { AvatarShape } from '@/assets/illustrations';
 import { IDisabilityItem } from '@/types/disability';
 
-const NHS_LOGO_URL = 'https://digital.nhs.uk/binaries/content/gallery/website/developer/api-catalogue/nhs-website-content/nhs-attribution.png';
+const NHS_LOGO_URL = 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/NHS%2010mm%20-%20RGB%20Blue%20on%20white-6UFE7zxSQtJnlvAPsWWgeiMzKpO2t6.jpg';
 
 type Props = {
   disability: IDisabilityItem;
@@ -68,7 +68,7 @@ export default function DisabilityItem({ disability }: Props) {
               height: 0,
               paddingTop: '56.25%',
               position: 'relative',
-              bgcolor: '#005eb8',
+              bgcolor: 'white',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
