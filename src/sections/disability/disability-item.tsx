@@ -1,9 +1,10 @@
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
+import Chip from '@mui/material/Chip';
 import Link from '@mui/material/Link';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
-import ListItemText from '@mui/material/ListItemText';
+import Typography from '@mui/material/Typography';
 import { alpha, useTheme } from '@mui/material/styles';
 
 import Image from '@/components/image';
@@ -60,7 +61,11 @@ export default function DisabilityItem({ disability }: Props) {
         />
       </Box>
 
-      <ListItemText sx={{ mt: 7, mb: 1 }} primary={disability_name} secondary={category} />
+      <Typography variant="subtitle1" sx={{ mt: 7, mb: 0.5 }}>
+        {disability_name}
+      </Typography>
+
+      <Chip label={category} size="small" variant="soft" color="primary" sx={{ mb: 1 }} />
 
       {disability_nhs_slug && (
         <Link

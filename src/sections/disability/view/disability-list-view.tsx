@@ -14,6 +14,7 @@ import Alert from '@mui/material/Alert';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import Checkbox from '@mui/material/Checkbox';
+import Chip from '@mui/material/Chip';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
@@ -247,7 +248,9 @@ export default function DisabilityListView() {
                           />
                         </TableCell>
                         <TableCell>{row.disability_name}</TableCell>
-                        <TableCell>{row.category}</TableCell>
+                        <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                          <Chip label={row.category} size="small" variant="soft" color="primary" />
+                        </TableCell>
                         <TableCell>
                           {row.disability_nhs_slug ? (
                             <Link
