@@ -3,8 +3,8 @@ import Card from '@mui/material/Card';
 import Chip from '@mui/material/Chip';
 import CardActionArea from '@mui/material/CardActionArea';
 import Avatar from '@mui/material/Avatar';
-import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
+import { alpha, useTheme } from '@mui/material/styles';
 
 import { AvatarShape } from '@/assets/illustrations';
 import { IDisabilityItem } from '@/types/disability';
@@ -16,6 +16,8 @@ type Props = {
 };
 
 export default function DisabilityItem({ disability }: Props) {
+  const theme = useTheme();
+
   const { disability_name, disability_nhs_slug, category } = disability;
 
   const nhsUrl = disability_nhs_slug 
@@ -29,13 +31,24 @@ export default function DisabilityItem({ disability }: Props) {
   };
 
   return (
-    <Card>
+    <Card
+      sx={{
+        overflow: 'hidden',
+        bgcolor: 'background.paper',
+      }}
+    >
       <CardActionArea 
         onClick={handleClick} 
         disabled={!nhsUrl}
-        sx={{ textAlign: 'center' }}
       >
-        <Box sx={{ position: 'relative' }}>
+        {/* Top section - NHS logo with primary color tint */}
+        <Box
+          sx={{
+            position: 'relative',
+            bgcolor: alpha(theme.palette.primary.main, 0.08),
+            borderBottom: `1px solid ${alpha(theme.palette.primary.main, 0.12)}`,
+          }}
+        >
           <AvatarShape
             sx={{
               left: 0,
@@ -44,6 +57,7 @@ export default function DisabilityItem({ disability }: Props) {
               mx: 'auto',
               bottom: -26,
               position: 'absolute',
+              color: 'background.paper',
             }}
           />
 
@@ -58,6 +72,9 @@ export default function DisabilityItem({ disability }: Props) {
               bottom: -32,
               mx: 'auto',
               position: 'absolute',
+              bgcolor: theme.palette.primary.main,
+              color: theme.palette.primary.contrastText,
+              fontWeight: 600,
             }}
           >
             {disability_name.charAt(0).toUpperCase()}
@@ -68,7 +85,6 @@ export default function DisabilityItem({ disability }: Props) {
               height: 0,
               paddingTop: '56.25%',
               position: 'relative',
-              bgcolor: 'white',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -91,19 +107,46 @@ export default function DisabilityItem({ disability }: Props) {
           </Box>
         </Box>
 
-        <Typography variant="subtitle1" sx={{ mt: 7, mb: 0.5 }}>
-          {disability_name}
-        </Typography>
-
-        <Chip label={category} size="small" variant="soft" color="primary" sx={{ mb: 1 }} />
-
-        {disability_nhs_slug && (
-          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
-            {disability_nhs_slug}
+        {/* Bottom section - content on clean background */}
+        <Box
+          sx={{
+            textAlign: 'center',
+            pt: 5,
+            pb: 2.5,
+            px: 2,
+            bgcolor: 'background.paper',
+          }}
+        >
+          <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>
+            {disability_name}
           </Typography>
-        )}
 
-        <Divider sx={{ borderStyle: 'dashed' }} />
+          <Chip 
+            label={category} 
+            size="small" 
+            variant="soft" 
+            color="primary" 
+            sx={{ mb: 1.5 }} 
+          />
+
+          {disability_nhs_slug && (
+            <Typography 
+              variant="caption" 
+              sx={{ 
+                display: 'block', 
+                color: 'text.secondary',
+                bgcolor: alpha(theme.palette.grey[500], 0.08),
+                borderRadius: 0.75,
+                py: 0.5,
+                px: 1,
+                mx: 'auto',
+                width: 'fit-content',
+              }}
+            >
+              {disability_nhs_slug}
+            </Typography>
+          )}
+        </Box>
       </CardActionArea>
     </Card>
   );

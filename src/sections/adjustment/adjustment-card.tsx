@@ -2,11 +2,9 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Chip from '@mui/material/Chip';
 import Avatar from '@mui/material/Avatar';
-import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import { alpha, useTheme } from '@mui/material/styles';
 
-import Image from '@/components/image';
 import { AvatarShape } from '@/assets/illustrations';
 import { IAdjustmentCard } from '@/types/adjustment';
 
@@ -17,11 +15,23 @@ type Props = {
 export default function AdjustmentCard({ adjustment }: Props) {
   const theme = useTheme();
 
-  const { title, category, coverUrl, thumbnailUrl } = adjustment;
+  const { title, category } = adjustment;
 
   return (
-    <Card sx={{ textAlign: 'center' }}>
-      <Box sx={{ position: 'relative' }}>
+    <Card
+      sx={{
+        overflow: 'hidden',
+        bgcolor: 'background.paper',
+      }}
+    >
+      {/* Top section - primary color gradient */}
+      <Box
+        sx={{
+          position: 'relative',
+          bgcolor: alpha(theme.palette.primary.main, 0.08),
+          borderBottom: `1px solid ${alpha(theme.palette.primary.main, 0.12)}`,
+        }}
+      >
         <AvatarShape
           sx={{
             left: 0,
@@ -30,12 +40,12 @@ export default function AdjustmentCard({ adjustment }: Props) {
             mx: 'auto',
             bottom: -26,
             position: 'absolute',
+            color: 'background.paper',
           }}
         />
 
         <Avatar
           alt={title}
-          src={thumbnailUrl}
           sx={{
             width: 64,
             height: 64,
@@ -45,24 +55,45 @@ export default function AdjustmentCard({ adjustment }: Props) {
             bottom: -32,
             mx: 'auto',
             position: 'absolute',
+            bgcolor: theme.palette.primary.main,
+            color: theme.palette.primary.contrastText,
+            fontWeight: 600,
           }}
-        />
+        >
+          {title.charAt(0).toUpperCase()}
+        </Avatar>
 
-        <Image
-          src={coverUrl}
-          alt={coverUrl}
-          ratio="16/9"
-          overlay={alpha(theme.palette.grey[900], 0.48)}
+        <Box
+          sx={{
+            height: 0,
+            paddingTop: '56.25%',
+            position: 'relative',
+            background: `linear-gradient(135deg, ${alpha(theme.palette.primary.light, 0.2)} 0%, ${alpha(theme.palette.primary.main, 0.1)} 100%)`,
+          }}
         />
       </Box>
 
-      <Typography variant="subtitle1" sx={{ mt: 7, mb: 0.5 }}>
-        {title}
-      </Typography>
+      {/* Bottom section - content on clean background */}
+      <Box
+        sx={{
+          textAlign: 'center',
+          pt: 5,
+          pb: 2.5,
+          px: 2,
+          bgcolor: 'background.paper',
+        }}
+      >
+        <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>
+          {title}
+        </Typography>
 
-      <Chip label={category} size="small" variant="soft" color="primary" sx={{ mb: 1 }} />
-
-      <Divider sx={{ borderStyle: 'dashed' }} />
+        <Chip 
+          label={category} 
+          size="small" 
+          variant="soft" 
+          color="primary" 
+        />
+      </Box>
     </Card>
   );
 }
