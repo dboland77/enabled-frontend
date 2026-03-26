@@ -71,8 +71,8 @@ export function useNavData() {
             path: '/dashboard/adjustments',
             icon: ICONS.file,
             children: [
-              { title: 'browse', path: '/dashboard/adjustments' },
-              { title: 'choose', path: '/dashboard/adjustments/cards' },
+              { title: 'cards', path: '/dashboard/adjustments/cards' },
+              { title: 'list', path: '/dashboard/adjustments' },
               { title: 'create', path: '/dashboard/adjustments/new' },
             ],
           },
