@@ -1,8 +1,9 @@
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
+import Chip from '@mui/material/Chip';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
-import ListItemText from '@mui/material/ListItemText';
+import Typography from '@mui/material/Typography';
 import { alpha, useTheme } from '@mui/material/styles';
 
 import Image from '@/components/image';
@@ -55,13 +56,11 @@ export default function AdjustmentCard({ adjustment }: Props) {
         />
       </Box>
 
-      <ListItemText
-        sx={{ mt: 7, mb: 1 }}
-        primary={title}
-        secondary={category}
-        primaryTypographyProps={{ typography: 'subtitle1' }}
-        secondaryTypographyProps={{ component: 'span', mt: 0.5 }}
-      />
+      <Typography variant="subtitle1" sx={{ mt: 7, mb: 0.5 }}>
+        {title}
+      </Typography>
+
+      <Chip label={category} size="small" variant="soft" color="primary" sx={{ mb: 1 }} />
 
       <Divider sx={{ borderStyle: 'dashed' }} />
     </Card>

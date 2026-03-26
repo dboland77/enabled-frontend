@@ -2,12 +2,14 @@
 
 import { useState, useCallback } from 'react';
 
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Alert from '@mui/material/Alert';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
+import Pagination from '@mui/material/Pagination';
 
 import Iconify from '@/components/iconify';
 import EmptyContent from '@/components/empty-content';
@@ -19,15 +21,23 @@ import { IAdjustmentCard } from '@/types/adjustment';
 
 import AdjustmentCardList from '../adjustment-card-list';
 
+const ITEMS_PER_PAGE = 6;
+
 export default function AdjustmentCardsView() {
   const settings = useSettingsContext();
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [page, setPage] = useState(1);
 
   const { adjustments, loading: adjustmentsLoading, error } = useAdjustments();
 
   const handleSearch = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
+    setPage(1);
+  }, []);
+
+  const handlePageChange = useCallback((_: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value);
   }, []);
 
   // Map adjustments to card format
@@ -47,6 +57,9 @@ export default function AdjustmentCardsView() {
       card.description.toLowerCase().includes(q)
     );
   });
+
+  const totalPages = Math.ceil(filteredCards.length / ITEMS_PER_PAGE);
+  const paginatedCards = filteredCards.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
   const notFound = !adjustmentsLoading && filteredCards.length === 0;
 
@@ -100,7 +113,20 @@ export default function AdjustmentCardsView() {
       {notFound ? (
         <EmptyContent filled title="No adjustments found" sx={{ py: 10 }} />
       ) : (
-        <AdjustmentCardList adjustments={filteredCards} />
+        <>
+          <AdjustmentCardList adjustments={paginatedCards} />
+
+          {totalPages > 1 && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+              <Pagination
+                count={totalPages}
+                page={page}
+                onChange={handlePageChange}
+                color="primary"
+              />
+            </Box>
+          )}
+        </>
       )}
     </Container>
   );
