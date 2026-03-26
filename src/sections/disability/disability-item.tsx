@@ -1,87 +1,110 @@
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Chip from '@mui/material/Chip';
-import Link from '@mui/material/Link';
+import CardActionArea from '@mui/material/CardActionArea';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
-import { alpha, useTheme } from '@mui/material/styles';
 
-import Image from '@/components/image';
 import { AvatarShape } from '@/assets/illustrations';
 import { IDisabilityItem } from '@/types/disability';
 
+const NHS_LOGO_URL = 'https://digital.nhs.uk/binaries/content/gallery/website/developer/api-catalogue/nhs-website-content/nhs-attribution.png';
+
 type Props = {
   disability: IDisabilityItem;
-  onView?: () => void;
-  onEdit?: () => void;
-  onDelete?: () => void;
 };
 
 export default function DisabilityItem({ disability }: Props) {
-  const theme = useTheme();
-
   const { disability_name, disability_nhs_slug, category } = disability;
 
+  const nhsUrl = disability_nhs_slug 
+    ? `https://www.nhs.uk/conditions/${disability_nhs_slug}` 
+    : null;
+
+  const handleClick = () => {
+    if (nhsUrl) {
+      window.open(nhsUrl, '_blank', 'noopener,noreferrer');
+    }
+  };
+
   return (
-    <Card sx={{ textAlign: 'center' }}>
-      <Box sx={{ position: 'relative' }}>
-        <AvatarShape
-          sx={{
-            left: 0,
-            right: 0,
-            zIndex: 10,
-            mx: 'auto',
-            bottom: -26,
-            position: 'absolute',
-          }}
-        />
+    <Card>
+      <CardActionArea 
+        onClick={handleClick} 
+        disabled={!nhsUrl}
+        sx={{ textAlign: 'center' }}
+      >
+        <Box sx={{ position: 'relative' }}>
+          <AvatarShape
+            sx={{
+              left: 0,
+              right: 0,
+              zIndex: 10,
+              mx: 'auto',
+              bottom: -26,
+              position: 'absolute',
+            }}
+          />
 
-        <Avatar
-          alt={disability_name}
-          sx={{
-            width: 64,
-            height: 64,
-            zIndex: 11,
-            left: 0,
-            right: 0,
-            bottom: -32,
-            mx: 'auto',
-            position: 'absolute',
-          }}
-        >
-          {disability_name.charAt(0).toUpperCase()}
-        </Avatar>
+          <Avatar
+            alt={disability_name}
+            sx={{
+              width: 64,
+              height: 64,
+              zIndex: 11,
+              left: 0,
+              right: 0,
+              bottom: -32,
+              mx: 'auto',
+              position: 'absolute',
+            }}
+          >
+            {disability_name.charAt(0).toUpperCase()}
+          </Avatar>
 
-        <Image
-          src=""
-          alt={disability_name}
-          ratio="16/9"
-          overlay={alpha(theme.palette.grey[900], 0.48)}
-        />
-      </Box>
+          <Box
+            sx={{
+              height: 0,
+              paddingTop: '56.25%',
+              position: 'relative',
+              bgcolor: '#005eb8',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Box
+              component="img"
+              src={NHS_LOGO_URL}
+              alt="NHS"
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                maxWidth: '80%',
+                maxHeight: '60%',
+                objectFit: 'contain',
+              }}
+            />
+          </Box>
+        </Box>
 
-      <Typography variant="subtitle1" sx={{ mt: 7, mb: 0.5 }}>
-        {disability_name}
-      </Typography>
+        <Typography variant="subtitle1" sx={{ mt: 7, mb: 0.5 }}>
+          {disability_name}
+        </Typography>
 
-      <Chip label={category} size="small" variant="soft" color="primary" sx={{ mb: 1 }} />
+        <Chip label={category} size="small" variant="soft" color="primary" sx={{ mb: 1 }} />
 
-      {disability_nhs_slug && (
-        <Link
-          href={`https://www.nhs.uk/conditions/${disability_nhs_slug}`}
-          target="_blank"
-          rel="noreferrer"
-          underline="hover"
-          variant="caption"
-          color="text.secondary"
-          sx={{ display: 'block', mb: 1 }}
-        >
-          NHS: {disability_nhs_slug}
-        </Link>
-      )}
+        {disability_nhs_slug && (
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
+            {disability_nhs_slug}
+          </Typography>
+        )}
 
-      <Divider sx={{ borderStyle: 'dashed' }} />
+        <Divider sx={{ borderStyle: 'dashed' }} />
+      </CardActionArea>
     </Card>
   );
 }
