@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 
 import { createClient } from '@/lib/supabase/client';
 import { IDisabilityItem } from '@/types/disability';
 
 export function useDisabilities() {
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
   const [disabilities, setDisabilities] = useState<IDisabilityItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -17,14 +17,14 @@ export function useDisabilities() {
 
     try {
       const { data, error: fetchError } = await supabase
-        .from('disability_index')
+        .from('disabilities')
         .select('*')
         .order('disability_name', { ascending: true });
 
       if (fetchError) {
         setError(fetchError.message);
       } else {
-        setDisabilities(data as IDisabilityItem[]);
+        setDisabilities((data || []) as IDisabilityItem[]);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch disabilities');
@@ -37,7 +37,7 @@ export function useDisabilities() {
     async (id: string) => {
       try {
         const { error: deleteError } = await supabase
-          .from('disability_index')
+          .from('disabilities')
           .delete()
           .eq('id', id);
 

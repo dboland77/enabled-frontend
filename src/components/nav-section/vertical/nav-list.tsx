@@ -1,12 +1,18 @@
 import { useState, useEffect, useCallback } from 'react';
 
 import Collapse from '@mui/material/Collapse';
+import { usePathname } from 'next/navigation';
 
 import NavItem from '@/components/nav-section/vertical/nav-item';
 import { NavListProps, NavSubListProps } from '@/components/nav-section/types';
 
 export default function NavList({ data, depth, slotProps }: NavListProps) {
-  const active = false;
+  const pathname = usePathname();
+
+  const active =
+    data.path === pathname ||
+    (!!data.children && data.children.some((child: any) => child.path === pathname));
+
   const [openMenu, setOpenMenu] = useState(active);
 
   useEffect(() => {
@@ -14,11 +20,11 @@ export default function NavList({ data, depth, slotProps }: NavListProps) {
       handleCloseMenu();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [pathname]);
 
   const handleToggleMenu = useCallback(() => {
     if (data.children) {
-      setOpenMenu((prev) => !prev);
+      setOpenMenu((prev: any) => !prev);
     }
   }, [data.children]);
 

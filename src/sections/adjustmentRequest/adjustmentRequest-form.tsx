@@ -81,7 +81,7 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
   // Get unique adjustment types - combine database types with static options
   const adjustmentTypeOptions = useMemo(() => {
     const dbTypes = adjustments
-      .map((a) => a.type)
+      .map((a) => a.category)
       .filter((type): type is string => type !== null && type.trim() !== '');
     // Combine database types with static options, removing duplicates
     const allTypes = [...new Set([...ADJUSTMENT_TYPE_OPTIONS, ...dbTypes])];

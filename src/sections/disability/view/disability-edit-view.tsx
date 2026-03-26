@@ -19,6 +19,10 @@ export default function DisabilityEditView({ id }: Props) {
     id: '',
     disability_name: '',
     disability_nhs_slug: '',
+    category: '',
+    subcategory: '',
+    created_at: new Date(),
+    updated_at: new Date(),
   };
 
   return (

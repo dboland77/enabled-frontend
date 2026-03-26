@@ -1,7 +1,8 @@
 'use client';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 
 import Card from '@mui/material/Card';
+import Link from '@mui/material/Link';
 import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
@@ -13,9 +14,14 @@ import Alert from '@mui/material/Alert';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import Checkbox from '@mui/material/Checkbox';
+import Chip from '@mui/material/Chip';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
 
 import { useRouter } from 'next/navigation';
 import Iconify from '@/components/iconify';
@@ -30,9 +36,7 @@ import { IDisabilityItem } from '@/types/disability';
 
 import {
   useTable,
-  emptyRows,
   TableNoData,
-  TableEmptyRows,
   TableHeadCustom,
   TableSelectedAction,
   TablePaginationCustom,
@@ -40,6 +44,7 @@ import {
 
 const TABLE_HEAD = [
   { id: 'disability_name', label: 'Name' },
+  { id: 'category', label: 'Category' },
   { id: 'disability_nhs_slug', label: 'NHS Slug' },
   { id: '', label: '' },
 ];
@@ -57,24 +62,38 @@ export default function DisabilityListView() {
 
   const [tableData, setTableData] = useState<IDisabilityItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('');
 
-  // Sync tableData with disabilities from hook
   useEffect(() => {
     setTableData(disabilities);
   }, [disabilities]);
+
+  const categoryOptions = useMemo(() => {
+    const categories = tableData.map((row) => row.category);
+    return Array.from(new Set(categories)).sort();
+  }, [tableData]);
 
   const handleSearch = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
     table.onResetPage();
   }, [table]);
 
+  const handleCategoryFilter = useCallback((event: SelectChangeEvent) => {
+    setCategoryFilter(event.target.value);
+    table.onResetPage();
+  }, [table]);
+
   const dataFiltered = tableData.filter((row) => {
-    if (!searchQuery) return true;
-    const q = searchQuery.toLowerCase();
-    return (
-      row.disability_name?.toLowerCase().includes(q) ||
-      row.disability_nhs_slug?.toLowerCase().includes(q)
-    );
+    const matchesSearch = !searchQuery || (() => {
+      const q = searchQuery.toLowerCase();
+      return (
+        row.disability_name.toLowerCase().includes(q) ||
+        row.category.toLowerCase().includes(q) ||
+        row.disability_nhs_slug?.toLowerCase().includes(q)
+      );
+    })();
+    const matchesCategory = !categoryFilter || row.category === categoryFilter;
+    return matchesSearch && matchesCategory;
   });
 
   const notFound = !disabilitiesLoading && !(dataFiltered.length > 0);
@@ -83,8 +102,6 @@ export default function DisabilityListView() {
     table.page * table.rowsPerPage,
     table.page * table.rowsPerPage + table.rowsPerPage
   );
-
-  const denseHeight = table.dense ? 52 : 72;
 
   const handleDeleteRow = async (rowId: string) => {
     const success = await deleteDisability(rowId);
@@ -147,7 +164,7 @@ export default function DisabilityListView() {
         )}
 
         <Card>
-          <Stack sx={{ p: 2.5 }}>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ p: 2.5 }}>
             <TextField
               fullWidth
               value={searchQuery}
@@ -161,6 +178,22 @@ export default function DisabilityListView() {
                 ),
               }}
             />
+
+            <FormControl sx={{ minWidth: 180, flexShrink: 0 }}>
+              <InputLabel>Filter by category</InputLabel>
+              <Select
+                value={categoryFilter}
+                label="Filter by category"
+                onChange={handleCategoryFilter}
+              >
+                <MenuItem value="">All categories</MenuItem>
+                {categoryOptions.map((category) => (
+                  <MenuItem key={category} value={category}>
+                    {category}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Stack>
 
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
@@ -215,7 +248,24 @@ export default function DisabilityListView() {
                           />
                         </TableCell>
                         <TableCell>{row.disability_name}</TableCell>
-                        <TableCell>{row.disability_nhs_slug}</TableCell>
+                        <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                          <Chip label={row.category} size="small" variant="soft" color="primary" />
+                        </TableCell>
+                        <TableCell>
+                          {row.disability_nhs_slug ? (
+                            <Link
+                              href={`https://www.nhs.uk/conditions/${row.disability_nhs_slug}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              underline="hover"
+                              color="text.secondary"
+                            >
+                              {row.disability_nhs_slug}
+                            </Link>
+                          ) : (
+                            '-'
+                          )}
+                        </TableCell>
                         <TableCell align="right">
                           <IconButton onClick={() => handleEditRow(row.id)}>
                             <Iconify icon="solar:pen-bold" />
@@ -226,11 +276,6 @@ export default function DisabilityListView() {
                         </TableCell>
                       </TableRow>
                     ))}
-
-                  <TableEmptyRows
-                    height={denseHeight}
-                    emptyRows={emptyRows(table.page, table.rowsPerPage, tableData.length)}
-                  />
 
                   <TableNoData notFound={notFound} />
                 </TableBody>

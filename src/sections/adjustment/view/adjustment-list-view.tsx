@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
@@ -12,6 +12,10 @@ import Alert from '@mui/material/Alert';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
 
 import Iconify from '@/components/iconify';
 import Scrollbar from '@/components/scrollbar';
@@ -22,9 +26,7 @@ import { useAdjustments } from '@/hooks/use-adjustments';
 import { IAdjustmentItem } from '@/types/adjustment';
 import {
   useTable,
-  emptyRows,
   TableNoData,
-  TableEmptyRows,
   TableHeadCustom,
   TableSelectedAction,
   TablePaginationCustom,
@@ -34,8 +36,8 @@ import AdjustmentTableRow from '../adjustment-table-row';
 
 const TABLE_HEAD = [
   { id: 'title', label: 'Adjustment' },
-  { id: 'type', label: 'Type' },
-  { id: 'detail', label: 'Detail' },
+  { id: 'category', label: 'Category' },
+  { id: 'description', label: 'Description' },
 ];
 
 export default function AdjustmentListView() {
@@ -47,35 +49,41 @@ export default function AdjustmentListView() {
 
   const [tableData, setTableData] = useState<IAdjustmentItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('');
 
-  // Sync tableData with adjustments from hook
   useEffect(() => {
     setTableData(adjustments);
   }, [adjustments]);
+
+  const categoryOptions = useMemo(() => {
+    const categories = tableData.map((row) => row.category);
+    return Array.from(new Set(categories)).sort();
+  }, [tableData]);
 
   const handleSearch = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
     table.onResetPage();
   }, [table]);
 
+  const handleCategoryFilter = useCallback((event: SelectChangeEvent) => {
+    setCategoryFilter(event.target.value);
+    table.onResetPage();
+  }, [table]);
+
   const dataFiltered = tableData.filter((row) => {
-    if (!searchQuery) return true;
-    const q = searchQuery.toLowerCase();
-    return (
-      (row.title?.toLowerCase().includes(q) ?? false) ||
-      (row.type?.toLowerCase().includes(q) ?? false) ||
-      (row.detail?.toLowerCase().includes(q) ?? false)
-    );
+    const matchesSearch = !searchQuery || (() => {
+      const q = searchQuery.toLowerCase();
+      return (
+        row.title.toLowerCase().includes(q) ||
+        row.category.toLowerCase().includes(q) ||
+        row.description.toLowerCase().includes(q)
+      );
+    })();
+    const matchesCategory = !categoryFilter || row.category === categoryFilter;
+    return matchesSearch && matchesCategory;
   });
 
   const notFound = !adjustmentsLoading && !(dataFiltered.length > 0);
-
-  // const dataInPage = dataFiltered.slice(
-  //   table.page * table.rowsPerPage,
-  //   table.page * table.rowsPerPage + table.rowsPerPage
-  // );
-
-  const denseHeight = table.dense ? 52 : 72;
 
   return adjustmentsLoading ? (
     <ProgressBar />
@@ -109,21 +117,37 @@ export default function AdjustmentListView() {
       )}
 
       <Card>
-          <Stack sx={{ p: 2.5 }}>
-            <TextField
-              fullWidth
-              value={searchQuery}
-              onChange={handleSearch}
-              placeholder="Search by title, type or detail..."
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Stack>
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ p: 2.5 }}>
+          <TextField
+            fullWidth
+            value={searchQuery}
+            onChange={handleSearch}
+            placeholder="Search by title, category or description..."
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
+                </InputAdornment>
+              ),
+            }}
+          />
+
+          <FormControl sx={{ minWidth: 180, flexShrink: 0 }}>
+            <InputLabel>Filter by category</InputLabel>
+            <Select
+              value={categoryFilter}
+              label="Filter by category"
+              onChange={handleCategoryFilter}
+            >
+              <MenuItem value="">All categories</MenuItem>
+              {categoryOptions.map((category) => (
+                <MenuItem key={category} value={category}>
+                  {category}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Stack>
 
         <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
           <TableSelectedAction
@@ -169,11 +193,6 @@ export default function AdjustmentListView() {
                       onSelectRow={() => table.onSelectRow(row.id)}
                     />
                   ))}
-
-                <TableEmptyRows
-                  height={denseHeight}
-                  emptyRows={emptyRows(table.page, table.rowsPerPage, tableData.length)}
-                />
 
                 <TableNoData notFound={notFound} />
               </TableBody>

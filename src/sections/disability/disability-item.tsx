@@ -1,134 +1,153 @@
 import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
-import Stack from '@mui/material/Stack';
+import Chip from '@mui/material/Chip';
+import CardActionArea from '@mui/material/CardActionArea';
 import Avatar from '@mui/material/Avatar';
-import Divider from '@mui/material/Divider';
-import MenuItem from '@mui/material/MenuItem';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import ListItemText from '@mui/material/ListItemText';
+import { alpha, useTheme } from '@mui/material/styles';
 
-// import { paths } from '@/routes/paths';
-import Iconify from '@/components/iconify';
-import { fDate } from '@/utils/format-time';
+import { AvatarShape } from '@/assets/illustrations';
 import { IDisabilityItem } from '@/types/disability';
-import CustomPopover, { usePopover } from '@/components/custom-popover';
+
+const NHS_LOGO_URL = 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/NHS%2010mm%20-%20RGB%20Blue%20on%20white-6UFE7zxSQtJnlvAPsWWgeiMzKpO2t6.jpg';
 
 type Props = {
   disability: IDisabilityItem;
-  onView: VoidFunction;
-  onEdit: VoidFunction;
-  onDelete: VoidFunction;
 };
 
-export default function DisabilityItem({ disability, onView, onEdit, onDelete }: Props) {
-  const popover = usePopover();
+export default function DisabilityItem({ disability }: Props) {
+  const theme = useTheme();
 
-  const { disability_name, disability_nhs_slug } = disability;
+  const { disability_name, disability_nhs_slug, category } = disability;
+
+  const nhsUrl = disability_nhs_slug 
+    ? `https://www.nhs.uk/conditions/${disability_nhs_slug}` 
+    : null;
+
+  const handleClick = () => {
+    if (nhsUrl) {
+      window.open(nhsUrl, '_blank', 'noopener,noreferrer');
+    }
+  };
 
   return (
-    <>
-      <Card>
-        <IconButton onClick={popover.onOpen} sx={{ position: 'absolute', top: 8, right: 8 }}>
-          <Iconify icon="eva:more-vertical-fill" />
-        </IconButton>
-
-        <Stack sx={{ p: 3, pb: 2 }}>
-          <Avatar
-            alt="NAME"
-            // src={'LOGO'}
-            variant="rounded"
-            sx={{ width: 48, height: 48, mb: 2 }}
-          />
-
-          <ListItemText
-            sx={{ mb: 1 }}
-            primary={
-              <Link href={`http://www.nhs.uk/conditions/${disability_nhs_slug}`} color="inherit" target="_blank">
-                {disability_name}
-              </Link>
-            }
-            secondary={`Posted date: ${fDate(new Date())}`}
-            primaryTypographyProps={{
-              typography: 'subtitle1',
-            }}
-            secondaryTypographyProps={{
-              mt: 1,
-              component: 'span',
-              typography: 'caption',
-              color: 'text.disabled',
-            }}
-          />
-        </Stack>
-
-        <Divider sx={{ borderStyle: 'dashed' }} />
-
-        <Box rowGap={1.5} display="grid" gridTemplateColumns="repeat(2, 1fr)" sx={{ p: 3 }}>
-          {[
-            {
-              label: 'Cognitive',
-              icon: <Iconify width={16} icon="carbon:skill-level-basic" sx={{ flexShrink: 0 }} />,
-            },
-            {
-              label: 'Physical',
-              icon: <Iconify width={16} icon="solar:user-rounded-bold" sx={{ flexShrink: 0 }} />,
-            },
-          ].map((item) => (
-            <Stack
-              key={item.label}
-              spacing={0.5}
-              flexShrink={0}
-              direction="row"
-              alignItems="center"
-              sx={{ color: 'text.disabled', minWidth: 0 }}
-            >
-              {item.icon}
-              <Typography variant="caption" noWrap>
-                {item.label}
-              </Typography>
-            </Stack>
-          ))}
-        </Box>
-      </Card>
-
-      <CustomPopover
-        open={popover.open}
-        onClose={popover.onClose}
-        arrow="right-top"
-        sx={{ width: 140 }}
+    <Card
+      sx={{
+        overflow: 'hidden',
+        bgcolor: 'background.paper',
+      }}
+    >
+      <CardActionArea 
+        onClick={handleClick} 
+        disabled={!nhsUrl}
       >
-        <MenuItem
-          onClick={() => {
-            popover.onClose();
-            onView();
+        {/* Top section - NHS logo with primary color tint */}
+        <Box
+          sx={{
+            position: 'relative',
+            bgcolor: alpha(theme.palette.primary.main, 0.08),
+            borderBottom: `1px solid ${alpha(theme.palette.primary.main, 0.12)}`,
           }}
         >
-          <Iconify icon="solar:eye-bold" />
-          View
-        </MenuItem>
+          <AvatarShape
+            sx={{
+              left: 0,
+              right: 0,
+              zIndex: 10,
+              mx: 'auto',
+              bottom: -26,
+              position: 'absolute',
+              color: 'background.paper',
+            }}
+          />
 
-        <MenuItem
-          onClick={() => {
-            popover.onClose();
-            onEdit();
-          }}
-        >
-          <Iconify icon="solar:pen-bold" />
-          Edit
-        </MenuItem>
+          <Avatar
+            alt={disability_name}
+            sx={{
+              width: 64,
+              height: 64,
+              zIndex: 11,
+              left: 0,
+              right: 0,
+              bottom: -32,
+              mx: 'auto',
+              position: 'absolute',
+              bgcolor: theme.palette.primary.main,
+              color: theme.palette.primary.contrastText,
+              fontWeight: 600,
+            }}
+          >
+            {disability_name.charAt(0).toUpperCase()}
+          </Avatar>
 
-        <MenuItem
-          onClick={() => {
-            popover.onClose();
-            onDelete();
+          <Box
+            sx={{
+              height: 0,
+              paddingTop: '56.25%',
+              position: 'relative',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Box
+              component="img"
+              src={NHS_LOGO_URL}
+              alt="NHS"
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                maxWidth: '40%',
+                maxHeight: '30%',
+                objectFit: 'contain',
+              }}
+            />
+          </Box>
+        </Box>
+
+        {/* Bottom section - content on clean background */}
+        <Box
+          sx={{
+            textAlign: 'center',
+            pt: 5,
+            pb: 2.5,
+            px: 2,
+            bgcolor: 'background.paper',
           }}
-          sx={{ color: 'error.main' }}
         >
-          <Iconify icon="solar:trash-bin-trash-bold" />
-          Delete
-        </MenuItem>
-      </CustomPopover>
-    </>
+          <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>
+            {disability_name}
+          </Typography>
+
+          <Chip 
+            label={category} 
+            size="small" 
+            variant="soft" 
+            color="primary" 
+            sx={{ mb: 1.5 }} 
+          />
+
+          {disability_nhs_slug && (
+            <Typography 
+              variant="caption" 
+              sx={{ 
+                display: 'block', 
+                color: 'text.secondary',
+                bgcolor: alpha(theme.palette.grey[500], 0.08),
+                borderRadius: 0.75,
+                py: 0.5,
+                px: 1,
+                mx: 'auto',
+                width: 'fit-content',
+              }}
+            >
+              {disability_nhs_slug}
+            </Typography>
+          )}
+        </Box>
+      </CardActionArea>
+    </Card>
   );
 }

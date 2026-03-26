@@ -2,8 +2,12 @@
 import { useEffect } from 'react';
 
 import Box from '@mui/material/Box';
+import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Drawer from '@mui/material/Drawer';
+import Divider from '@mui/material/Divider';
+import Typography from '@mui/material/Typography';
+import { alpha } from '@mui/material/styles';
 
 import Logo from '@/components/logo';
 import { usePathname } from 'next/navigation';
@@ -39,6 +43,10 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
+  const sidebarSx = {
+    bgcolor: (theme: any) => alpha(theme.palette.primary.main, 0.04),
+  };
+
   const renderContent = (
     <Scrollbar
       sx={{
@@ -60,6 +68,32 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
       />
 
       <Box sx={{ flexGrow: 1 }} />
+
+      <Divider sx={{ borderStyle: 'dashed', mx: 2 }} />
+
+      <Stack
+        spacing={0.5}
+        alignItems="center"
+        sx={{ py: 3, px: 2 }}
+      >
+        <Typography variant="caption" color="text.disabled">
+          &copy; {new Date().getFullYear()} Enabled
+        </Typography>
+        <Link
+          href="https://www.enabled.co.uk"
+          target="_blank"
+          rel="noopener noreferrer"
+          variant="caption"
+          color="text.disabled"
+          underline="hover"
+          sx={{
+            '&:hover': { color: 'primary.main' },
+            transition: 'color 0.2s',
+          }}
+        >
+          www.enabled.co.uk
+        </Link>
+      </Stack>
     </Scrollbar>
   );
 
@@ -79,6 +113,7 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
             position: 'fixed',
             width: NAV.W_VERTICAL,
             borderRight: (theme) => `dashed 1px ${theme.palette.divider}`,
+            ...sidebarSx,
           }}
         >
           {renderContent}
@@ -90,6 +125,7 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
           PaperProps={{
             sx: {
               width: NAV.W_VERTICAL,
+              ...sidebarSx,
             },
           }}
         >
