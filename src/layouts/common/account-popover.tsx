@@ -2,6 +2,7 @@ import { m } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 
 import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
@@ -16,6 +17,14 @@ import CustomPopover, { usePopover } from '@/components/custom-popover';
 import { useUserProfile } from '@/hooks/use-user-profile';
 
 import { alpha } from '@mui/system';
+
+// Role display configuration
+const ROLE_CONFIG: Record<string, { label: string; color: 'default' | 'primary' | 'secondary' | 'info' | 'success' | 'warning' | 'error' }> = {
+  admin: { label: 'Administrator', color: 'error' },
+  approver: { label: 'Approver', color: 'warning' },
+  manager: { label: 'Manager', color: 'info' },
+  employee: { label: 'Employee', color: 'default' },
+};
 
 // ----------------------------------------------------------------------
 
@@ -63,6 +72,8 @@ export default function AccountPopover() {
   const firstname = profile?.firstname ?? '';
   const lastname = profile?.lastname ?? '';
   const avatarUrl = profile?.avatar ?? '';
+  const userRole = profile?.role ?? 'employee';
+  const roleConfig = ROLE_CONFIG[userRole] || ROLE_CONFIG.employee;
 
   return (
     <>
@@ -111,9 +122,12 @@ export default function AccountPopover() {
               <Typography variant="subtitle2" noWrap>
                 {firstname} {lastname}
               </Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-                {profile?.userId ?? ''}
-              </Typography>
+              <Chip 
+                label={roleConfig.label} 
+                color={roleConfig.color} 
+                size="small" 
+                sx={{ mt: 0.5, height: 20, fontSize: '0.7rem' }} 
+              />
             </>
           )}
         </Box>

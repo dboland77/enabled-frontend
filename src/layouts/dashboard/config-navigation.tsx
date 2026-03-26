@@ -54,6 +54,19 @@ export function useNavData() {
       },
 
       {
+        subheader: 'Management',
+        roles: ['admin', 'approver', 'manager'],
+        items: [
+          {
+            title: 'Approvals',
+            path: '/dashboard/approvals',
+            icon: ICONS.file,
+            roles: ['admin', 'approver', 'manager'],
+          },
+        ],
+      },
+
+      {
         subheader: 'Knowledge Hub',
         items: [
           {

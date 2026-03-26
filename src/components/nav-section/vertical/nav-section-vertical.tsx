@@ -9,9 +9,17 @@ import NavList from '@/components/nav-section/vertical/nav-list';
 import { NavProps, NavGroupProps } from '@/components/nav-section/types';
 
 function NavSectionVertical({ data, slotProps, ...other }: NavProps) {
+  const currentRole = slotProps?.currentRole || '';
+  
+  // Filter groups based on roles
+  const filteredData = data.filter((group) => {
+    if (!group.roles || group.roles.length === 0) return true;
+    return group.roles.includes(currentRole);
+  });
+
   return (
     <Stack component="nav" id="nav-section-vertical" {...other}>
-      {data.map((group, index) => (
+      {filteredData.map((group, index) => (
         <>
           {index > 0 && (
             <Divider

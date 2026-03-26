@@ -2,87 +2,125 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
-import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemButton from '@mui/material/ListItemButton';
 
 import Label from '@/components/label';
 import { fToNow } from '@/utils/format-time';
-import FileThumbnail from '@/components/file-thumbnail';
+import Iconify from '@/components/iconify';
+import {
+  INotification,
+  NotificationType,
+  getNotificationIcon,
+  getNotificationColor,
+} from '@/types/notification';
 
 type NotificationItemProps = {
-  notification: {
-    id: string;
-    title: string;
-    category: string;
-    createdAt: Date;
-    isUnRead: boolean;
-    type: string;
-    avatarUrl: string | null;
-  };
+  notification: INotification;
+  onMarkAsRead?: (id: string) => void;
+  onViewRequest?: (requestId: string) => void;
 };
 
-export default function NotificationItem({ notification }: NotificationItemProps) {
+export default function NotificationItem({
+  notification,
+  onMarkAsRead,
+  onViewRequest,
+}: NotificationItemProps) {
+  const handleClick = () => {
+    if (!notification.isRead && onMarkAsRead) {
+      onMarkAsRead(notification.id);
+    }
+    if (notification.relatedRequestId && onViewRequest) {
+      onViewRequest(notification.relatedRequestId);
+    }
+  };
+
   const renderAvatar = (
     <ListItemAvatar>
-      {notification.avatarUrl ? (
-        <Avatar src={notification.avatarUrl} sx={{ bgcolor: 'background.neutral' }} />
-      ) : (
-        <Stack
-          alignItems="center"
-          justifyContent="center"
+      <Stack
+        alignItems="center"
+        justifyContent="center"
+        sx={{
+          width: 40,
+          height: 40,
+          borderRadius: '50%',
+          bgcolor: `${getNotificationColor(notification.type)}.lighter`,
+        }}
+      >
+        <Iconify
+          icon={getNotificationIcon(notification.type)}
           sx={{
-            width: 40,
-            height: 40,
-            borderRadius: '50%',
-            bgcolor: 'background.neutral',
+            width: 24,
+            height: 24,
+            color: `${getNotificationColor(notification.type)}.main`,
           }}
-        >
-          <Box
-            component="img"
-            src={`/assets/icons/notification/${
-              (notification.type === 'order' && 'ic_order') ||
-              (notification.type === 'chat' && 'ic_chat') ||
-              (notification.type === 'mail' && 'ic_mail') ||
-              (notification.type === 'delivery' && 'ic_delivery')
-            }.svg`}
-            sx={{ width: 24, height: 24 }}
-          />
-        </Stack>
-      )}
+        />
+      </Stack>
     </ListItemAvatar>
   );
 
   const renderText = (
     <ListItemText
       disableTypography
-      primary={reader(notification.title)}
+      primary={
+        <Box
+          sx={{
+            mb: 0.5,
+            typography: 'subtitle2',
+            color: notification.isRead ? 'text.secondary' : 'text.primary',
+          }}
+        >
+          {notification.title}
+        </Box>
+      }
       secondary={
-        <Stack
-          direction="row"
-          alignItems="center"
-          sx={{ typography: 'caption', color: 'text.disabled' }}
-          divider={
+        <Stack spacing={0.5}>
+          {notification.message && (
             <Box
               sx={{
-                width: 2,
-                height: 2,
-                bgcolor: 'currentColor',
-                mx: 0.5,
-                borderRadius: '50%',
+                typography: 'body2',
+                color: 'text.secondary',
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
               }}
-            />
-          }
-        >
-          {fToNow(notification.createdAt)}
-          {notification.category}
+            >
+              {notification.message}
+            </Box>
+          )}
+          <Stack
+            direction="row"
+            alignItems="center"
+            sx={{ typography: 'caption', color: 'text.disabled' }}
+            divider={
+              <Box
+                sx={{
+                  width: 2,
+                  height: 2,
+                  bgcolor: 'currentColor',
+                  mx: 0.5,
+                  borderRadius: '50%',
+                }}
+              />
+            }
+          >
+            {fToNow(notification.createdAt)}
+            <Label
+              variant="soft"
+              color={getNotificationColor(notification.type)}
+              sx={{ height: 20, fontSize: 10 }}
+            >
+              {getStatusLabel(notification.type)}
+            </Label>
+          </Stack>
         </Stack>
       }
     />
   );
 
-  const renderUnReadBadge = notification.isUnRead && (
+  const renderUnReadBadge = !notification.isRead && (
     <Box
       sx={{
         top: 26,
@@ -96,124 +134,97 @@ export default function NotificationItem({ notification }: NotificationItemProps
     />
   );
 
-  const friendAction = (
-    <Stack spacing={1} direction="row" sx={{ mt: 1.5 }}>
-      <Button size="small" variant="contained">
-        Accept
-      </Button>
-      <Button size="small" variant="outlined">
-        Decline
-      </Button>
-    </Stack>
-  );
+  // Render action buttons for adjustment request notifications
+  const renderActions = () => {
+    if (!notification.relatedRequestId) return null;
 
-  const projectAction = (
-    <Stack alignItems="flex-start">
-      <Box
-        sx={{
-          p: 1.5,
-          my: 1.5,
-          borderRadius: 1.5,
-          color: 'text.secondary',
-          bgcolor: 'background.neutral',
-        }}
-      >
-        {reader(
-          `<p><strong>@Jaydon Frankie</strong> feedback by asking questions or just leave a note of appreciation.</p>`
-        )}
-      </Box>
-
-      <Button size="small" variant="contained">
-        Reply
-      </Button>
-    </Stack>
-  );
-
-  const fileAction = (
-    <Stack
-      spacing={1}
-      direction="row"
-      sx={{
-        pl: 1,
-        p: 1.5,
-        mt: 1.5,
-        borderRadius: 1.5,
-        bgcolor: 'background.neutral',
-      }}
-    >
-      <FileThumbnail
-        file="http://localhost:8080/httpsdesign-suriname-2015.mp3"
-        sx={{ width: 40, height: 40 }}
-      />
-
-      <Stack spacing={1} direction={{ xs: 'column', sm: 'row' }} flexGrow={1} sx={{ minWidth: 0 }}>
-        <ListItemText
-          disableTypography
-          primary={
-            <Typography variant="subtitle2" component="div" sx={{ color: 'text.secondary' }} noWrap>
-              design-suriname-2015.mp3
-            </Typography>
-          }
-          secondary={
-            <Stack
-              direction="row"
-              alignItems="center"
-              sx={{ typography: 'caption', color: 'text.disabled' }}
-              divider={
-                <Box
-                  sx={{
-                    mx: 0.5,
-                    width: 2,
-                    height: 2,
-                    borderRadius: '50%',
-                    bgcolor: 'currentColor',
-                  }}
-                />
-              }
+    switch (notification.type) {
+      case NotificationType.ADJUSTMENT_REQUEST_SUBMITTED:
+        return (
+          <Stack spacing={1} direction="row" sx={{ mt: 1.5 }}>
+            <Button
+              size="small"
+              variant="contained"
+              onClick={() => onViewRequest?.(notification.relatedRequestId!)}
             >
-              <span>2.3 GB</span>
-              <span>30 min ago</span>
-            </Stack>
-          }
-        />
+              Review
+            </Button>
+          </Stack>
+        );
 
-        <Button size="small" variant="outlined">
-          Download
-        </Button>
-      </Stack>
-    </Stack>
-  );
+      case NotificationType.ADJUSTMENT_REQUEST_APPROVED:
+        return (
+          <Stack spacing={1} direction="row" sx={{ mt: 1.5 }}>
+            <Button
+              size="small"
+              variant="soft"
+              color="success"
+              onClick={() => onViewRequest?.(notification.relatedRequestId!)}
+            >
+              View Details
+            </Button>
+          </Stack>
+        );
 
-  const tagsAction = (
-    <Stack direction="row" spacing={0.75} flexWrap="wrap" sx={{ mt: 1.5 }}>
-      <Label variant="outlined" color="info">
-        Design
-      </Label>
-      <Label variant="outlined" color="warning">
-        Dashboard
-      </Label>
-      <Label variant="outlined">Design system</Label>
-    </Stack>
-  );
+      case NotificationType.ADJUSTMENT_REQUEST_DECLINED:
+        return (
+          <Stack spacing={1} direction="row" sx={{ mt: 1.5 }}>
+            <Button
+              size="small"
+              variant="soft"
+              color="error"
+              onClick={() => onViewRequest?.(notification.relatedRequestId!)}
+            >
+              View Details
+            </Button>
+          </Stack>
+        );
 
-  const paymentAction = (
-    <Stack direction="row" spacing={1} sx={{ mt: 1.5 }}>
-      <Button size="small" variant="contained">
-        Pay
-      </Button>
-      <Button size="small" variant="outlined">
-        Decline
-      </Button>
-    </Stack>
-  );
+      case NotificationType.ADJUSTMENT_REQUEST_MORE_INFO:
+        return (
+          <Stack spacing={1} direction="row" sx={{ mt: 1.5 }}>
+            <Button
+              size="small"
+              variant="contained"
+              color="warning"
+              onClick={() => onViewRequest?.(notification.relatedRequestId!)}
+            >
+              Provide Info
+            </Button>
+          </Stack>
+        );
+
+      case NotificationType.ADJUSTMENT_REQUEST_PENDING:
+      case NotificationType.ADJUSTMENT_REQUEST_UPDATED:
+        return (
+          <Stack spacing={1} direction="row" sx={{ mt: 1.5 }}>
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={() => onViewRequest?.(notification.relatedRequestId!)}
+            >
+              View
+            </Button>
+          </Stack>
+        );
+
+      default:
+        return null;
+    }
+  };
 
   return (
     <ListItemButton
       disableRipple
+      onClick={handleClick}
       sx={{
         p: 2.5,
         alignItems: 'flex-start',
         borderBottom: (theme) => `dashed 1px ${theme.palette.divider}`,
+        bgcolor: notification.isRead ? 'transparent' : 'action.hover',
+        '&:hover': {
+          bgcolor: notification.isRead ? 'action.hover' : 'action.selected',
+        },
       }}
     >
       {renderUnReadBadge}
@@ -222,11 +233,7 @@ export default function NotificationItem({ notification }: NotificationItemProps
 
       <Stack sx={{ flexGrow: 1 }}>
         {renderText}
-        {notification.type === 'friend' && friendAction}
-        {notification.type === 'project' && projectAction}
-        {notification.type === 'file' && fileAction}
-        {notification.type === 'tags' && tagsAction}
-        {notification.type === 'payment' && paymentAction}
+        {renderActions()}
       </Stack>
     </ListItemButton>
   );
@@ -234,16 +241,22 @@ export default function NotificationItem({ notification }: NotificationItemProps
 
 // ----------------------------------------------------------------------
 
-function reader(data: string) {
-  return (
-    <Box
-      dangerouslySetInnerHTML={{ __html: data }}
-      sx={{
-        mb: 0.5,
-        '& p': { typography: 'body2', m: 0 },
-        '& a': { color: 'inherit', textDecoration: 'none' },
-        '& strong': { typography: 'subtitle2' },
-      }}
-    />
-  );
+function getStatusLabel(type: NotificationType): string {
+  switch (type) {
+    case NotificationType.ADJUSTMENT_REQUEST_SUBMITTED:
+      return 'New Request';
+    case NotificationType.ADJUSTMENT_REQUEST_APPROVED:
+      return 'Approved';
+    case NotificationType.ADJUSTMENT_REQUEST_DECLINED:
+      return 'Declined';
+    case NotificationType.ADJUSTMENT_REQUEST_MORE_INFO:
+      return 'Info Needed';
+    case NotificationType.ADJUSTMENT_REQUEST_PENDING:
+      return 'Pending';
+    case NotificationType.ADJUSTMENT_REQUEST_UPDATED:
+      return 'Updated';
+    case NotificationType.SYSTEM:
+    default:
+      return 'System';
+  }
 }
