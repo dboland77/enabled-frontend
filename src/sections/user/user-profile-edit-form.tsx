@@ -31,6 +31,9 @@ export default function UserProfileEditForm() {
   const { roles, loading: rolesLoading } = useRoles();
   const { departments, loading: departmentsLoading } = useDepartments();
 
+  // Check if current user can edit roles (admin or approver)
+  const canEditRoles = profile?.role === 'admin' || profile?.role === 'approver';
+
   const [userDisabilities, setUserDisabilities] = useState<UserDisability[]>([]);
   const [userAdjustments, setUserAdjustments] = useState<UserAdjustment[]>([]);
   const [loadingDisabilities, setLoadingDisabilities] = useState(true);
@@ -209,7 +212,8 @@ export default function UserProfileEditForm() {
                     {option.role_name}
                   </li>
                 )}
-                disabled={loading}
+                disabled={loading || !canEditRoles}
+                helperText={!canEditRoles ? 'Only admins can change roles' : undefined}
               />
               <RHFAutocomplete
                 name="department"
