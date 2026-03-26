@@ -54,6 +54,17 @@ export function useNavData() {
       },
 
       {
+        subheader: 'Management',
+        items: [
+          {
+            title: 'Approvals',
+            path: '/dashboard/approvals',
+            icon: ICONS.file,
+          },
+        ],
+      },
+
+      {
         subheader: 'Knowledge Hub',
         items: [
           {
