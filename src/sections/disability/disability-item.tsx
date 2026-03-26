@@ -9,10 +9,14 @@ import { alpha, useTheme } from '@mui/material/styles';
 import { AvatarShape } from '@/assets/illustrations';
 import { IDisabilityItem } from '@/types/disability';
 
-const NHS_LOGO_URL = 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/NHS%2010mm%20-%20RGB%20Blue%20on%20white-6UFE7zxSQtJnlvAPsWWgeiMzKpO2t6.jpg';
+const NHS_LOGO_URL =
+  'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/NHS%2010mm%20-%20RGB%20Blue%20on%20white-6UFE7zxSQtJnlvAPsWWgeiMzKpO2t6.jpg';
 
 type Props = {
   disability: IDisabilityItem;
+  onView?: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
 };
 
 export default function DisabilityItem({ disability }: Props) {
@@ -20,8 +24,8 @@ export default function DisabilityItem({ disability }: Props) {
 
   const { disability_name, disability_nhs_slug, category } = disability;
 
-  const nhsUrl = disability_nhs_slug 
-    ? `https://www.nhs.uk/conditions/${disability_nhs_slug}` 
+  const nhsUrl = disability_nhs_slug
+    ? `https://www.nhs.uk/conditions/${disability_nhs_slug}`
     : null;
 
   const handleClick = () => {
@@ -37,10 +41,7 @@ export default function DisabilityItem({ disability }: Props) {
         bgcolor: 'background.paper',
       }}
     >
-      <CardActionArea 
-        onClick={handleClick} 
-        disabled={!nhsUrl}
-      >
+      <CardActionArea onClick={handleClick} disabled={!nhsUrl}>
         {/* Top section - NHS logo with primary color tint */}
         <Box
           sx={{
@@ -121,19 +122,13 @@ export default function DisabilityItem({ disability }: Props) {
             {disability_name}
           </Typography>
 
-          <Chip 
-            label={category} 
-            size="small" 
-            variant="soft" 
-            color="primary" 
-            sx={{ mb: 1.5 }} 
-          />
+          <Chip label={category} size="small" variant="soft" color="primary" sx={{ mb: 1.5 }} />
 
           {disability_nhs_slug && (
-            <Typography 
-              variant="caption" 
-              sx={{ 
-                display: 'block', 
+            <Typography
+              variant="caption"
+              sx={{
+                display: 'block',
                 color: 'text.secondary',
                 bgcolor: alpha(theme.palette.grey[500], 0.08),
                 borderRadius: 0.75,
