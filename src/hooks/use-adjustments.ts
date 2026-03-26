@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 
 import { createClient } from '@/lib/supabase/client';
 import { IAdjustmentItem } from '@/types/adjustment';
 
 export function useAdjustments() {
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
   const [adjustments, setAdjustments] = useState<IAdjustmentItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -24,7 +24,7 @@ export function useAdjustments() {
       if (fetchError) {
         setError(fetchError.message);
       } else {
-        setAdjustments(data as IAdjustmentItem[]);
+        setAdjustments((data || []) as IAdjustmentItem[]);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch adjustments');
