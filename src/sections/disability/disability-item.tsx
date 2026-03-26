@@ -83,8 +83,8 @@ export default function DisabilityItem({ disability }: Props) {
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
-                maxWidth: '80%',
-                maxHeight: '60%',
+                maxWidth: '40%',
+                maxHeight: '30%',
                 objectFit: 'contain',
               }}
             />
