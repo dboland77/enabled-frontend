@@ -5,8 +5,7 @@ import { alpha, styled } from '@mui/system';
 // ----------------------------------------------------------------------
 
 export const StyledRootScrollbar = styled('div')(() => ({
-  flexGrow: 1,
-  height: '100%',
+  flexShrink: 0,
   overflow: 'hidden',
 }));
 

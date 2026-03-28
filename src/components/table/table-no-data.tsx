@@ -12,22 +12,20 @@ type Props = {
 };
 
 export default function TableNoData({ notFound, sx }: Props) {
+  if (!notFound) return null;
+
   return (
     <TableRow>
-      {notFound ? (
-        <TableCell colSpan={12}>
-          <EmptyContent
-            filled
-            title="No Data"
-            sx={{
-              py: 10,
-              ...sx,
-            }}
-          />
-        </TableCell>
-      ) : (
-        <TableCell colSpan={12} sx={{ p: 0 }} />
-      )}
+      <TableCell colSpan={12}>
+        <EmptyContent
+          filled
+          title="No Data"
+          sx={{
+            py: 5,
+            ...sx,
+          }}
+        />
+      </TableCell>
     </TableRow>
   );
 }
