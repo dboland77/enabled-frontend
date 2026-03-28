@@ -81,7 +81,9 @@ export default function AdjustmentRequestEditView({ id }: Props) {
   if (loading) {
     return (
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 400 }}>
+        <Box
+          sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 400 }}
+        >
           <CircularProgress />
         </Box>
       </Container>
@@ -100,10 +102,14 @@ export default function AdjustmentRequestEditView({ id }: Props) {
           ]}
           sx={{ mb: { xs: 3, md: 5 } }}
         />
-        <Alert 
-          severity="error" 
+        <Alert
+          severity="error"
           action={
-            <Button color="inherit" size="small" onClick={() => router.push('/dashboard/user/adjustmentRequests')}>
+            <Button
+              color="inherit"
+              size="small"
+              onClick={() => router.push('/dashboard/user/adjustmentRequests')}
+            >
               Back to List
             </Button>
           }
@@ -126,7 +132,7 @@ export default function AdjustmentRequestEditView({ id }: Props) {
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <RequestAdjustmentForm currentAdjustmentRequest={adjustmentRequest} />
+      <RequestAdjustmentForm currentAdjustmentRequest={adjustmentRequest!} />
     </Container>
   );
 }
