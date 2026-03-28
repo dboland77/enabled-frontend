@@ -103,8 +103,7 @@ export default function RequestAdjustmentForm({ currentAdjustmentRequest }: Prop
     location: Yup.string().nullable().required('Please select where you need this adjustment'),
     requiredDate: Yup.date()
       .nullable()
-      .required('Please tell us when you need this adjustment')
-      .min(new Date(), 'Required date must be in the future'),
+      .required('Please tell us when you need this adjustment'),
     approver: Yup.object().nullable().required('Please select an approver for your request'),
     approver_id: Yup.string().nullable().default(''),
   });

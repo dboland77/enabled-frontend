@@ -82,7 +82,7 @@ export default function AdjustmentRequestListView() {
 
   const handleEditRow = useCallback(
     (rowId: string) => {
-      router.push('/dashboard/adjustmentRequests/edit:rowId');
+      router.push(`/dashboard/user/adjustmentRequests/${rowId}/edit`);
     },
     [router]
   );

@@ -1,9 +1,18 @@
 'use client';
-import Container from '@mui/material/Container';
 
+import { useState, useEffect } from 'react';
+
+import Container from '@mui/material/Container';
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
+import Alert from '@mui/material/Alert';
+import Button from '@mui/material/Button';
+
+import { useRouter } from 'next/navigation';
+import { createClient } from '@/lib/supabase/client';
 import { useSettingsContext } from '@/components/settings';
 import CustomBreadcrumbs from '@/components/custom-breadcrumbs';
-import { RequestStatusTypes } from '@/types/adjustmentRequest';
+import { IAdjustmentRequestItem, RequestStatusTypes } from '@/types/adjustmentRequest';
 
 import RequestAdjustmentForm from '../adjustmentRequest-form';
 
@@ -11,52 +20,113 @@ type Props = {
   id: string;
 };
 
-const adjustmentRequests = [
-  {
-    id: 'dfd',
-    title: 'test',
-    detail: 'detail test',
-    createdAt: '',
-    adjustmentType: 'adj type',
-    requiredDate: new Date().toISOString(),
-    workfunction: 'test function',
-    benefit: 'ben1',
-    location: 'here',
-    disability: 'd1',
-    status: RequestStatusTypes.NEW,
-    approverName: 'jk',
-    approverId: '123',
-  },
-];
-
 export default function AdjustmentRequestEditView({ id }: Props) {
   const settings = useSettingsContext();
+  const router = useRouter();
+  const supabase = createClient();
 
-  const currentAdjustmentRequest = adjustmentRequests.filter((a) => a.id === id)[0];
+  const [adjustmentRequest, setAdjustmentRequest] = useState<IAdjustmentRequestItem | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchAdjustmentRequest = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const {
+          data: { user },
+          error: authError,
+        } = await supabase.auth.getUser();
+
+        if (authError || !user) {
+          setError('Not authenticated');
+          setLoading(false);
+          return;
+        }
+
+        const { data, error: fetchError } = await supabase
+          .from('adjustment_requests')
+          .select('*')
+          .eq('id', id)
+          .eq('user_id', user.id)
+          .single();
+
+        if (fetchError) {
+          if (fetchError.code === 'PGRST116') {
+            setError('Adjustment request not found or you do not have permission to edit it.');
+          } else {
+            setError(fetchError.message);
+          }
+        } else {
+          // Check if request can be edited (only NEW or INFO_NEEDED status)
+          const editableStatuses = [RequestStatusTypes.NEW, RequestStatusTypes.INFO_NEEDED];
+          if (!editableStatuses.includes(data.status)) {
+            setError(`This request cannot be edited because it has status: ${data.status}`);
+          } else {
+            setAdjustmentRequest(data as IAdjustmentRequestItem);
+          }
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch adjustment request');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAdjustmentRequest();
+  }, [id, supabase]);
+
+  if (loading) {
+    return (
+      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 400 }}>
+          <CircularProgress />
+        </Box>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+        <CustomBreadcrumbs
+          heading="Edit Adjustment Request"
+          links={[
+            { name: 'Home', href: '/dashboard' },
+            { name: 'Adjustment Requests', href: '/dashboard/user/adjustmentRequests' },
+            { name: 'Edit' },
+          ]}
+          sx={{ mb: { xs: 3, md: 5 } }}
+        />
+        <Alert 
+          severity="error" 
+          action={
+            <Button color="inherit" size="small" onClick={() => router.push('/dashboard/user/adjustmentRequests')}>
+              Back to List
+            </Button>
+          }
+        >
+          {error}
+        </Alert>
+      </Container>
+    );
+  }
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
         heading="Edit Adjustment Request"
         links={[
-          {
-            name: 'Home',
-            href: '/dashboard',
-          },
-          {
-            name: 'Adjustment Requests',
-            href: '/dashboard/adjustmentRequests/list',
-          },
-          {
-            name: 'Edit Adjustment Request',
-          },
+          { name: 'Home', href: '/dashboard' },
+          { name: 'Adjustment Requests', href: '/dashboard/user/adjustmentRequests' },
+          { name: adjustmentRequest?.title || 'Edit' },
         ]}
-        sx={{
-          mb: { xs: 3, md: 5 },
-        }}
+        sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <RequestAdjustmentForm currentAdjustmentRequest={currentAdjustmentRequest} />
+      <RequestAdjustmentForm currentAdjustmentRequest={adjustmentRequest} />
     </Container>
   );
 }
