@@ -80,7 +80,7 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
           &copy; {new Date().getFullYear()} Enabled
         </Typography>
         <Link
-          href="https://www.enabled.co.uk"
+          href="https://www.getenabled.co.uk"
           target="_blank"
           rel="noopener noreferrer"
           variant="caption"
@@ -91,7 +91,7 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
             transition: 'color 0.2s',
           }}
         >
-          www.enabled.co.uk
+          www.getenabled.co.uk
         </Link>
       </Stack>
     </Scrollbar>

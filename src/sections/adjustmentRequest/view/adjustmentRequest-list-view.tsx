@@ -18,6 +18,7 @@ import ProgressBar from '@/components/progress-bar';
 import { ConfirmDialog } from '@/components/custom-dialog';
 import { useSettingsContext } from '@/components/settings';
 import CustomBreadcrumbs from '@/components/custom-breadcrumbs';
+import { useAdjustmentRequests } from '@/hooks/use-adjustment-requests';
 
 import {
   useTable,
@@ -37,27 +38,6 @@ const TABLE_HEAD = [
   { id: 'status', label: 'Status' },
 ];
 
-//TODO - change this to state
-const adjustmentRequests = [
-  {
-    id: 'dfd',
-    title: 'test',
-    detail: 'detail test',
-    createdAt: '',
-    adjustmentType: 'adj type',
-    requiredDate: new Date().toISOString(),
-    workfunction: 'test function',
-    benefit: 'ben1',
-    location: 'here',
-    disability: 'd1',
-    status: null,
-    approverName: 'putog',
-    approverId: '232',
-  },
-];
-
-const adjustmentRequestsLoading = false;
-
 export default function AdjustmentRequestListView() {
   const table = useTable();
 
@@ -66,6 +46,12 @@ export default function AdjustmentRequestListView() {
   const router = useRouter();
 
   const confirm = useBoolean();
+
+  const { adjustmentRequests, loading, refetch } = useAdjustmentRequests();
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   const dataFiltered = adjustmentRequests.length > 0 ? adjustmentRequests : [];
 
@@ -96,12 +82,12 @@ export default function AdjustmentRequestListView() {
 
   const handleEditRow = useCallback(
     (rowId: string) => {
-      router.push('/dashboard/adjustmentRequests/edit:rowId');
+      router.push(`/dashboard/user/adjustmentRequests/${rowId}/edit`);
     },
     [router]
   );
 
-  return adjustmentRequestsLoading ? (
+  return loading ? (
     <ProgressBar />
   ) : (
     <>
@@ -115,7 +101,7 @@ export default function AdjustmentRequestListView() {
           ]}
           action={
             <Button
-              href={'/dashboard/adjustmentRequests/new'}
+              href={'/dashboard/user/adjustmentRequests/new'}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >

@@ -33,8 +33,8 @@ export default function NotFoundView() {
         />
       </m.div>
 
-      <Button href="/" size="large" variant="contained">
-        Go to Home
+      <Button href="/dashboard" size="large" variant="contained">
+        Go to Dashboard
       </Button>
     </MotionContainer>
   );
