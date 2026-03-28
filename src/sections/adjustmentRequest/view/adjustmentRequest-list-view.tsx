@@ -115,7 +115,7 @@ export default function AdjustmentRequestListView() {
           ]}
           action={
             <Button
-              href={'/dashboard/adjustmentRequests/new'}
+              href={'/dashboard/user/adjustmentRequests/new'}
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
