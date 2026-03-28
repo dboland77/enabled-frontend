@@ -60,8 +60,8 @@ export default function AdjustmentRequestEditView({ id }: Props) {
             setError(fetchError.message);
           }
         } else {
-          // Check if request can be edited (only NEW or INFO_NEEDED status)
-          const editableStatuses = [RequestStatusTypes.NEW, RequestStatusTypes.INFO_NEEDED];
+          // Check if request can be edited (only NEW or MORE_INFO status)
+          const editableStatuses = [RequestStatusTypes.NEW, RequestStatusTypes.MORE_INFO];
           if (!editableStatuses.includes(data.status)) {
             setError(`This request cannot be edited because it has status: ${data.status}`);
           } else {
