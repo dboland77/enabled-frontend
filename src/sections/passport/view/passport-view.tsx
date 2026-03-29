@@ -16,6 +16,7 @@ import { usePassport } from '@/hooks/use-passport';
 import PassportBook from '../passport-book';
 import PassportEmpty from '../passport-empty';
 import PassportSendDialog from '../passport-send-dialog';
+import PassportFullscreenModal from '../passport-fullscreen-modal';
 
 // ----------------------------------------------------------------------
 
@@ -23,6 +24,7 @@ export default function PassportView() {
   const theme = useTheme();
   const { passportData, loading, error } = usePassport();
   const [sendDialogOpen, setSendDialogOpen] = useState(false);
+  const [fullscreenOpen, setFullscreenOpen] = useState(false);
 
   if (loading) {
     return (
@@ -79,13 +81,22 @@ export default function PassportView() {
           </Typography>
         </Box>
 
-        <Button
-          variant="contained"
-          startIcon={<Iconify icon="eva:email-outline" />}
-          onClick={() => setSendDialogOpen(true)}
-        >
-          Send Passport
-        </Button>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Button
+            variant="outlined"
+            startIcon={<Iconify icon="eva:expand-fill" />}
+            onClick={() => setFullscreenOpen(true)}
+          >
+            Fullscreen
+          </Button>
+          <Button
+            variant="contained"
+            startIcon={<Iconify icon="eva:email-outline" />}
+            onClick={() => setSendDialogOpen(true)}
+          >
+            Send Passport
+          </Button>
+        </Box>
       </Box>
 
       {/* Passport book */}
@@ -198,6 +209,13 @@ export default function PassportView() {
         passportNumber={passportData.passportNumber}
         holderName={passportData.holder.fullName}
         defaultEmail={passportData.holder.email}
+      />
+
+      {/* Fullscreen modal */}
+      <PassportFullscreenModal
+        open={fullscreenOpen}
+        onClose={() => setFullscreenOpen(false)}
+        data={passportData}
       />
     </Box>
   );

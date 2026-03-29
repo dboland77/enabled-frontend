@@ -135,7 +135,7 @@ export default function PassportSendDialog({
       <DialogContent>
         {success ? (
           <Alert severity="success" sx={{ mt: 1 }}>
-            Passport sent successfully to {email}
+            Passport request submitted. In a production environment, a PDF would be generated and sent to {email}.
           </Alert>
         ) : (
           <>
@@ -145,10 +145,13 @@ export default function PassportSendDialog({
               </Alert>
             )}
 
+            <Alert severity="info" sx={{ mb: 2 }}>
+              This feature is currently in demo mode. To enable actual email delivery, integrate with a service like Resend, SendGrid, or nodemailer.
+            </Alert>
+
             <Box sx={{ mt: 1 }}>
               <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mb: 2 }}>
-                Enter the email address where you would like to send your Reasonable Adjustments
-                Passport. The recipient will receive a PDF attachment.
+                Enter the email address where you would like to send your Reasonable Adjustments Passport. In production, a PDF attachment will be included.
               </Typography>
 
               <TextField
