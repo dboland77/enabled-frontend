@@ -45,6 +45,7 @@ export function useNavData() {
             path: '/dashboard/user/adjustmentRequests',
             icon: ICONS.disability,
             children: [
+              { title: 'wizard', path: '/dashboard/adjustments/wizard' },
               { title: 'browse', path: '/dashboard/user/adjustmentRequests' },
               { title: 'list', path: '/dashboard/user/adjustmentRequests/list' },
               { title: 'request', path: '/dashboard/user/adjustmentRequests/new' },
@@ -84,9 +85,10 @@ export function useNavData() {
             path: '/dashboard/adjustments',
             icon: ICONS.file,
             children: [
+              { title: 'wizard', path: '/dashboard/adjustments/wizard' },
               { title: 'cards', path: '/dashboard/adjustments/cards' },
               { title: 'list', path: '/dashboard/adjustments' },
-              { title: 'create', path: '/dashboard/adjustments/new' },
+              { title: 'create', path: '/dashboard/adjustments/new', roles: ['admin'] },
             ],
           },
         ],
