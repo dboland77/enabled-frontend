@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { createPortal } from 'react-dom';
-import { useTheme } from '@mui/material/styles';
+import { useTheme, Theme } from '@mui/material/styles';
 
 import { IPassportData, getApproverInitials } from '@/types/passport';
 
@@ -108,7 +107,7 @@ export function usePassportDownload(data: IPassportData | null) {
 // ----------------------------------------------------------------------
 // Build plain HTML strings for each page so html2canvas has no React overhead
 
-function buildPageDescriptors(data: IPassportData, theme: ReturnType<typeof useTheme>) {
+function buildPageDescriptors(data: IPassportData, theme: Theme) {
   const primary = theme.palette.primary.dark;
   const primaryMain = theme.palette.primary.main;
   const gold = '#D4AF37';
