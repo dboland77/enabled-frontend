@@ -15,6 +15,7 @@ const ICONS = {
   external: icon('ic_external'),
   menuItem: icon('ic_menu_item'),
   dashboard: icon('ic_dashboard'),
+  passport: icon('ic_passport'),
 };
 
 export function useNavData() {
@@ -50,6 +51,11 @@ export function useNavData() {
               { title: 'list', path: '/dashboard/user/adjustmentRequests/list' },
               { title: 'request', path: '/dashboard/user/adjustmentRequests/new' },
             ],
+          },
+          {
+            title: 'My Passport',
+            path: '/dashboard/passport',
+            icon: ICONS.passport,
           },
         ],
       },

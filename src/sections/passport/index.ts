@@ -1,0 +1,9 @@
+export { default as PassportView } from './view/passport-view';
+export { default as PassportBook } from './passport-book';
+export { default as PassportCover } from './passport-cover';
+export { default as PassportStamp } from './passport-stamp';
+export { default as PassportEmpty } from './passport-empty';
+export { default as PassportPersonalPage } from './passport-personal-page';
+export { default as PassportAdjustmentPage } from './passport-adjustment-page';
+export { default as PassportInsideCover } from './passport-inside-cover';
+export { default as PassportSendDialog } from './passport-send-dialog';
