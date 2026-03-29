@@ -12,6 +12,7 @@ import { alpha, useTheme } from '@mui/material/styles';
 
 import Iconify from '@/components/iconify';
 import { usePassport } from '@/hooks/use-passport';
+import { usePassportDownload } from '@/hooks/use-passport-download';
 
 import PassportBook from '../passport-book';
 import PassportEmpty from '../passport-empty';
@@ -25,6 +26,7 @@ export default function PassportView() {
   const { passportData, loading, error } = usePassport();
   const [sendDialogOpen, setSendDialogOpen] = useState(false);
   const [fullscreenOpen, setFullscreenOpen] = useState(false);
+  const { download, downloading } = usePassportDownload(passportData);
 
   if (loading) {
     return (
@@ -88,6 +90,20 @@ export default function PassportView() {
             onClick={() => setFullscreenOpen(true)}
           >
             Fullscreen
+          </Button>
+          <Button
+            variant="outlined"
+            startIcon={
+              downloading ? (
+                <Iconify icon="eva:loader-outline" />
+              ) : (
+                <Iconify icon="eva:download-outline" />
+              )
+            }
+            onClick={download}
+            disabled={downloading}
+          >
+            {downloading ? 'Generating...' : 'Download PDF'}
           </Button>
           <Button
             variant="contained"
