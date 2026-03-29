@@ -14,7 +14,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import { alpha, useTheme } from '@mui/material/styles';
 
-import { Iconify } from '@/components/iconify';
+import Iconify from '@/components/iconify';
 
 // ----------------------------------------------------------------------
 

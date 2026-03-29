@@ -3,18 +3,37 @@
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
+import CircularProgress from '@mui/material/CircularProgress';
 import { alpha, useTheme } from '@mui/material/styles';
 
-import { useRef, useCallback, useState, forwardRef } from 'react';
-import HTMLFlipBook from 'react-pageflip';
+import { useRef, useCallback, useState, forwardRef, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 
-import { Iconify } from '@/components/iconify';
+import Iconify from '@/components/iconify';
 import { IPassportData } from '@/types/passport';
 
 import PassportCover from './passport-cover';
 import PassportInsideCover from './passport-inside-cover';
 import PassportPersonalPage from './passport-personal-page';
 import PassportAdjustmentPage from './passport-adjustment-page';
+
+// Dynamically import HTMLFlipBook with no SSR
+const HTMLFlipBook = dynamic(() => import('react-pageflip').then((mod) => mod.default), {
+  ssr: false,
+  loading: () => (
+    <Box
+      sx={{
+        width: 280,
+        height: 380,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <CircularProgress />
+    </Box>
+  ),
+});
 
 // ----------------------------------------------------------------------
 
@@ -38,8 +57,14 @@ export default function PassportBook({ data, onPdfRef }: PassportBookProps) {
   const bookRef = useRef<{ pageFlip: () => { flipNext: () => void; flipPrev: () => void; getCurrentPageIndex: () => number; getPageCount: () => number } }>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [currentPage, setCurrentPage] = useState(0);
+  const [isMounted, setIsMounted] = useState(false);
 
-  // Calculate total pages: front cover + inside front + personal page + adjustment pages + inside back + back cover
+  // Ensure component only renders on client
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Calculate total pages: front cover + inside front + personal page + blank + adjustment pages + inside back + back cover
   const totalPages = 4 + data.approvedAdjustments.length + 2;
 
   const handleFlipNext = useCallback(() => {
@@ -62,6 +87,33 @@ export default function PassportBook({ data, onPdfRef }: PassportBookProps) {
     },
     [onPdfRef]
   );
+
+  if (!isMounted) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 2,
+        }}
+      >
+        <Box
+          sx={{
+            width: 280,
+            height: 380,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            bgcolor: alpha(theme.palette.grey[500], 0.1),
+            borderRadius: 1,
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      </Box>
+    );
+  }
 
   return (
     <Box

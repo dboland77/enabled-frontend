@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { alpha, useTheme } from '@mui/material/styles';
 
-import { Iconify } from '@/components/iconify';
+import Iconify from '@/components/iconify';
 
 // ----------------------------------------------------------------------
 
