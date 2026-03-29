@@ -50,9 +50,10 @@ PageWrapper.displayName = 'PageWrapper';
 interface PassportBookProps {
   data: IPassportData;
   onPdfRef?: (ref: HTMLDivElement | null) => void;
+  scale?: number;
 }
 
-export default function PassportBook({ data, onPdfRef }: PassportBookProps) {
+export default function PassportBook({ data, onPdfRef, scale = 1 }: PassportBookProps) {
   const theme = useTheme();
   const bookRef = useRef<{ pageFlip: () => { flipNext: () => void; flipPrev: () => void; getCurrentPageIndex: () => number; getPageCount: () => number } }>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -130,6 +131,14 @@ export default function PassportBook({ data, onPdfRef }: PassportBookProps) {
         sx={{
           position: 'relative',
           perspective: '1500px',
+          transform: `scale(${scale})`,
+          transformOrigin: 'center center',
+          // Reserve the scaled space so layout doesn't collapse
+          width: 560 * scale,
+          height: 380 * scale,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
         {/* @ts-expect-error - react-pageflip types are not fully compatible */}

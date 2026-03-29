@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import IconButton from '@mui/material/IconButton';
 import { useTheme } from '@mui/material/styles';
+import { useEffect, useState } from 'react';
 
 import Iconify from '@/components/iconify';
 import { IPassportData } from '@/types/passport';
@@ -18,12 +19,34 @@ interface PassportFullscreenModalProps {
   data: IPassportData;
 }
 
+// Base dimensions of the passport book at scale=1
+const BASE_BOOK_WIDTH = 560;  // two pages side-by-side
+const BASE_BOOK_HEIGHT = 420; // page height + controls
+
 export default function PassportFullscreenModal({
   open,
   onClose,
   data,
 }: PassportFullscreenModalProps) {
   const theme = useTheme();
+  const [scale, setScale] = useState(1);
+
+  // Recalculate scale whenever the modal opens or window resizes
+  useEffect(() => {
+    if (!open) return;
+
+    const calculateScale = () => {
+      const availableW = window.innerWidth * 0.9;
+      const availableH = window.innerHeight * 0.88; // leave room for close button
+      const scaleW = availableW / BASE_BOOK_WIDTH;
+      const scaleH = availableH / BASE_BOOK_HEIGHT;
+      setScale(Math.min(scaleW, scaleH, 2.4)); // cap at 2.4× to keep quality
+    };
+
+    calculateScale();
+    window.addEventListener('resize', calculateScale);
+    return () => window.removeEventListener('resize', calculateScale);
+  }, [open]);
 
   return (
     <Modal
@@ -35,59 +58,45 @@ export default function PassportFullscreenModal({
         justifyContent: 'center',
         zIndex: 1200,
       }}
-      BackdropProps={{
-        sx: {
-          backdropFilter: 'blur(4px)',
-          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      slotProps={{
+        backdrop: {
+          sx: {
+            backdropFilter: 'blur(6px)',
+            backgroundColor: 'rgba(0, 0, 0, 0.85)',
+          },
         },
       }}
     >
       <Box
         sx={{
           position: 'relative',
-          width: '95vw',
-          height: '95vh',
-          maxWidth: 1200,
-          maxHeight: 800,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          bgcolor: 'background.paper',
-          borderRadius: 2,
-          boxShadow: theme.shadows[24],
-          overflow: 'auto',
-          p: 2,
+          width: '100vw',
+          height: '100vh',
+          outline: 'none',
         }}
       >
-        {/* Close button */}
+        {/* Close button — always anchored top-right */}
         <IconButton
           onClick={onClose}
           sx={{
-            position: 'absolute',
-            top: 16,
-            right: 16,
-            bgcolor: 'rgba(0, 0, 0, 0.05)',
-            '&:hover': {
-              bgcolor: 'rgba(0, 0, 0, 0.1)',
-            },
+            position: 'fixed',
+            top: 20,
+            right: 20,
+            bgcolor: 'rgba(255,255,255,0.15)',
+            color: '#fff',
+            backdropFilter: 'blur(4px)',
+            '&:hover': { bgcolor: 'rgba(255,255,255,0.25)' },
             zIndex: 10,
           }}
         >
-          <Iconify icon="eva:close-fill" />
+          <Iconify icon="eva:close-fill" width={24} />
         </IconButton>
 
-        {/* Passport book */}
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '100%',
-            height: '100%',
-          }}
-        >
-          <PassportBook data={data} />
-        </Box>
+        {/* Scaled passport */}
+        <PassportBook data={data} scale={scale} />
       </Box>
     </Modal>
   );
