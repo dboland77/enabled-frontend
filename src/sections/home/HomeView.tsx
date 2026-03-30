@@ -26,8 +26,8 @@ export default function HomeView() {
   const settings = useSettingsContext();
   const router = useRouter();
   const theme = useTheme();
-  const { profile, loading } = useUserProfile();
-  const { notifications, createNotification } = useNotifications();
+  const { profile, loading: profileLoading } = useUserProfile();
+  const { notifications, createNotification, loading: notificationsLoading } = useNotifications();
   const notificationsCreatedRef = useRef(false);
 
   const isFirstLogin = profile?.is_first_login ?? true;
@@ -35,17 +35,21 @@ export default function HomeView() {
   const lastname = profile?.lastname ?? '';
   const hasName = firstname || lastname;
   const isProfileComplete = !isFirstLogin && hasName;
+  const loading = profileLoading || notificationsLoading;
 
   // Create onboarding notifications on first visit - only runs once per session
   useEffect(() => {
     const createOnboardingNotifications = async () => {
-      // Skip if already processed this session, still loading, or no user
-      if (notificationsCreatedRef.current || loading || !profile?.userId) return;
+      // Skip if already processed this session
+      if (notificationsCreatedRef.current) return;
+      
+      // Wait for both profile and notifications to finish loading
+      if (profileLoading || notificationsLoading || !profile?.userId) return;
       
       // Mark as processed immediately to prevent duplicate calls
       notificationsCreatedRef.current = true;
 
-      // Check if we already have these notification types
+      // Check if we already have these notification types in the database
       const hasCompleteProfileNotification = notifications.some(
         (n) => n.type === NotificationType.COMPLETE_PROFILE
       );
@@ -87,7 +91,8 @@ export default function HomeView() {
     };
 
     createOnboardingNotifications();
-  }, [loading, profile, isProfileComplete, notifications, createNotification]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profileLoading, notificationsLoading, profile?.userId]);
 
   const getWelcomeTitle = () => {
     if (isFirstLogin || !hasName) {

@@ -171,15 +171,26 @@ export function useNotifications() {
 
   const deleteNotification = useCallback(
     async (notificationId: string) => {
+      // Optimistic update - remove from local state immediately
+      const previousNotifications = notifications;
+      setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
+      
       try {
+        console.log('[v0] Attempting to delete notification:', notificationId);
+        
         const {
           data: { user },
           error: authError,
         } = await supabase.auth.getUser();
 
         if (authError || !user) {
+          console.log('[v0] Delete failed - not authenticated:', authError);
+          // Rollback on auth error
+          setNotifications(previousNotifications);
           throw new Error('Not authenticated');
         }
+
+        console.log('[v0] User authenticated, deleting notification for user:', user.id);
 
         const { error: deleteError } = await supabase
           .from('notifications')
@@ -187,16 +198,22 @@ export function useNotifications() {
           .eq('id', notificationId)
           .eq('user_id', user.id);
 
-        if (deleteError) throw deleteError;
+        if (deleteError) {
+          console.log('[v0] Delete error from Supabase:', deleteError);
+          // Rollback on delete error
+          setNotifications(previousNotifications);
+          throw deleteError;
+        }
 
-        setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
+        console.log('[v0] Delete successful');
         return true;
       } catch (err) {
+        console.error('[v0] Delete notification failed:', err);
         setError(err instanceof Error ? err.message : 'Failed to delete notification');
         return false;
       }
     },
-    [supabase]
+    [supabase, notifications]
   );
 
   // Subscribe to real-time notifications
