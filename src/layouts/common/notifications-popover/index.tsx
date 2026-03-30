@@ -66,9 +66,7 @@ export default function NotificationsPopover() {
   };
 
   const handleDelete = async (notificationId: string) => {
-    console.log('[v0] handleDelete called with id:', notificationId);
-    const result = await deleteNotification(notificationId);
-    console.log('[v0] deleteNotification result:', result);
+    await deleteNotification(notificationId);
   };
 
   const getFilteredNotifications = () => {

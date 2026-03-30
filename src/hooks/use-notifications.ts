@@ -141,6 +141,25 @@ export function useNotifications() {
   const createNotification = useCallback(
     async (data: CreateNotificationData) => {
       try {
+        // Check if a notification of the same type already exists for this user
+        const { data: existing, error: checkError } = await supabase
+          .from('notifications')
+          .select('id')
+          .eq('user_id', data.userId)
+          .eq('type', data.type)
+          .limit(1);
+
+        if (checkError) {
+          console.error('Failed to check existing notifications:', checkError);
+          throw checkError;
+        }
+
+        // If notification of this type already exists, skip creation
+        if (existing && existing.length > 0) {
+          console.log(`Notification of type "${data.type}" already exists, skipping creation`);
+          return null;
+        }
+
         const insertData = {
           user_id: data.userId,
           title: data.title,
@@ -176,21 +195,16 @@ export function useNotifications() {
       setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
       
       try {
-        console.log('[v0] Attempting to delete notification:', notificationId);
-        
         const {
           data: { user },
           error: authError,
         } = await supabase.auth.getUser();
 
         if (authError || !user) {
-          console.log('[v0] Delete failed - not authenticated:', authError);
           // Rollback on auth error
           setNotifications(previousNotifications);
           throw new Error('Not authenticated');
         }
-
-        console.log('[v0] User authenticated, deleting notification for user:', user.id);
 
         const { error: deleteError } = await supabase
           .from('notifications')
@@ -199,16 +213,14 @@ export function useNotifications() {
           .eq('user_id', user.id);
 
         if (deleteError) {
-          console.log('[v0] Delete error from Supabase:', deleteError);
           // Rollback on delete error
           setNotifications(previousNotifications);
           throw deleteError;
         }
 
-        console.log('[v0] Delete successful');
         return true;
       } catch (err) {
-        console.error('[v0] Delete notification failed:', err);
+        console.error('Failed to delete notification:', err);
         setError(err instanceof Error ? err.message : 'Failed to delete notification');
         return false;
       }
