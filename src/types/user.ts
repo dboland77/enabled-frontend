@@ -29,10 +29,10 @@ export interface IApprover {
 // TODO: Replace these placeholder IDs with actual Supabase user UUIDs after creating test accounts
 // You can find the UUIDs in Supabase Dashboard > Authentication > Users
 export const MOCK_APPROVERS: IApprover[] = [
-  { id: 'REPLACE_WITH_ADMIN_UUID', name: 'Test Admin', email: 'admin@test.com', role: 'admin', department: 'Administration' },
-  { id: 'REPLACE_WITH_APPROVER1_UUID', name: 'Test Approver (HR)', email: 'approver1@test.com', role: 'approver', department: 'Human Resources' },
-  { id: 'REPLACE_WITH_APPROVER2_UUID', name: 'Test Approver (Facilities)', email: 'approver2@test.com', role: 'approver', department: 'Facilities' },
-  { id: 'REPLACE_WITH_MANAGER_UUID', name: 'Test Manager', email: 'manager@test.com', role: 'manager', department: 'Operations' },
+  { id: 'REPLACE_WITH_ADMIN_UUID', name: 'Alex Admin', email: 'admin@test.com', role: 'admin', department: 'IT Services' },
+  { id: 'REPLACE_WITH_APPROVER_UUID', name: 'Sarah HR', email: 'approver@test.com', role: 'approver', department: 'Human Resources' },
+  { id: 'REPLACE_WITH_APPROVER2_UUID', name: 'David Facilities', email: 'approver2@test.com', role: 'approver', department: 'Facilities' },
+  { id: 'REPLACE_WITH_MANAGER_UUID', name: 'Mike Manager', email: 'manager@test.com', role: 'manager', department: 'Engineering' },
 ];
 
 export type IUserTableFilterValue = string | string[];

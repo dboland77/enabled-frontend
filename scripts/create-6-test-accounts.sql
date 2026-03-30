@@ -4,14 +4,14 @@
 --
 -- STEP 1: Create users via Supabase Dashboard (Authentication > Users > Add user)
 -- 
--- | # | Email                | Password           | Role     |
--- |---|----------------------|--------------------|----------|
--- | 1 | admin@test.com       | TestAdmin123!      | Admin    |
--- | 2 | approver1@test.com   | TestApprover123!   | Approver |
--- | 3 | approver2@test.com   | TestApprover123!   | Approver |
--- | 4 | manager@test.com     | TestManager123!    | Manager  |
--- | 5 | employee1@test.com   | TestEmployee123!   | Employee |
--- | 6 | employee2@test.com   | TestEmployee123!   | Employee |
+-- | # | Email              | Password           | Role     |
+-- |---|--------------------|--------------------|----------|
+-- | 1 | admin@test.com     | TestAdmin123!      | Admin    |
+-- | 2 | approver@test.com  | TestApprover123!   | Approver |
+-- | 3 | approver2@test.com | TestApprover123!   | Approver |
+-- | 4 | manager@test.com   | TestManager123!    | Manager  |
+-- | 5 | employee@test.com  | TestEmployee123!   | Employee |
+-- | 6 | employee2@test.com | TestEmployee123!   | Employee |
 --
 -- STEP 2: After creating users in Supabase Auth, run this SQL script
 -- ============================================================================
@@ -29,18 +29,18 @@ ON CONFLICT (role_name) DO NOTHING;
 DO $$
 DECLARE
   admin_id UUID;
-  approver1_id UUID;
+  approver_id UUID;
   approver2_id UUID;
   manager_id UUID;
-  employee1_id UUID;
+  employee_id UUID;
   employee2_id UUID;
 BEGIN
   -- Get user IDs by email
   SELECT id INTO admin_id FROM auth.users WHERE email = 'admin@test.com';
-  SELECT id INTO approver1_id FROM auth.users WHERE email = 'approver1@test.com';
+  SELECT id INTO approver_id FROM auth.users WHERE email = 'approver@test.com';
   SELECT id INTO approver2_id FROM auth.users WHERE email = 'approver2@test.com';
   SELECT id INTO manager_id FROM auth.users WHERE email = 'manager@test.com';
-  SELECT id INTO employee1_id FROM auth.users WHERE email = 'employee1@test.com';
+  SELECT id INTO employee_id FROM auth.users WHERE email = 'employee@test.com';
   SELECT id INTO employee2_id FROM auth.users WHERE email = 'employee2@test.com';
 
   -- 1. ADMIN USER
@@ -54,15 +54,15 @@ BEGIN
     RAISE NOTICE 'NOT FOUND: admin@test.com - Create this user in Supabase Auth first';
   END IF;
 
-  -- 2. APPROVER 1 (HR)
-  IF approver1_id IS NOT NULL THEN
+  -- 2. APPROVER (HR)
+  IF approver_id IS NOT NULL THEN
     INSERT INTO user_profile ("userId", firstname, lastname, role, email, job_title, department, location, is_first_login)
-    VALUES (approver1_id, 'Sarah', 'HR', 'approver', 'approver1@test.com', 'HR Business Partner', 'Human Resources', 'Head Office', false)
+    VALUES (approver_id, 'Sarah', 'HR', 'approver', 'approver@test.com', 'HR Business Partner', 'Human Resources', 'Head Office', false)
     ON CONFLICT ("userId") DO UPDATE SET
       role = 'approver', firstname = 'Sarah', lastname = 'HR', job_title = 'HR Business Partner', department = 'Human Resources';
-    RAISE NOTICE 'Created: approver1@test.com (Approver - HR)';
+    RAISE NOTICE 'Created: approver@test.com (Approver - HR)';
   ELSE
-    RAISE NOTICE 'NOT FOUND: approver1@test.com - Create this user in Supabase Auth first';
+    RAISE NOTICE 'NOT FOUND: approver@test.com - Create this user in Supabase Auth first';
   END IF;
 
   -- 3. APPROVER 2 (Facilities)
@@ -87,15 +87,15 @@ BEGIN
     RAISE NOTICE 'NOT FOUND: manager@test.com - Create this user in Supabase Auth first';
   END IF;
 
-  -- 5. EMPLOYEE 1 (Experienced user with disabilities)
-  IF employee1_id IS NOT NULL THEN
+  -- 5. EMPLOYEE (Experienced user with disabilities)
+  IF employee_id IS NOT NULL THEN
     INSERT INTO user_profile ("userId", firstname, lastname, role, email, job_title, department, location, is_first_login)
-    VALUES (employee1_id, 'Emma', 'Wilson', 'employee', 'employee1@test.com', 'Software Developer', 'Engineering', 'Remote', false)
+    VALUES (employee_id, 'Emma', 'Wilson', 'employee', 'employee@test.com', 'Software Developer', 'Engineering', 'Remote', false)
     ON CONFLICT ("userId") DO UPDATE SET
       role = 'employee', firstname = 'Emma', lastname = 'Wilson', job_title = 'Software Developer', department = 'Engineering';
-    RAISE NOTICE 'Created: employee1@test.com (Employee - Experienced)';
+    RAISE NOTICE 'Created: employee@test.com (Employee - Experienced)';
   ELSE
-    RAISE NOTICE 'NOT FOUND: employee1@test.com - Create this user in Supabase Auth first';
+    RAISE NOTICE 'NOT FOUND: employee@test.com - Create this user in Supabase Auth first';
   END IF;
 
   -- 6. EMPLOYEE 2 (New user - first time flow)
@@ -137,14 +137,14 @@ ORDER BY
 -- TEST ACCOUNT SUMMARY
 -- ============================================================================
 -- 
--- | Email                | Password           | Role     | Testing Purpose                    |
--- |----------------------|--------------------|----------|------------------------------------|
--- | admin@test.com       | TestAdmin123!      | Admin    | User management, system settings   |
--- | approver1@test.com   | TestApprover123!   | Approver | Approve requests (HR perspective)  |
--- | approver2@test.com   | TestApprover123!   | Approver | Approve requests (Facilities)      |
--- | manager@test.com     | TestManager123!    | Manager  | Team view, approval workflow       |
--- | employee1@test.com   | TestEmployee123!   | Employee | Submit requests, use wizard        |
--- | employee2@test.com   | TestEmployee123!   | Employee | First-time user onboarding flow    |
+-- | Email              | Password           | Role     | Testing Purpose                    |
+-- |--------------------|--------------------|-----------|------------------------------------|
+-- | admin@test.com     | TestAdmin123!      | Admin    | User management, system settings   |
+-- | approver@test.com  | TestApprover123!   | Approver | Approve requests (HR perspective)  |
+-- | approver2@test.com | TestApprover123!   | Approver | Approve requests (Facilities)      |
+-- | manager@test.com   | TestManager123!    | Manager  | Team view, approval workflow       |
+-- | employee@test.com  | TestEmployee123!   | Employee | Submit requests, use wizard        |
+-- | employee2@test.com | TestEmployee123!   | Employee | First-time user onboarding flow    |
 --
 -- ============================================================================
 
@@ -157,11 +157,11 @@ ORDER BY
 --
 -- 1. Run this query to get the UUIDs:
 --
-SELECT id, email FROM auth.users WHERE email IN ('admin@test.com', 'approver1@test.com', 'approver2@test.com', 'manager@test.com');
+SELECT id, email FROM auth.users WHERE email IN ('admin@test.com', 'approver@test.com', 'approver2@test.com', 'manager@test.com');
 --
 -- 2. Copy the UUIDs and update src/types/user.ts:
 --    Replace 'REPLACE_WITH_ADMIN_UUID' with the actual UUID for admin@test.com
---    Replace 'REPLACE_WITH_APPROVER1_UUID' with the actual UUID for approver1@test.com
+--    Replace 'REPLACE_WITH_APPROVER_UUID' with the actual UUID for approver@test.com
 --    Replace 'REPLACE_WITH_APPROVER2_UUID' with the actual UUID for approver2@test.com
 --    Replace 'REPLACE_WITH_MANAGER_UUID' with the actual UUID for manager@test.com
 --
