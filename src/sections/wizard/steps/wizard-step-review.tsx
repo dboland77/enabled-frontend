@@ -23,6 +23,7 @@ type Props = {
   selectedAdjustments: IRecommendedAdjustment[];
   additionalNotes: string;
   onNotesChange: (notes: string) => void;
+  onNotesBlur?: () => void;
   onEditStep: (step: number) => void;
 };
 
@@ -32,6 +33,7 @@ export default function WizardStepReview({
   selectedAdjustments,
   additionalNotes,
   onNotesChange,
+  onNotesBlur,
   onEditStep,
 }: Props) {
   const theme = useTheme();
@@ -198,6 +200,7 @@ export default function WizardStepReview({
                 placeholder="e.g., specific times when adjustments are most needed, any temporary or permanent requirements, preferred implementation timeline..."
                 value={additionalNotes}
                 onChange={(e) => onNotesChange(e.target.value)}
+                onBlur={onNotesBlur}
               />
             </CardContent>
           </Card>

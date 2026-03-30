@@ -334,14 +334,27 @@ export function useWizardSession() {
     [supabase, session]
   );
 
-  // Update state locally and trigger save
+  // Update state locally only (for text inputs to avoid save on every keystroke)
+  const updateSessionLocal = useCallback((updates: Partial<IWizardState>) => {
+    setSession((prev) => ({ ...prev, ...updates }));
+  }, []);
+
+  // Update state locally and trigger save (for non-text inputs like selections)
   const updateSession = useCallback(
     (updates: Partial<IWizardState>) => {
       setSession((prev) => ({ ...prev, ...updates }));
-      saveSession(updates);
+      // Don't save additionalNotes on every keystroke - it will be saved on blur or step change
+      if (!('additionalNotes' in updates)) {
+        saveSession(updates);
+      }
     },
     [saveSession]
   );
+
+  // Save notes explicitly (call on blur or before completing)
+  const saveNotes = useCallback(() => {
+    saveSession({ additionalNotes: session.additionalNotes });
+  }, [saveSession, session.additionalNotes]);
 
   // Complete the wizard and create adjustment request
   const completeWizard = useCallback(async () => {
@@ -425,6 +438,8 @@ export function useWizardSession() {
     saving,
     error,
     updateSession,
+    updateSessionLocal,
+    saveNotes,
     completeWizard,
     resetWizard,
   };
