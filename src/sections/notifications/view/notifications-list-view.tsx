@@ -74,7 +74,7 @@ export default function NotificationsListView() {
     }
   };
 
-  const getActionButton = (notification: { type: NotificationType; relatedRequestId?: string }) => {
+  const getActionButton = (notification: { type: NotificationType; relatedRequestId?: string | null }) => {
     switch (notification.type) {
       case NotificationType.ADJUSTMENT_REQUEST_SUBMITTED:
       case NotificationType.ADJUSTMENT_REQUEST_APPROVED:
