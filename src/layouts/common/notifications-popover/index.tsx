@@ -59,6 +59,11 @@ export default function NotificationsPopover() {
     router.push(`/dashboard/user/adjustmentRequests/${requestId}`);
   };
 
+  const handleNavigate = (path: string) => {
+    drawer.onFalse();
+    router.push(path);
+  };
+
   const getFilteredNotifications = () => {
     switch (currentTab) {
       case 'unread':
@@ -164,6 +169,7 @@ export default function NotificationsPopover() {
             notification={notification}
             onMarkAsRead={handleMarkAsRead}
             onViewRequest={handleViewRequest}
+            onNavigate={handleNavigate}
           />
         ))}
       </List>

@@ -20,12 +20,14 @@ type NotificationItemProps = {
   notification: INotification;
   onMarkAsRead?: (id: string) => void;
   onViewRequest?: (requestId: string) => void;
+  onNavigate?: (path: string) => void;
 };
 
 export default function NotificationItem({
   notification,
   onMarkAsRead,
   onViewRequest,
+  onNavigate,
 }: NotificationItemProps) {
   const handleClick = () => {
     if (!notification.isRead && onMarkAsRead) {
@@ -208,6 +210,34 @@ export default function NotificationItem({
           </Stack>
         );
 
+      case NotificationType.COMPLETE_PROFILE:
+        return (
+          <Stack spacing={1} direction="row" sx={{ mt: 1.5 }}>
+            <Button
+              size="small"
+              variant="contained"
+              color="warning"
+              onClick={() => onNavigate?.('/dashboard/user/profile')}
+            >
+              Complete Profile
+            </Button>
+          </Stack>
+        );
+
+      case NotificationType.TRY_WIZARD:
+        return (
+          <Stack spacing={1} direction="row" sx={{ mt: 1.5 }}>
+            <Button
+              size="small"
+              variant="contained"
+              color="primary"
+              onClick={() => onNavigate?.('/dashboard/adjustments/wizard')}
+            >
+              Try Wizard
+            </Button>
+          </Stack>
+        );
+
       default:
         return null;
     }
@@ -255,6 +285,10 @@ function getStatusLabel(type: NotificationType): string {
       return 'Pending';
     case NotificationType.ADJUSTMENT_REQUEST_UPDATED:
       return 'Updated';
+    case NotificationType.COMPLETE_PROFILE:
+      return 'Action';
+    case NotificationType.TRY_WIZARD:
+      return 'Tip';
     case NotificationType.SYSTEM:
     default:
       return 'System';
