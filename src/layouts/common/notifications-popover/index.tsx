@@ -233,11 +233,6 @@ export default function NotificationsPopover() {
           sx={{ pl: 2.5, pr: 1 }}
         >
           {renderTabs}
-          <Tooltip title="Settings">
-            <IconButton>
-              <Iconify icon="solar:settings-bold-duotone" />
-            </IconButton>
-          </Tooltip>
         </Stack>
 
         <Divider />
