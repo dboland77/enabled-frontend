@@ -47,7 +47,7 @@ export default function AdjustmentRequestListView() {
 
   const confirm = useBoolean();
 
-  const { adjustmentRequests, loading, refetch } = useAdjustmentRequests();
+  const { adjustmentRequests, loading, refetch, deleteAdjustmentRequest } = useAdjustmentRequests();
 
   useEffect(() => {
     refetch();
@@ -64,21 +64,33 @@ export default function AdjustmentRequestListView() {
 
   const denseHeight = table.dense ? 52 : 72;
 
-  const handleDeleteRow = async (rowId: string) => {
-    table.onUpdatePageDeleteRow(dataInPage.length);
-  };
+  const handleDeleteRow = useCallback(
+    async (rowId: string) => {
+      const success = await deleteAdjustmentRequest(rowId);
+      if (success) {
+        table.onUpdatePageDeleteRow(dataInPage.length);
+      }
+    },
+    [deleteAdjustmentRequest, dataInPage.length, table]
+  );
 
-  const handleDeleteRows = async () => {
-    const deleteRows = adjustmentRequests
-      .filter((row) => table.selected.includes(row.id))
-      .map((r) => r.id);
+  const handleDeleteRows = useCallback(async () => {
+    const deletePromises = table.selected.map((id) => deleteAdjustmentRequest(id));
+    await Promise.all(deletePromises);
 
     table.onUpdatePageDeleteRows({
       totalRows: adjustmentRequests.length,
       totalRowsInPage: dataInPage.length,
       totalRowsFiltered: dataFiltered.length,
     });
-  };
+    table.setSelected([]);
+  }, [
+    table,
+    deleteAdjustmentRequest,
+    adjustmentRequests.length,
+    dataInPage.length,
+    dataFiltered.length,
+  ]);
 
   const handleEditRow = useCallback(
     (rowId: string) => {
@@ -165,6 +177,7 @@ export default function AdjustmentRequestListView() {
                         onSelectRow={() => table.onSelectRow(row.id)}
                         onDeleteRow={() => handleDeleteRow(row.id)}
                         onEditRow={() => handleEditRow(row.id)}
+                        onRefresh={refetch}
                       />
                     ))}
 

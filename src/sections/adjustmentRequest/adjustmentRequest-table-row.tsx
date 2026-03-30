@@ -1,5 +1,4 @@
 import Button from '@mui/material/Button';
-// import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import TableRow from '@mui/material/TableRow';
@@ -15,12 +14,15 @@ import { ConfirmDialog } from '@/components/custom-dialog';
 import CustomPopover, { usePopover } from '@/components/custom-popover';
 import { RequestStatusTypes, IAdjustmentRequestItem } from '@/types/adjustmentRequest';
 
+import AdjustmentRequestQuickEditForm from './adjustmentRequest-quick-edit-form';
+
 type Props = {
   selected: boolean;
   onEditRow: VoidFunction;
   row: IAdjustmentRequestItem;
   onSelectRow: VoidFunction;
   onDeleteRow: VoidFunction;
+  onRefresh?: VoidFunction;
 };
 
 export default function AdjustmentRequestTableRow({
@@ -29,6 +31,7 @@ export default function AdjustmentRequestTableRow({
   onEditRow,
   onSelectRow,
   onDeleteRow,
+  onRefresh,
 }: Props) {
   const {
     title,
@@ -43,6 +46,11 @@ export default function AdjustmentRequestTableRow({
   const quickEdit = useBoolean();
 
   const popover = usePopover();
+
+  const handleDeleteConfirm = () => {
+    onDeleteRow();
+    confirm.onFalse();
+  };
 
   return (
     <>
@@ -92,6 +100,13 @@ export default function AdjustmentRequestTableRow({
         </TableCell>
       </TableRow>
 
+      <AdjustmentRequestQuickEditForm
+        open={quickEdit.value}
+        onClose={quickEdit.onFalse}
+        currentRequest={row}
+        onSuccess={onRefresh}
+      />
+
       <CustomPopover
         open={popover.open}
         onClose={popover.onClose}
@@ -126,7 +141,7 @@ export default function AdjustmentRequestTableRow({
         title="Delete"
         content="Are you sure want to delete?"
         action={
-          <Button variant="contained" color="error" onClick={onDeleteRow}>
+          <Button variant="contained" color="error" onClick={handleDeleteConfirm}>
             Delete
           </Button>
         }
