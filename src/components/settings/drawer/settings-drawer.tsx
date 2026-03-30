@@ -38,7 +38,7 @@ export default function SettingsDrawer() {
       sx={{ py: 2, pr: 1, pl: 2.5 }}
     >
       <Typography variant="h6" sx={{ flexGrow: 1 }}>
-        Settings
+        Accessibility
       </Typography>
 
       <Tooltip title="Reset">
