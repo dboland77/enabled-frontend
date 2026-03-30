@@ -21,6 +21,7 @@ type NotificationItemProps = {
   onMarkAsRead?: (id: string) => void;
   onViewRequest?: (requestId: string) => void;
   onNavigate?: (path: string) => void;
+  onDelete?: (id: string) => void;
 };
 
 export default function NotificationItem({
@@ -28,6 +29,7 @@ export default function NotificationItem({
   onMarkAsRead,
   onViewRequest,
   onNavigate,
+  onDelete,
 }: NotificationItemProps) {
   const handleClick = () => {
     if (!notification.isRead && onMarkAsRead) {
@@ -128,13 +130,18 @@ export default function NotificationItem({
         top: 26,
         width: 8,
         height: 8,
-        right: 20,
+        right: 48,
         borderRadius: '50%',
         bgcolor: 'info.main',
         position: 'absolute',
       }}
     />
   );
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onDelete?.(notification.id);
+  };
 
   // Render action buttons for adjustment request notifications
   const renderActions = () => {
@@ -249,12 +256,14 @@ export default function NotificationItem({
       onClick={handleClick}
       sx={{
         p: 2.5,
+        pr: 5,
         alignItems: 'flex-start',
         borderBottom: (theme) => `dashed 1px ${theme.palette.divider}`,
         bgcolor: notification.isRead ? 'transparent' : 'action.hover',
         '&:hover': {
           bgcolor: notification.isRead ? 'action.hover' : 'action.selected',
         },
+        position: 'relative',
       }}
     >
       {renderUnReadBadge}
@@ -265,6 +274,29 @@ export default function NotificationItem({
         {renderText}
         {renderActions()}
       </Stack>
+
+      <Box
+        onClick={handleDelete}
+        sx={{
+          position: 'absolute',
+          top: 12,
+          right: 12,
+          width: 28,
+          height: 28,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: '50%',
+          cursor: 'pointer',
+          color: 'text.disabled',
+          '&:hover': {
+            bgcolor: 'action.hover',
+            color: 'error.main',
+          },
+        }}
+      >
+        <Iconify icon="eva:close-fill" width={18} />
+      </Box>
     </ListItemButton>
   );
 }

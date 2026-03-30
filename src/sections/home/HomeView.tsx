@@ -36,10 +36,14 @@ export default function HomeView() {
   const hasName = firstname || lastname;
   const isProfileComplete = !isFirstLogin && hasName;
 
-  // Create onboarding notifications on first visit
+  // Create onboarding notifications on first visit - only runs once per session
   useEffect(() => {
     const createOnboardingNotifications = async () => {
-      if (loading || !profile?.userId || notificationsCreatedRef.current) return;
+      // Skip if already processed this session, still loading, or no user
+      if (notificationsCreatedRef.current || loading || !profile?.userId) return;
+      
+      // Mark as processed immediately to prevent duplicate calls
+      notificationsCreatedRef.current = true;
 
       // Check if we already have these notification types
       const hasCompleteProfileNotification = notifications.some(
@@ -48,8 +52,6 @@ export default function HomeView() {
       const hasTryWizardNotification = notifications.some(
         (n) => n.type === NotificationType.TRY_WIZARD
       );
-
-      notificationsCreatedRef.current = true;
 
       // Create "Complete Profile" notification if profile is incomplete and no notification exists
       if (!isProfileComplete && !hasCompleteProfileNotification) {
