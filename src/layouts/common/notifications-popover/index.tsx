@@ -40,6 +40,7 @@ export default function NotificationsPopover() {
     loading,
     markAsRead,
     markAllAsRead,
+    deleteNotification,
   } = useNotifications();
 
   const handleChangeTab = useCallback((event: React.SyntheticEvent, newValue: string) => {
@@ -62,6 +63,10 @@ export default function NotificationsPopover() {
   const handleNavigate = (path: string) => {
     drawer.onFalse();
     router.push(path);
+  };
+
+  const handleDelete = async (notificationId: string) => {
+    await deleteNotification(notificationId);
   };
 
   const getFilteredNotifications = () => {
@@ -170,6 +175,7 @@ export default function NotificationsPopover() {
             onMarkAsRead={handleMarkAsRead}
             onViewRequest={handleViewRequest}
             onNavigate={handleNavigate}
+            onDelete={handleDelete}
           />
         ))}
       </List>
