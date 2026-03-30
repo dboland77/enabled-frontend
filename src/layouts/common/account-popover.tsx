@@ -1,4 +1,3 @@
-import { m } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 
 import Box from '@mui/material/Box';
@@ -11,7 +10,6 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Skeleton from '@mui/material/Skeleton';
 
-import { varHover } from '@/components/animate';
 import { useSnackbar } from '@/components/snackbar';
 import CustomPopover, { usePopover } from '@/components/custom-popover';
 import { useUserProfile } from '@/hooks/use-user-profile';
@@ -78,10 +76,6 @@ export default function AccountPopover() {
   return (
     <>
       <IconButton
-        component={m.button}
-        whileTap="tap"
-        whileHover="hover"
-        variants={varHover(1.05)}
         onClick={popover.onOpen}
         aria-label={`Account menu${firstname ? ` for ${firstname} ${lastname}` : ''}`}
         aria-haspopup="true"
@@ -90,6 +84,10 @@ export default function AccountPopover() {
           width: 40,
           height: 40,
           background: (theme) => alpha(theme.palette.grey[500], 0.08),
+          transition: 'transform 0.2s ease-in-out',
+          '&:hover': {
+            transform: 'scale(1.05)',
+          },
           ...(popover.open && {
             background: (theme) =>
               `linear-gradient(135deg, ${theme.palette.primary.light} 0%, ${theme.palette.primary.main} 100%)`,
