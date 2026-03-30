@@ -9,9 +9,11 @@ export default function LandingPage() {
         <li>
           <Link href="/auth/signin">Sign In</Link>
         </li>
+        {/* TODO: Re-enable sign up after testing phase
         <li>
           <Link href="/auth/signup">Sign Up</Link>
         </li>
+        */}
       </ul>
     </main>
   );

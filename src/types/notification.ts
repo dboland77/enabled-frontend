@@ -7,6 +7,8 @@ export enum NotificationType {
   ADJUSTMENT_REQUEST_MORE_INFO = 'adjustment_request_more_info',
   ADJUSTMENT_REQUEST_PENDING = 'adjustment_request_pending',
   ADJUSTMENT_REQUEST_UPDATED = 'adjustment_request_updated',
+  COMPLETE_PROFILE = 'complete_profile',
+  TRY_WIZARD = 'try_wizard',
   SYSTEM = 'system',
 }
 
@@ -96,6 +98,10 @@ export function getNotificationIcon(type: NotificationType): string {
       return 'solar:clock-circle-bold';
     case NotificationType.ADJUSTMENT_REQUEST_UPDATED:
       return 'solar:refresh-bold';
+    case NotificationType.COMPLETE_PROFILE:
+      return 'solar:user-circle-bold';
+    case NotificationType.TRY_WIZARD:
+      return 'mdi:magic-staff';
     case NotificationType.SYSTEM:
     default:
       return 'solar:bell-bold';
@@ -110,9 +116,11 @@ export function getNotificationColor(type: NotificationType): 'success' | 'error
     case NotificationType.ADJUSTMENT_REQUEST_DECLINED:
       return 'error';
     case NotificationType.ADJUSTMENT_REQUEST_MORE_INFO:
+    case NotificationType.COMPLETE_PROFILE:
       return 'warning';
     case NotificationType.ADJUSTMENT_REQUEST_SUBMITTED:
     case NotificationType.ADJUSTMENT_REQUEST_PENDING:
+    case NotificationType.TRY_WIZARD:
       return 'info';
     default:
       return 'default';

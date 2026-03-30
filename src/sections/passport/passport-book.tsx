@@ -15,6 +15,8 @@ import { IPassportData } from '@/types/passport';
 import PassportCover from './passport-cover';
 import PassportInsideCover from './passport-inside-cover';
 import PassportPersonalPage from './passport-personal-page';
+import PassportDisabilitiesPage from './passport-disabilities-page';
+import PassportLimitationsPage from './passport-limitations-page';
 import PassportAdjustmentPage from './passport-adjustment-page';
 
 // Dynamically import HTMLFlipBook with no SSR
@@ -65,8 +67,8 @@ export default function PassportBook({ data, onPdfRef, scale = 1 }: PassportBook
     setIsMounted(true);
   }, []);
 
-  // Calculate total pages: front cover + inside front + personal page + blank + adjustment pages + inside back + back cover
-  const totalPages = 4 + data.approvedAdjustments.length + 2;
+  // Calculate total pages: front cover + inside front + personal page + disabilities page + limitations page + adjustment pages + inside back + back cover
+  const totalPages = 5 + data.approvedAdjustments.length + 2;
 
   const handleFlipNext = useCallback(() => {
     bookRef.current?.pageFlip()?.flipNext();
@@ -187,38 +189,20 @@ export default function PassportBook({ data, onPdfRef, scale = 1 }: PassportBook
             />
           </PageWrapper>
 
-          {/* Blank page (opposite personal info) */}
+          {/* Disabilities Page (My Conditions) */}
           <PageWrapper>
-            <Box
-              sx={{
-                width: '100%',
-                height: '100%',
-                bgcolor: '#FAF8F5',
-                position: 'relative',
-              }}
-            >
-              <Box
-                sx={{
-                  position: 'absolute',
-                  inset: 0,
-                  opacity: 0.03,
-                  backgroundImage: `repeating-linear-gradient(
-                    0deg,
-                    ${theme.palette.primary.main},
-                    ${theme.palette.primary.main} 1px,
-                    transparent 1px,
-                    transparent 20px
-                  ),
-                  repeating-linear-gradient(
-                    90deg,
-                    ${theme.palette.primary.main},
-                    ${theme.palette.primary.main} 1px,
-                    transparent 1px,
-                    transparent 20px
-                  )`,
-                }}
-              />
-            </Box>
+            <PassportDisabilitiesPage
+              disabilities={data.disabilities || []}
+              pageNumber={2}
+            />
+          </PageWrapper>
+
+          {/* Limitations Page (I Struggle With) */}
+          <PageWrapper>
+            <PassportLimitationsPage
+              limitations={data.limitations || []}
+              pageNumber={3}
+            />
           </PageWrapper>
 
           {/* Adjustment Pages */}
@@ -226,7 +210,7 @@ export default function PassportBook({ data, onPdfRef, scale = 1 }: PassportBook
             <PageWrapper key={adjustment.id}>
               <PassportAdjustmentPage
                 adjustment={adjustment}
-                pageNumber={index + 2}
+                pageNumber={index + 4}
               />
             </PageWrapper>
           ))}

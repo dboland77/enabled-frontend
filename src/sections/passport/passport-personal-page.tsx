@@ -143,32 +143,63 @@ const PassportPersonalPage = forwardRef<HTMLDivElement, PassportPersonalPageProp
               </Typography>
             </Box>
 
-            {/* Email */}
-            <Box>
-              <Typography
-                variant="caption"
-                sx={{
-                  color: theme.palette.text.secondary,
-                  fontSize: '9px',
-                  textTransform: 'uppercase',
-                  letterSpacing: 1,
-                }}
-              >
-                Email
-              </Typography>
-              <Typography
-                variant="body2"
-                sx={{
-                  color: theme.palette.text.primary,
-                  fontSize: '10px',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {holder.email}
-              </Typography>
-            </Box>
+            {/* Job Title */}
+            {holder.jobTitle && (
+              <Box sx={{ mb: 1 }}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: theme.palette.text.secondary,
+                    fontSize: '9px',
+                    textTransform: 'uppercase',
+                    letterSpacing: 1,
+                  }}
+                >
+                  Role
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: theme.palette.text.primary,
+                    fontSize: '10px',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {holder.jobTitle}
+                </Typography>
+              </Box>
+            )}
+
+            {/* Department */}
+            {holder.department && (
+              <Box>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: theme.palette.text.secondary,
+                    fontSize: '9px',
+                    textTransform: 'uppercase',
+                    letterSpacing: 1,
+                  }}
+                >
+                  Department
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: theme.palette.text.primary,
+                    fontSize: '10px',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {holder.department}
+                </Typography>
+              </Box>
+            )}
           </Box>
         </Box>
 

@@ -1,43 +1,63 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+
+// Initialize state synchronously from localStorage to avoid hydration mismatch
+function getInitialState(key: string, initialState: any) {
+  if (typeof window === 'undefined') {
+    return initialState;
+  }
+  
+  try {
+    const stored = window.localStorage.getItem(key);
+    if (stored) {
+      return { ...initialState, ...JSON.parse(stored) };
+    }
+  } catch (error) {
+    console.error('Error reading from localStorage:', error);
+  }
+  
+  return initialState;
+}
 
 export function useLocalStorage(key: string, initialState: any) {
-  const [state, setState] = useState(initialState);
+  // Use ref to track if initial load from storage is done
+  const isInitialized = useRef(false);
+  
+  const [state, setState] = useState(() => {
+    // Only read from localStorage once during initialization
+    if (typeof window !== 'undefined' && !isInitialized.current) {
+      isInitialized.current = true;
+      return getInitialState(key, initialState);
+    }
+    return initialState;
+  });
 
+  // Sync state from localStorage on mount (for SSR hydration)
   useEffect(() => {
-    const restored = getStorage(key);
-
-    if (restored) {
-      setState((prevValue: any) => ({
-        ...prevValue,
-        ...restored,
-      }));
+    if (!isInitialized.current) {
+      const restored = getStorage(key);
+      if (restored) {
+        setState((prevValue: any) => ({
+          ...prevValue,
+          ...restored,
+        }));
+      }
+      isInitialized.current = true;
     }
   }, [key]);
 
-  const updateState = useCallback(
-    (updateValue: any) => {
+  const update = useCallback(
+    (name: string, updateValue: any) => {
       setState((prevValue: any) => {
-        setStorage(key, {
+        const newState = {
           ...prevValue,
-          ...updateValue,
-        });
-
-        return {
-          ...prevValue,
-          ...updateValue,
+          [name]: updateValue,
         };
+        // Debounce localStorage writes
+        setStorage(key, newState);
+        return newState;
       });
     },
     [key]
-  );
-
-  const update = useCallback(
-    (name: string, updateValue: any) => {
-      updateState({
-        [name]: updateValue,
-      });
-    },
-    [updateState]
   );
 
   const reset = useCallback(() => {
@@ -45,11 +65,12 @@ export function useLocalStorage(key: string, initialState: any) {
     setState(initialState);
   }, [initialState, key]);
 
-  return {
+  // Memoize return value to prevent unnecessary re-renders
+  return useMemo(() => ({
     state,
     update,
     reset,
-  };
+  }), [state, update, reset]);
 }
 
 export const getStorage = (key: string) => {

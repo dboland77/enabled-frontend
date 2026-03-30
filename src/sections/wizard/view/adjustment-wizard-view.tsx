@@ -127,7 +127,7 @@ export default function AdjustmentWizardView() {
   const handleSubmit = useCallback(async () => {
     const requestId = await completeWizard();
     if (requestId) {
-      router.push(`/dashboard/adjustment-requests/${requestId}`);
+      router.push(`/dashboard/user/adjustmentRequests/${requestId}`);
     }
     confirmSubmit.onFalse();
   }, [completeWizard, router, confirmSubmit]);
