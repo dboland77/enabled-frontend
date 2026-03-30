@@ -1,10 +1,13 @@
 import { IAdjustmentRequestItem } from './adjustmentRequest';
+import { IDisabilityItem } from './disability';
 
 export interface IPassportHolder {
   id: string;
   fullName: string;
   email: string;
   avatarUrl?: string;
+  jobTitle?: string;
+  department?: string;
   issueDate: Date;
 }
 
@@ -16,9 +19,18 @@ export interface IPassportStamp {
   approverInitials: string;
 }
 
+export interface IPassportLimitation {
+  id: string;
+  description: string;
+  category?: string;
+  createdAt: Date;
+}
+
 export interface IPassportData {
   passportNumber: string;
   holder: IPassportHolder;
+  disabilities: IDisabilityItem[];
+  limitations: IPassportLimitation[];
   approvedAdjustments: IAdjustmentRequestItem[];
   stamps: IPassportStamp[];
   issueDate: Date;
