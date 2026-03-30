@@ -128,7 +128,7 @@ export default function WizardStepAdjustments({
           No Recommendations Yet
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 400, mx: 'auto' }}>
-          Please go back and select at least one disability or limitation to receive personalized
+          Please go back and select at least one disability or limitation to receive personalised
           adjustment recommendations.
         </Typography>
       </Box>

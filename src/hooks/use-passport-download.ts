@@ -279,7 +279,7 @@ function buildPageDescriptors(data: IPassportData, theme: Theme) {
           display:flex;justify-content:space-between;align-items:center">
           <div>
             <div style="font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:${textSecondary};margin-bottom:3px">Approved By</div>
-            <div style="font-size:13px;font-weight:600;color:${textPrimary}">${adj.approverName || 'Authorized Approver'}</div>
+            <div style="font-size:13px;font-weight:600;color:${textPrimary}">${adj.approverName || 'Authorised Approver'}</div>
           </div>
           <div style="text-align:right">
             <div style="font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:${textSecondary};margin-bottom:3px">Date</div>
