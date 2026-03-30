@@ -39,7 +39,7 @@ export default function HomeView() {
   // Create onboarding notifications on first visit
   useEffect(() => {
     const createOnboardingNotifications = async () => {
-      if (loading || !profile?.id || notificationsCreatedRef.current) return;
+      if (loading || !profile?.userId || notificationsCreatedRef.current) return;
 
       // Check if we already have these notification types
       const hasCompleteProfileNotification = notifications.some(
@@ -55,7 +55,7 @@ export default function HomeView() {
       if (!isProfileComplete && !hasCompleteProfileNotification) {
         try {
           await createNotification({
-            userId: profile.id,
+            userId: profile.userId,
             title: 'Complete Your Profile',
             message:
               'Please fill in your profile information including your job details and accessibility requirements to get started.',
@@ -71,7 +71,7 @@ export default function HomeView() {
       if (!hasTryWizardNotification) {
         try {
           await createNotification({
-            userId: profile.id,
+            userId: profile.userId,
             title: 'Try the Adjustment Wizard',
             message:
               'Get personalized workplace adjustment recommendations based on your disabilities and limitations using our guided wizard.',
