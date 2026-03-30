@@ -82,10 +82,10 @@ export default function AdjustmentRequestQuickEditForm({
     detail: Yup.string()
       .required('Detail is required')
       .min(10, 'Please provide more detail'),
-    adjustmentType: Yup.string().nullable().required('Adjustment type is required'),
-    workfunction: Yup.string().nullable().required('Work function is required'),
-    location: Yup.string().nullable().required('Location is required'),
-    requiredDate: Yup.date().nullable().required('Required date is required'),
+    adjustmentType: Yup.string().required('Adjustment type is required'),
+    workfunction: Yup.string().required('Work function is required'),
+    location: Yup.string().required('Location is required'),
+    requiredDate: Yup.date().required('Required date is required'),
   });
 
   const defaultValues = useMemo(
@@ -95,19 +95,12 @@ export default function AdjustmentRequestQuickEditForm({
       adjustmentType: currentRequest?.adjustmentType || '',
       workfunction: currentRequest?.workfunction || '',
       location: currentRequest?.location || '',
-      requiredDate: currentRequest?.requiredDate ? new Date(currentRequest.requiredDate) : null,
+      requiredDate: currentRequest?.requiredDate ? new Date(currentRequest.requiredDate) : new Date(),
     }),
     [currentRequest]
   );
 
-  const methods = useForm<{
-    title: string;
-    detail: string;
-    adjustmentType: string | null;
-    workfunction: string | null;
-    location: string | null;
-    requiredDate: Date | null;
-  }>({
+  const methods = useForm({
     resolver: yupResolver(QuickEditSchema),
     defaultValues,
   });
@@ -133,10 +126,10 @@ export default function AdjustmentRequestQuickEditForm({
         id: currentRequest.id,
         title: data.title,
         detail: data.detail,
-        adjustmentType: data.adjustmentType as string,
-        workfunction: data.workfunction as string,
-        location: data.location as string,
-        requiredDate: data.requiredDate as Date,
+        adjustmentType: data.adjustmentType,
+        workfunction: data.workfunction,
+        location: data.location,
+        requiredDate: data.requiredDate,
         approverId: currentRequest.approverId || '',
         approverName: currentRequest.approverName || '',
       });
