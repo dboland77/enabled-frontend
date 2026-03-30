@@ -74,7 +74,7 @@ export default function HomeView() {
             userId: profile.userId,
             title: 'Try the Adjustment Wizard',
             message:
-              'Get personalized workplace adjustment recommendations based on your disabilities and limitations using our guided wizard.',
+              'Get personalised workplace adjustment recommendations based on your disabilities and limitations using our guided wizard.',
             type: NotificationType.TRY_WIZARD,
             category: NotificationCategory.SYSTEM,
           });
@@ -172,7 +172,7 @@ export default function HomeView() {
                   Adjustment Wizard
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Get personalized workplace adjustment recommendations based on your disabilities
+                  Get personalised workplace adjustment recommendations based on your disabilities
                   and limitations
                 </Typography>
               </Box>

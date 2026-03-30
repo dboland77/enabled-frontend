@@ -228,7 +228,7 @@ const PassportAdjustmentPage = forwardRef<HTMLDivElement, PassportAdjustmentPage
                     fontSize: '10px',
                   }}
                 >
-                  {adjustment.approverName || 'Authorized Approver'}
+                  {adjustment.approverName || 'Authorised Approver'}
                 </Typography>
               </Box>
               <Box sx={{ textAlign: 'right' }}>
