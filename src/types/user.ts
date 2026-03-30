@@ -15,7 +15,9 @@ export const USER_ROLES: IUserRole[] = [
   { value: 'employee', label: 'Employee', description: 'Standard user access', canApprove: false },
 ];
 
-// Mock approvers list (users who can approve requests)
+// Approvers list (users who can approve requests)
+// NOTE: These IDs must match actual Supabase Auth user IDs for the approval workflow to function.
+// After creating test users, update the IDs below with the UUIDs from Supabase Dashboard > Authentication > Users
 export interface IApprover {
   id: string;
   name: string;
@@ -24,12 +26,13 @@ export interface IApprover {
   department?: string;
 }
 
+// TODO: Replace these placeholder IDs with actual Supabase user UUIDs after creating test accounts
+// You can find the UUIDs in Supabase Dashboard > Authentication > Users
 export const MOCK_APPROVERS: IApprover[] = [
-  { id: '1', name: 'Sarah Johnson', email: 'sarah.johnson@company.com', role: 'manager', department: 'Human Resources' },
-  { id: '2', name: 'Michael Chen', email: 'michael.chen@company.com', role: 'approver', department: 'Operations' },
-  { id: '3', name: 'Emma Williams', email: 'emma.williams@company.com', role: 'manager', department: 'IT Services' },
-  { id: '4', name: 'James Brown', email: 'james.brown@company.com', role: 'admin', department: 'Administration' },
-  { id: '5', name: 'Lisa Davis', email: 'lisa.davis@company.com', role: 'approver', department: 'Facilities' },
+  { id: 'REPLACE_WITH_ADMIN_UUID', name: 'Test Admin', email: 'admin@test.com', role: 'admin', department: 'Administration' },
+  { id: 'REPLACE_WITH_APPROVER1_UUID', name: 'Test Approver (HR)', email: 'approver1@test.com', role: 'approver', department: 'Human Resources' },
+  { id: 'REPLACE_WITH_APPROVER2_UUID', name: 'Test Approver (Facilities)', email: 'approver2@test.com', role: 'approver', department: 'Facilities' },
+  { id: 'REPLACE_WITH_MANAGER_UUID', name: 'Test Manager', email: 'manager@test.com', role: 'manager', department: 'Operations' },
 ];
 
 export type IUserTableFilterValue = string | string[];

@@ -147,3 +147,23 @@ ORDER BY
 -- | employee2@test.com   | TestEmployee123!   | Employee | First-time user onboarding flow    |
 --
 -- ============================================================================
+
+-- ============================================================================
+-- STEP 3: UPDATE APPROVERS LIST IN CODE (IMPORTANT!)
+-- ============================================================================
+--
+-- After running this script, you MUST update the MOCK_APPROVERS in the code
+-- with the actual Supabase user UUIDs for requests to route correctly.
+--
+-- 1. Run this query to get the UUIDs:
+--
+SELECT id, email FROM auth.users WHERE email IN ('admin@test.com', 'approver1@test.com', 'approver2@test.com', 'manager@test.com');
+--
+-- 2. Copy the UUIDs and update src/types/user.ts:
+--    Replace 'REPLACE_WITH_ADMIN_UUID' with the actual UUID for admin@test.com
+--    Replace 'REPLACE_WITH_APPROVER1_UUID' with the actual UUID for approver1@test.com
+--    Replace 'REPLACE_WITH_APPROVER2_UUID' with the actual UUID for approver2@test.com
+--    Replace 'REPLACE_WITH_MANAGER_UUID' with the actual UUID for manager@test.com
+--
+-- Without this step, employee requests will NOT be routed to test approvers!
+-- ============================================================================
