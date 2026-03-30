@@ -100,7 +100,14 @@ export default function AdjustmentRequestQuickEditForm({
     [currentRequest]
   );
 
-  const methods = useForm({
+  const methods = useForm<{
+    title: string;
+    detail: string;
+    adjustmentType: string | null;
+    workfunction: string | null;
+    location: string | null;
+    requiredDate: Date | null;
+  }>({
     resolver: yupResolver(QuickEditSchema),
     defaultValues,
   });
