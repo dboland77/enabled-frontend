@@ -79,7 +79,7 @@ export default function AccountPopover() {
         onClick={popover.onOpen}
         aria-label={`Account menu${firstname ? ` for ${firstname} ${lastname}` : ''}`}
         aria-haspopup="true"
-        aria-expanded={popover.open}
+        aria-expanded={Boolean(popover.open)}
         sx={{
           width: 40,
           height: 40,
