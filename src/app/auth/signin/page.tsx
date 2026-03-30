@@ -65,6 +65,7 @@ export default function SignInView() {
     <Stack spacing={2} sx={{ mb: 5 }}>
       <Typography variant="h4">Sign in to enableD</Typography>
 
+      {/* TODO: Re-enable sign up after testing phase
       <Stack direction="row" spacing={0.5}>
         <Typography variant="body2">New user?</Typography>
 
@@ -79,6 +80,7 @@ export default function SignInView() {
           Sign Up
         </Link>
       </Stack>
+      */}
     </Stack>
   );
 
@@ -103,9 +105,11 @@ export default function SignInView() {
         }}
       />
 
+      {/* TODO: Re-enable forgot password after testing phase
       <Link variant="body2" color="inherit" underline="always" sx={{ alignSelf: 'flex-end' }}>
         Forgot password?
       </Link>
+      */}
 
       <Button
         fullWidth
