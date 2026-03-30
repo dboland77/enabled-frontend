@@ -102,7 +102,7 @@ function Searchbar() {
 
   const renderButton = (
     <Stack direction="row" alignItems="center">
-      <IconButton onClick={search.onTrue}>
+      <IconButton onClick={search.onTrue} aria-label="Search">
         <Iconify icon="eva:search-fill" />
       </IconButton>
 

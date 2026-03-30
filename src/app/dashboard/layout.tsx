@@ -4,6 +4,7 @@ import ThemeProvider from '@/theme';
 import ProgressBar from '@/components/progress-bar';
 import { SettingsDrawer, SettingsProvider } from '@/components/settings';
 import SnackbarProvider from '@/components/snackbar/snackbar-provider';
+import { AriaLiveAnnouncerProvider, KeyboardShortcutsProvider } from '@/components/accessibility';
 import DashboardLayout from '@/layouts/dashboard';
 
 type Props = {
@@ -23,11 +24,15 @@ export default function DashboardPageLayout({ children }: Props) {
       }}
     >
       <ThemeProvider>
-        <SnackbarProvider>
-          <SettingsDrawer />
-          <ProgressBar />
-          <DashboardLayout>{children}</DashboardLayout>
-        </SnackbarProvider>
+        <KeyboardShortcutsProvider>
+          <AriaLiveAnnouncerProvider>
+            <SnackbarProvider>
+              <SettingsDrawer />
+              <ProgressBar />
+              <DashboardLayout>{children}</DashboardLayout>
+            </SnackbarProvider>
+          </AriaLiveAnnouncerProvider>
+        </KeyboardShortcutsProvider>
       </ThemeProvider>
     </SettingsProvider>
   );

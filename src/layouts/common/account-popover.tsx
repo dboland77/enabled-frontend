@@ -83,6 +83,9 @@ export default function AccountPopover() {
         whileHover="hover"
         variants={varHover(1.05)}
         onClick={popover.onOpen}
+        aria-label={`Account menu${firstname ? ` for ${firstname} ${lastname}` : ''}`}
+        aria-haspopup="true"
+        aria-expanded={popover.open}
         sx={{
           width: 40,
           height: 40,
