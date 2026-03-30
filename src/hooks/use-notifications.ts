@@ -141,6 +141,25 @@ export function useNotifications() {
   const createNotification = useCallback(
     async (data: CreateNotificationData) => {
       try {
+        // Check if a notification of the same type already exists for this user
+        const { data: existing, error: checkError } = await supabase
+          .from('notifications')
+          .select('id')
+          .eq('user_id', data.userId)
+          .eq('type', data.type)
+          .limit(1);
+
+        if (checkError) {
+          console.error('Failed to check existing notifications:', checkError);
+          throw checkError;
+        }
+
+        // If notification of this type already exists, skip creation
+        if (existing && existing.length > 0) {
+          console.log(`Notification of type "${data.type}" already exists, skipping creation`);
+          return null;
+        }
+
         const insertData = {
           user_id: data.userId,
           title: data.title,
@@ -171,6 +190,10 @@ export function useNotifications() {
 
   const deleteNotification = useCallback(
     async (notificationId: string) => {
+      // Optimistic update - remove from local state immediately
+      const previousNotifications = notifications;
+      setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
+      
       try {
         const {
           data: { user },
@@ -178,6 +201,8 @@ export function useNotifications() {
         } = await supabase.auth.getUser();
 
         if (authError || !user) {
+          // Rollback on auth error
+          setNotifications(previousNotifications);
           throw new Error('Not authenticated');
         }
 
@@ -187,16 +212,20 @@ export function useNotifications() {
           .eq('id', notificationId)
           .eq('user_id', user.id);
 
-        if (deleteError) throw deleteError;
+        if (deleteError) {
+          // Rollback on delete error
+          setNotifications(previousNotifications);
+          throw deleteError;
+        }
 
-        setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
         return true;
       } catch (err) {
+        console.error('Failed to delete notification:', err);
         setError(err instanceof Error ? err.message : 'Failed to delete notification');
         return false;
       }
     },
-    [supabase]
+    [supabase, notifications]
   );
 
   // Subscribe to real-time notifications
