@@ -43,7 +43,7 @@ export default function AdjustmentWizardView() {
   const confirmSubmit = useBoolean();
 
   // Session management
-  const { session, loading: sessionLoading, saving, error: sessionError, updateSession, completeWizard, resetWizard } = useWizardSession();
+  const { session, loading: sessionLoading, saving, error: sessionError, updateSession, updateSessionLocal, saveNotes, completeWizard, resetWizard } = useWizardSession();
 
   // Data fetching
   const { disabilities, loading: disabilitiesLoading, error: disabilitiesError } = useDisabilities();
@@ -118,10 +118,14 @@ export default function AdjustmentWizardView() {
 
   const handleNotesChange = useCallback(
     (notes: string) => {
-      updateSession({ additionalNotes: notes });
+      updateSessionLocal({ additionalNotes: notes });
     },
-    [updateSession]
+    [updateSessionLocal]
   );
+
+  const handleNotesBlur = useCallback(() => {
+    saveNotes();
+  }, [saveNotes]);
 
   // Submit handler
   const handleSubmit = useCallback(async () => {
@@ -200,6 +204,7 @@ export default function AdjustmentWizardView() {
             selectedAdjustments={selectedAdjustments}
             additionalNotes={session.additionalNotes}
             onNotesChange={handleNotesChange}
+            onNotesBlur={handleNotesBlur}
             onEditStep={handleStepClick}
           />
         );
