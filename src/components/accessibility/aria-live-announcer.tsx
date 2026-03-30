@@ -32,7 +32,7 @@ type Props = {
 export function AriaLiveAnnouncerProvider({ children }: Props) {
   const [politeMessage, setPoliteMessage] = useState('');
   const [assertiveMessage, setAssertiveMessage] = useState('');
-  const clearTimeoutRef = useRef<NodeJS.Timeout>();
+  const clearTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const announce = useCallback((message: string, politeness: Politeness = 'polite') => {
     // Clear any existing timeout
