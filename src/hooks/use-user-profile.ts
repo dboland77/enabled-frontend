@@ -1,10 +1,13 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import useSWR, { mutate } from 'swr';
+import { useCallback } from 'react';
 
 import { createClient } from '@/lib/supabase/client';
 
 // ----------------------------------------------------------------------
+
+const PROFILE_CACHE_KEY = 'user-profile';
 
 export interface UserDisability {
   id: string;
@@ -48,46 +51,48 @@ export interface UserProfileUpdate {
   is_disabled?: boolean;
 }
 
+// Fetcher function for SWR
+async function fetchUserProfile(): Promise<UserProfile | null> {
+  const supabase = createClient();
+  
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    return null;
+  }
+
+  const { data, error: profileError } = await supabase
+    .from('user_profile')
+    .select('*')
+    .eq('userId', user.id)
+    .single();
+
+  if (profileError) {
+    throw new Error(profileError.message);
+  }
+
+  return data as UserProfile;
+}
+
 export function useUserProfile() {
   const supabase = createClient();
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  const fetchProfile = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      // Get the currently authenticated user
-      const {
-        data: { user },
-        error: authError,
-      } = await supabase.auth.getUser();
-
-      if (authError || !user) {
-        setError('Not authenticated');
-        setLoading(false);
-        return;
-      }
-
-      const { data, error: profileError } = await supabase
-        .from('user_profile')
-        .select('*')
-        .eq('userId', user.id)
-        .single();
-
-      if (profileError) {
-        setError(profileError.message);
-      } else {
-        setProfile(data as UserProfile);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch profile');
-    } finally {
-      setLoading(false);
+  const { data: profile, error, isLoading: loading } = useSWR<UserProfile | null>(
+    PROFILE_CACHE_KEY,
+    fetchUserProfile,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      dedupingInterval: 5000,
     }
-  }, [supabase]);
+  );
+
+  const refetch = useCallback(() => {
+    mutate(PROFILE_CACHE_KEY);
+  }, []);
 
   const updateAvatar = useCallback(
     async (avatarUrl: string) => {
@@ -96,15 +101,10 @@ export function useUserProfile() {
           data: { user },
         } = await supabase.auth.getUser();
 
-        console.log('[v0] updateAvatar - User:', user?.id);
-        console.log('[v0] updateAvatar - Avatar URL:', avatarUrl);
-
         if (!user) {
-          console.log('[v0] updateAvatar - No user found');
           return;
         }
 
-        // Use UPDATE since the profile should already exist (created via updateProfile)
         const { data, error: updateError } = await supabase
           .from('user_profile')
           .update({
@@ -114,16 +114,15 @@ export function useUserProfile() {
           .eq('userId', user.id)
           .select();
 
-        console.log('[v0] updateAvatar - Response data:', data);
-        console.log('[v0] updateAvatar - Error:', updateError);
-
         if (!updateError && data && data.length > 0) {
-          setProfile((prev) => prev ? { ...prev, avatar: avatarUrl } : data[0] as UserProfile);
-        } else if (data && data.length === 0) {
-          console.log('[v0] updateAvatar - No profile found. Please save your profile first.');
+          // Update the SWR cache immediately for all components
+          mutate(PROFILE_CACHE_KEY, (current: UserProfile | null | undefined) => 
+            current ? { ...current, avatar: avatarUrl } : current,
+            false
+          );
         }
       } catch (err) {
-        console.error('[v0] Failed to update avatar:', err);
+        console.error('Failed to update avatar:', err);
       }
     },
     [supabase]
@@ -137,7 +136,6 @@ export function useUserProfile() {
 
       if (!user) throw new Error('Not authenticated');
 
-      // Use upsert to create the profile if it doesn't exist
       const now = new Date().toISOString();
       const { data, error: updateError } = await supabase
         .from('user_profile')
@@ -150,7 +148,7 @@ export function useUserProfile() {
           department: updates.department ?? null,
           line_manager_id: updates.line_manager_id ?? null,
           is_disabled: updates.is_disabled ?? false,
-          is_first_login: false, // Mark as not first login after profile update
+          is_first_login: false,
           createdAt: now,
           updatedAt: now,
         }, {
@@ -160,10 +158,12 @@ export function useUserProfile() {
 
       if (updateError) throw updateError;
 
-      setProfile((prev) =>
-        prev 
-          ? { ...prev, ...updates, is_first_login: false } 
-          : data?.[0] as UserProfile
+      // Update the SWR cache immediately for all components
+      mutate(PROFILE_CACHE_KEY, (current: UserProfile | null | undefined) => 
+        current 
+          ? { ...current, ...updates, is_first_login: false } 
+          : data?.[0] as UserProfile,
+        false
       );
     },
     [supabase]
@@ -284,15 +284,11 @@ export function useUserProfile() {
     if (deleteError) throw deleteError;
   }, [supabase]);
 
-  useEffect(() => {
-    fetchProfile();
-  }, [fetchProfile]);
-
   return { 
-    profile, 
+    profile: profile ?? null, 
     loading, 
-    error, 
-    refetch: fetchProfile, 
+    error: error?.message ?? null, 
+    refetch, 
     updateAvatar, 
     updateProfile,
     fetchUserDisabilities,
