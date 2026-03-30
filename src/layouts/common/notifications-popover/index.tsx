@@ -106,14 +106,14 @@ export default function NotificationsPopover() {
 
       {!!unreadCount && (
         <Tooltip title="Mark all as read">
-          <IconButton color="primary" onClick={handleMarkAllAsRead}>
+          <IconButton color="primary" onClick={handleMarkAllAsRead} aria-label="Mark all notifications as read">
             <Iconify icon="eva:done-all-fill" />
           </IconButton>
         </Tooltip>
       )}
 
       {!smUp && (
-        <IconButton onClick={drawer.onFalse}>
+        <IconButton onClick={drawer.onFalse} aria-label="Close notifications">
           <Iconify icon="mingcute:close-line" />
         </IconButton>
       )}
@@ -167,7 +167,11 @@ export default function NotificationsPopover() {
 
   const renderList = (
     <Scrollbar>
-      <List disablePadding>
+      <List 
+        disablePadding 
+        aria-live="polite" 
+        aria-label={`${getFilteredNotifications().length} notifications`}
+      >
         {getFilteredNotifications().map((notification) => (
           <NotificationItem
             key={notification.id}
@@ -197,6 +201,7 @@ export default function NotificationsPopover() {
         variants={varHover(1.05)}
         color={drawer.value ? 'primary' : 'default'}
         onClick={drawer.onTrue}
+        aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ''}`}
       >
         <Badge badgeContent={unreadCount} color="error">
           <Iconify icon="solar:bell-bing-bold-duotone" width={24} />
@@ -207,11 +212,14 @@ export default function NotificationsPopover() {
         open={drawer.value}
         onClose={drawer.onFalse}
         anchor="right"
+        aria-label="Notifications panel"
         slotProps={{
           backdrop: { invisible: true },
         }}
         PaperProps={{
           sx: { width: 1, maxWidth: 420 },
+          role: 'region',
+          'aria-label': 'Notifications',
         }}
       >
         {renderHead}
@@ -225,11 +233,6 @@ export default function NotificationsPopover() {
           sx={{ pl: 2.5, pr: 1 }}
         >
           {renderTabs}
-          <Tooltip title="Settings">
-            <IconButton>
-              <Iconify icon="solar:settings-bold-duotone" />
-            </IconButton>
-          </Tooltip>
         </Stack>
 
         <Divider />

@@ -104,6 +104,15 @@ export function button(theme: Theme) {
       },
     };
 
+    // Enhanced focus styles for accessibility
+    const focusStyles = {
+      '&:focus-visible': {
+        outline: `3px solid ${theme.palette.primary.main}`,
+        outlineOffset: '2px',
+        boxShadow: `0 0 0 4px ${alpha(theme.palette.primary.main, 0.24)}`,
+      },
+    };
+
     const size = {
       ...(smallSize && {
         height: 30,
@@ -135,7 +144,7 @@ export function button(theme: Theme) {
       }),
     };
 
-    return [defaultStyle, ...colorStyle, disabledState, size];
+    return [defaultStyle, ...colorStyle, disabledState, size, focusStyles];
   };
 
   return {

@@ -6,7 +6,11 @@ import { useSettingsContext } from '@/components/settings';
 
 const SPACING = 8;
 
-export default function Main({ children, sx, ...other }: BoxProps) {
+type MainProps = BoxProps & {
+  id?: string;
+};
+
+export default function Main({ children, sx, id, ...other }: MainProps) {
   const settings = useSettingsContext();
 
   const lgUp = useResponsive('up', 'lg');
@@ -19,6 +23,8 @@ export default function Main({ children, sx, ...other }: BoxProps) {
     return (
       <Box
         component="main"
+        id={id}
+        tabIndex={-1}
         sx={{
           minHeight: 1,
           display: 'flex',
@@ -29,6 +35,9 @@ export default function Main({ children, sx, ...other }: BoxProps) {
             pt: `${HEADER.H_MOBILE * 2 + 40}px`,
             pb: 15,
           }),
+          '&:focus': {
+            outline: 'none',
+          },
         }}
       >
         {children}
@@ -39,6 +48,8 @@ export default function Main({ children, sx, ...other }: BoxProps) {
   return (
     <Box
       component="main"
+      id={id}
+      tabIndex={-1}
       sx={{
         flexGrow: 1,
         minHeight: 1,
@@ -53,6 +64,9 @@ export default function Main({ children, sx, ...other }: BoxProps) {
             width: `calc(100% - ${NAV.W_MINI}px)`,
           }),
         }),
+        '&:focus': {
+          outline: 'none',
+        },
         ...sx,
       }}
       {...other}

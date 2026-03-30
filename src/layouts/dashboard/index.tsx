@@ -1,4 +1,5 @@
 import Box from '@mui/material/Box';
+import Link from '@mui/material/Link';
 
 import Main from './main';
 import Header from './header';
@@ -8,6 +9,42 @@ import NavHorizontal from './nav-horizontal';
 import { useBoolean } from '@/hooks/use-boolean';
 import { useResponsive } from '@/hooks/use-responsive';
 import { useSettingsContext } from '@/components/settings';
+
+// Skip to content link for keyboard navigation accessibility
+const SkipToContent = () => (
+  <Link
+    href="#main-content"
+    sx={{
+      position: 'absolute',
+      left: '-9999px',
+      top: 'auto',
+      width: '1px',
+      height: '1px',
+      overflow: 'hidden',
+      zIndex: 9999,
+      '&:focus': {
+        position: 'fixed',
+        top: 16,
+        left: 16,
+        width: 'auto',
+        height: 'auto',
+        padding: '16px 24px',
+        bgcolor: 'primary.main',
+        color: 'primary.contrastText',
+        fontWeight: 700,
+        fontSize: '1rem',
+        borderRadius: 1,
+        boxShadow: 8,
+        outline: '3px solid',
+        outlineColor: 'primary.dark',
+        outlineOffset: 2,
+        textDecoration: 'none',
+      },
+    }}
+  >
+    Skip to main content
+  </Link>
+);
 
 type Props = {
   children: React.ReactNode;
@@ -33,11 +70,12 @@ export default function DashboardLayout({ children }: Props) {
   if (isHorizontal) {
     return (
       <>
+        <SkipToContent />
         <Header onOpenNav={nav.onTrue} />
 
         {lgUp ? renderHorizontal : renderNavVertical}
 
-        <Main>{children}</Main>
+        <Main id="main-content">{children}</Main>
       </>
     );
   }
@@ -45,6 +83,7 @@ export default function DashboardLayout({ children }: Props) {
   if (isMini) {
     return (
       <>
+        <SkipToContent />
         <Header onOpenNav={nav.onTrue} />
 
         <Box
@@ -56,7 +95,7 @@ export default function DashboardLayout({ children }: Props) {
         >
           {lgUp ? renderNavMini : renderNavVertical}
 
-          <Main>{children}</Main>
+          <Main id="main-content">{children}</Main>
         </Box>
       </>
     );
@@ -64,6 +103,7 @@ export default function DashboardLayout({ children }: Props) {
 
   return (
     <>
+      <SkipToContent />
       <Header onOpenNav={nav.onTrue} />
 
       <Box
@@ -75,7 +115,7 @@ export default function DashboardLayout({ children }: Props) {
       >
         {renderNavVertical}
 
-        <Main>{children}</Main>
+        <Main id="main-content">{children}</Main>
       </Box>
     </>
   );

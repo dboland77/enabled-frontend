@@ -15,7 +15,9 @@ export const USER_ROLES: IUserRole[] = [
   { value: 'employee', label: 'Employee', description: 'Standard user access', canApprove: false },
 ];
 
-// Mock approvers list (users who can approve requests)
+// Approvers list (users who can approve requests)
+// NOTE: These IDs must match actual Supabase Auth user IDs for the approval workflow to function.
+// After creating test users, update the IDs below with the UUIDs from Supabase Dashboard > Authentication > Users
 export interface IApprover {
   id: string;
   name: string;
@@ -24,12 +26,12 @@ export interface IApprover {
   department?: string;
 }
 
+// Approvers list with actual Supabase user UUIDs for the approval workflow
 export const MOCK_APPROVERS: IApprover[] = [
-  { id: '1', name: 'Sarah Johnson', email: 'sarah.johnson@company.com', role: 'manager', department: 'Human Resources' },
-  { id: '2', name: 'Michael Chen', email: 'michael.chen@company.com', role: 'approver', department: 'Operations' },
-  { id: '3', name: 'Emma Williams', email: 'emma.williams@company.com', role: 'manager', department: 'IT Services' },
-  { id: '4', name: 'James Brown', email: 'james.brown@company.com', role: 'admin', department: 'Administration' },
-  { id: '5', name: 'Lisa Davis', email: 'lisa.davis@company.com', role: 'approver', department: 'Facilities' },
+  { id: 'eef04542-94a2-4618-bc55-f4536c722e6c', name: 'Alex Admin', email: 'admin@test.com', role: 'admin', department: 'IT Services' },
+  { id: '43fc7041-8b09-47a9-962c-6db0e4b9e42b', name: 'Sarah HR', email: 'approver@test.com', role: 'approver', department: 'Human Resources' },
+  { id: '4600bfd6-e691-4fd2-8fc2-2b404a70facd', name: 'David Facilities', email: 'approver2@test.com', role: 'approver', department: 'Facilities' },
+  { id: '0af3e4bc-6940-436a-bc66-e56f382c3b90', name: 'Mike Manager', email: 'manager@test.com', role: 'manager', department: 'Engineering' },
 ];
 
 export type IUserTableFilterValue = string | string[];

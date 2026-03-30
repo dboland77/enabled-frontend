@@ -42,7 +42,7 @@ export default function Header({ onOpenNav }: Props) {
       {lgUp && isNavHorizontal && <Logo sx={{ mr: 2.5 }} />}
 
       {!lgUp && (
-        <IconButton onClick={onOpenNav}>
+        <IconButton onClick={onOpenNav} aria-label="Open navigation menu">
           <SvgColor src="/assets/icons/navbar/ic_menu_item.svg" />
         </IconButton>
       )}
