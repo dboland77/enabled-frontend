@@ -51,7 +51,7 @@ export default function DocumentPreviewDialog({
       setError(null);
       setPdfUrl(null);
 
-      getSignedUrl(document.storage_path, 3600) // 1 hour expiry
+      getSignedUrl(document.file_path, 3600) // 1 hour expiry
         .then(setPdfUrl)
         .catch((err) => setError(err.message || 'Failed to load document'))
         .finally(() => setLoading(false));
@@ -67,10 +67,10 @@ export default function DocumentPreviewDialog({
     if (!document) return;
 
     try {
-      const url = await getSignedUrl(document.storage_path, 300); // 5 min expiry for download
+      const url = await getSignedUrl(document.file_path, 300); // 5 min expiry for download
       const link = window.document.createElement('a');
       link.href = url;
-      link.download = document.file_name;
+      link.download = document.name;
       link.target = '_blank';
       window.document.body.appendChild(link);
       link.click();
@@ -127,7 +127,7 @@ export default function DocumentPreviewDialog({
             </Box>
             <Box>
               <Stack direction="row" alignItems="center" spacing={1.5}>
-                <Typography variant="h6">{document.title}</Typography>
+                <Typography variant="h6">{document.name}</Typography>
                 <Label
                   variant="soft"
                   color={DOCUMENT_CATEGORY_COLORS[document.category]}
@@ -136,14 +136,9 @@ export default function DocumentPreviewDialog({
                   {DOCUMENT_CATEGORY_LABELS[document.category]}
                 </Label>
               </Stack>
-              <Stack direction="row" alignItems="center" spacing={1.5}>
-                <Typography variant="caption" color="text.secondary">
-                  {document.file_name}
-                </Typography>
-                <Typography variant="caption" color="text.disabled">
-                  {formatFileSize(document.file_size)}
-                </Typography>
-              </Stack>
+              <Typography variant="caption" color="text.disabled">
+                {formatFileSize(document.file_size_bytes)}
+              </Typography>
             </Box>
           </Stack>
 
@@ -215,7 +210,7 @@ export default function DocumentPreviewDialog({
                   onClick={() => {
                     setError(null);
                     setLoading(true);
-                    getSignedUrl(document.storage_path, 3600)
+                    getSignedUrl(document.file_path, 3600)
                       .then(setPdfUrl)
                       .catch((err) => setError(err.message))
                       .finally(() => setLoading(false));
@@ -242,7 +237,7 @@ export default function DocumentPreviewDialog({
             {/* PDF Viewer using iframe with signed URL */}
             <iframe
               src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=1`}
-              title={document.title}
+              title={document.name}
               style={{
                 flex: 1,
                 width: '100%',
