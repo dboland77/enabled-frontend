@@ -57,6 +57,17 @@ export function useNavData() {
             path: '/dashboard/passport',
             icon: ICONS.passport,
           },
+          {
+            title: 'My Documents',
+            path: '/dashboard/documents',
+            icon: ICONS.lock,
+            info: (
+              <SvgColor 
+                src="/assets/icons/navbar/ic_lock.svg" 
+                sx={{ width: 16, height: 16, color: 'success.main' }} 
+              />
+            ),
+          },
         ],
       },
 
