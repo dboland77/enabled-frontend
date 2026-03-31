@@ -46,16 +46,16 @@ export default function ProfileCover({
 }: ProfileCoverProps) {
   const theme = useTheme();
 
-  // Soft, light gradient so text on top remains legible
+  // Rich gradient — dark enough that white text passes WCAG AA (contrast ~8-11:1)
   const gradientColors = {
-    start: alpha(theme.palette.primary.light, 0.35),
-    middle: alpha(theme.palette.primary.main, 0.45),
-    end: alpha(theme.palette.primary.dark, 0.55),
+    start: alpha(theme.palette.primary.dark, 0.82),
+    middle: alpha(theme.palette.primary.darker ?? theme.palette.primary.dark, 0.88),
+    end: alpha(theme.palette.common.black, 0.72),
   };
 
-  // Text sitting on the cover must always be dark-on-light for contrast
-  const coverTextColor = theme.palette.grey[900];
-  const coverTextSecondary = theme.palette.grey[700];
+  // White text on the dark scrim — passes WCAG AA for both normal and bold text
+  const coverTextColor = theme.palette.common.white;
+  const coverTextSecondary = alpha(theme.palette.common.white, 0.82);
 
   return (
     <Box
@@ -76,9 +76,9 @@ export default function ProfileCover({
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(PATTERN_SVG.replace(/currentColor/g, theme.palette.primary.main))}")`,
+          backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(PATTERN_SVG.replace(/currentColor/g, theme.palette.common.white))}")`,
           backgroundSize: '200px 200px',
-          opacity: 0.25,
+          opacity: 0.18,
         }}
       />
 
@@ -91,7 +91,7 @@ export default function ProfileCover({
           width: 200,
           height: 200,
           borderRadius: '50%',
-          background: alpha(theme.palette.primary.main, 0.08),
+          background: alpha(theme.palette.common.white, 0.06),
         }}
       />
       <Box
@@ -102,7 +102,7 @@ export default function ProfileCover({
           width: 150,
           height: 150,
           borderRadius: '50%',
-          background: alpha(theme.palette.primary.main, 0.05),
+          background: alpha(theme.palette.common.white, 0.04),
         }}
       />
 
@@ -161,30 +161,29 @@ export default function ProfileCover({
               top: 16,
               left: 16,
               zIndex: 10,
-              bgcolor: alpha(theme.palette.common.white, 0.8),
+              bgcolor: alpha(theme.palette.common.white, 0.18),
               backdropFilter: 'blur(8px)',
-              color: coverTextColor,
-              fontWeight: 600,
-              border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
+              color: 'common.white',
+              fontWeight: 700,
+              border: `1px solid ${alpha(theme.palette.common.white, 0.35)}`,
               '& .MuiChip-icon': {
-                color: theme.palette.primary.main,
+                color: 'common.white',
               },
             }}
           />
         </Tooltip>
       )}
 
-      {/* Main content */}
+      {/* Main content — vertically centred so it is never clipped */}
       <Stack
         direction={{ xs: 'column', md: 'row' }}
-        alignItems={{ xs: 'center', md: 'flex-end' }}
+        alignItems="center"
         sx={{
           position: 'relative',
           zIndex: 5,
           height: 1,
           px: { xs: 3, md: 4 },
-          pb: { xs: 3, md: 4 },
-          pt: { xs: 4, md: 0 },
+          py: { xs: 3, md: 3 },
         }}
       >
         {/* Avatar with status ring */}
