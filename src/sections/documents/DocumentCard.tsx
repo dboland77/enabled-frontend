@@ -40,7 +40,7 @@ export default function DocumentCard({
 }: DocumentCardProps) {
   const theme = useTheme();
 
-  const activeShares = document.shares?.filter((s) => !s.revoked_at) || [];
+  const activeShares = document.shares || [];
   const hasShares = activeShares.length > 0;
 
   return (
@@ -105,25 +105,8 @@ export default function DocumentCard({
           whiteSpace: 'nowrap',
         }}
       >
-        {document.title}
+        {document.name}
       </Typography>
-
-      {document.description && (
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          sx={{
-            mb: 1.5,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-          }}
-        >
-          {document.description}
-        </Typography>
-      )}
 
       {/* Category & Meta */}
       <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
@@ -135,7 +118,7 @@ export default function DocumentCard({
           {DOCUMENT_CATEGORY_LABELS[document.category]}
         </Label>
         <Typography variant="caption" color="text.disabled">
-          {formatFileSize(document.file_size)}
+          {formatFileSize(document.file_size_bytes)}
         </Typography>
       </Stack>
 

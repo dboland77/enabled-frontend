@@ -8,14 +8,15 @@ const icon = (name: string) => (
 
 const ICONS = {
   disability: icon('ic_job'),
-  mail: icon('ic_mail'),
+  mail: icon('ic_file'),
   user: icon('ic_user'),
   file: icon('ic_file'),
-  lock: icon('ic_lock'),
-  external: icon('ic_external'),
+  lock: icon('ic_file'),
+  external: icon('ic_file'),
   menuItem: icon('ic_menu_item'),
   dashboard: icon('ic_dashboard'),
   passport: icon('ic_passport'),
+  documents: icon('ic_file'),
 };
 
 export function useNavData() {
@@ -60,13 +61,7 @@ export function useNavData() {
           {
             title: 'My Documents',
             path: '/dashboard/documents',
-            icon: ICONS.lock,
-            info: (
-              <SvgColor 
-                src="/assets/icons/navbar/ic_lock.svg" 
-                sx={{ width: 16, height: 16, color: 'success.main' }} 
-              />
-            ),
+            icon: ICONS.documents,
           },
         ],
       },
