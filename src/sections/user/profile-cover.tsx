@@ -46,12 +46,16 @@ export default function ProfileCover({
 }: ProfileCoverProps) {
   const theme = useTheme();
 
-  // Generate a warm, welcoming gradient
+  // Soft, light gradient so text on top remains legible
   const gradientColors = {
-    start: theme.palette.primary.main,
-    middle: theme.palette.primary.dark,
-    end: alpha(theme.palette.primary.darker, 0.95),
+    start: alpha(theme.palette.primary.light, 0.35),
+    middle: alpha(theme.palette.primary.main, 0.45),
+    end: alpha(theme.palette.primary.dark, 0.55),
   };
+
+  // Text sitting on the cover must always be dark-on-light for contrast
+  const coverTextColor = theme.palette.grey[900];
+  const coverTextSecondary = theme.palette.grey[700];
 
   return (
     <Box
@@ -61,6 +65,7 @@ export default function ProfileCover({
         overflow: 'hidden',
         borderRadius: 2,
         background: `linear-gradient(135deg, ${gradientColors.start} 0%, ${gradientColors.middle} 50%, ${gradientColors.end} 100%)`,
+        bgcolor: alpha(theme.palette.primary.lighter, 0.4),
       }}
     >
       {/* Decorative pattern overlay */}
@@ -71,9 +76,9 @@ export default function ProfileCover({
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(PATTERN_SVG.replace(/currentColor/g, theme.palette.common.white))}")`,
+          backgroundImage: `url("data:image/svg+xml,${encodeURIComponent(PATTERN_SVG.replace(/currentColor/g, theme.palette.primary.main))}")`,
           backgroundSize: '200px 200px',
-          opacity: 0.6,
+          opacity: 0.25,
         }}
       />
 
@@ -86,7 +91,7 @@ export default function ProfileCover({
           width: 200,
           height: 200,
           borderRadius: '50%',
-          background: alpha(theme.palette.common.white, 0.05),
+          background: alpha(theme.palette.primary.main, 0.08),
         }}
       />
       <Box
@@ -97,7 +102,7 @@ export default function ProfileCover({
           width: 150,
           height: 150,
           borderRadius: '50%',
-          background: alpha(theme.palette.common.white, 0.03),
+          background: alpha(theme.palette.primary.main, 0.05),
         }}
       />
 
@@ -110,19 +115,25 @@ export default function ProfileCover({
         >
           <IconButton
             onClick={onToggleEdit}
+            aria-label={isEditMode ? 'Switch to view mode' : 'Edit your profile'}
+            aria-pressed={isEditMode}
             sx={{
               position: 'absolute',
               top: 16,
               right: 16,
               zIndex: 10,
-              bgcolor: alpha(theme.palette.common.white, 0.15),
+              bgcolor: alpha(theme.palette.common.black, 0.45),
               backdropFilter: 'blur(8px)',
               color: 'common.white',
-              border: `1px solid ${alpha(theme.palette.common.white, 0.2)}`,
+              border: `2px solid ${alpha(theme.palette.common.white, 0.7)}`,
               transition: 'all 0.2s ease-in-out',
               '&:hover': {
-                bgcolor: alpha(theme.palette.common.white, 0.25),
+                bgcolor: alpha(theme.palette.common.black, 0.6),
                 transform: 'scale(1.05)',
+              },
+              '&:focus-visible': {
+                outline: `3px solid ${theme.palette.common.white}`,
+                outlineOffset: 2,
               },
             }}
           >
@@ -150,12 +161,13 @@ export default function ProfileCover({
               top: 16,
               left: 16,
               zIndex: 10,
-              bgcolor: alpha(theme.palette.common.white, 0.15),
+              bgcolor: alpha(theme.palette.common.white, 0.8),
               backdropFilter: 'blur(8px)',
-              color: 'common.white',
-              border: `1px solid ${alpha(theme.palette.common.white, 0.2)}`,
+              color: coverTextColor,
+              fontWeight: 600,
+              border: `1px solid ${alpha(theme.palette.primary.main, 0.3)}`,
               '& .MuiChip-icon': {
-                color: 'inherit',
+                color: theme.palette.primary.main,
               },
             }}
           />
@@ -215,19 +227,17 @@ export default function ProfileCover({
           </Box>
         </Tooltip>
 
-        {/* Name and role */}
         <Stack
           sx={{
             ml: { md: 3 },
             textAlign: { xs: 'center', md: 'left' },
-            color: 'common.white',
           }}
         >
           <Typography 
             variant="h4" 
             sx={{ 
               fontWeight: 700,
-              textShadow: `0 2px 4px ${alpha(theme.palette.common.black, 0.2)}`,
+              color: coverTextColor,
             }}
           >
             {name || 'Welcome!'}
@@ -241,11 +251,11 @@ export default function ProfileCover({
               justifyContent={{ xs: 'center', md: 'flex-start' }}
               sx={{ mt: 0.5 }}
             >
-              <Iconify icon="solar:briefcase-bold" width={18} sx={{ opacity: 0.8 }} />
+              <Iconify icon="solar:briefcase-bold" width={18} sx={{ color: coverTextSecondary }} />
               <Typography 
                 variant="body1" 
                 sx={{ 
-                  opacity: 0.9,
+                  color: coverTextSecondary,
                   textTransform: 'capitalize',
                 }}
               >
@@ -259,7 +269,7 @@ export default function ProfileCover({
             variant="body2" 
             sx={{ 
               mt: 1,
-              opacity: 0.7,
+              color: coverTextSecondary,
               maxWidth: 300,
             }}
           >
