@@ -24,13 +24,12 @@ export type DocumentPermission = 'view' | 'download';
 export interface IDocument {
   id: string;
   user_id: string;
-  title: string;
-  description: string | null;
+  name: string;
   category: DocumentCategory;
-  file_name: string;
-  file_size: number;
+  file_path: string;
+  file_size_bytes: number;
   mime_type: string;
-  storage_path: string;
+  uploaded_at: string;
   created_at: string;
   updated_at: string;
 }
@@ -51,9 +50,8 @@ export interface IDocumentShare {
   document_id: string;
   shared_with_user_id: string;
   shared_by_user_id: string;
-  permission: DocumentPermission;
-  created_at: string;
-  revoked_at: string | null;
+  permission_type: DocumentPermission;
+  shared_at: string;
   // Joined data
   shared_with_user?: {
     firstname: string;
@@ -76,7 +74,6 @@ export interface IEligibleRecipient {
 // Document upload input
 export interface IDocumentUpload {
   title: string;
-  description?: string;
   category: DocumentCategory;
   file: File;
 }

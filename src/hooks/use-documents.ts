@@ -52,12 +52,10 @@ async function fetchUserDocuments(): Promise<IDocumentWithShares[]> {
           document_id,
           shared_with_user_id,
           shared_by_user_id,
-          permission,
-          created_at,
-          revoked_at
+          permission_type,
+          shared_at
         `)
-        .eq('document_id', doc.id)
-        .is('revoked_at', null);
+        .eq('document_id', doc.id);
 
       // Get user details for each share
       const sharesWithUsers = await Promise.all(
@@ -98,7 +96,7 @@ async function fetchUserDocuments(): Promise<IDocumentWithShares[]> {
   return docsWithShares;
 }
 
-// Fetcher function for documents shared with the user
+  // Fetch documents shared with the user
 async function fetchSharedDocuments(): Promise<IDocumentWithShares[]> {
   const supabase = createClient();
 
@@ -118,25 +116,23 @@ async function fetchSharedDocuments(): Promise<IDocumentWithShares[]> {
       id,
       document_id,
       shared_by_user_id,
-      permission,
-      created_at,
+      permission_type,
+      shared_at,
       documents (
         id,
         user_id,
-        title,
-        description,
+        name,
         category,
-        file_name,
-        file_size,
+        file_path,
+        file_size_bytes,
         mime_type,
-        storage_path,
+        uploaded_at,
         created_at,
         updated_at
       )
     `)
     .eq('shared_with_user_id', user.id)
-    .is('revoked_at', null)
-    .order('created_at', { ascending: false });
+    .order('shared_at', { ascending: false });
 
   if (sharesError) {
     throw new Error(sharesError.message);
@@ -217,7 +213,7 @@ export function useDocuments() {
 
       // Upload file to storage
       const { error: uploadError } = await supabase.storage
-        .from('user-documents')
+        .from('documents')
         .upload(storagePath, input.file, {
           contentType: input.file.type,
           upsert: false,
@@ -232,20 +228,18 @@ export function useDocuments() {
         .from('documents')
         .insert({
           user_id: user.id,
-          title: input.title,
-          description: input.description || null,
+          name: input.title,
           category: input.category,
-          file_name: input.file.name,
-          file_size: input.file.size,
+          file_path: storagePath,
+          file_size_bytes: input.file.size,
           mime_type: input.file.type,
-          storage_path: storagePath,
         })
         .select()
         .single();
 
       if (dbError) {
         // Try to clean up uploaded file
-        await supabase.storage.from('user-documents').remove([storagePath]);
+        await supabase.storage.from('documents').remove([storagePath]);
         throw new Error(`Failed to save document: ${dbError.message}`);
       }
 
@@ -269,7 +263,7 @@ export function useDocuments() {
       // Get the document to find storage path
       const { data: doc, error: fetchError } = await supabase
         .from('documents')
-        .select('storage_path')
+        .select('file_path')
         .eq('id', documentId)
         .eq('user_id', user.id)
         .single();
@@ -278,8 +272,8 @@ export function useDocuments() {
 
       // Delete from storage
       const { error: storageError } = await supabase.storage
-        .from('user-documents')
-        .remove([doc.storage_path]);
+        .from('documents')
+        .remove([doc.file_path]);
 
       if (storageError) {
         console.error('Storage deletion failed:', storageError);
@@ -299,16 +293,16 @@ export function useDocuments() {
     [supabase]
   );
 
-  // Update document metadata
-  const updateDocument = useCallback(
+      // Update document metadata
     async (
       documentId: string,
-      updates: { title?: string; description?: string; category?: DocumentCategory }
+      updates: { title?: string; category?: DocumentCategory }
     ) => {
       const { error } = await supabase
         .from('documents')
         .update({
-          ...updates,
+          name: updates.title,
+          category: updates.category,
           updated_at: new Date().toISOString(),
         })
         .eq('id', documentId);
@@ -317,14 +311,12 @@ export function useDocuments() {
 
       mutate(DOCUMENTS_CACHE_KEY);
     },
-    [supabase]
-  );
 
   // Get signed URL for viewing/downloading
   const getSignedUrl = useCallback(
     async (storagePath: string, expiresIn: number = 3600): Promise<string> => {
       const { data, error } = await supabase.storage
-        .from('user-documents')
+        .from('documents')
         .createSignedUrl(storagePath, expiresIn);
 
       if (error) throw new Error(`Failed to get download URL: ${error.message}`);
