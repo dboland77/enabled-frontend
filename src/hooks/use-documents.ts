@@ -293,7 +293,8 @@ export function useDocuments() {
     [supabase]
   );
 
-      // Update document metadata
+  // Update document metadata
+  const updateDocument = useCallback(
     async (
       documentId: string,
       updates: { title?: string; category?: DocumentCategory }
@@ -311,6 +312,8 @@ export function useDocuments() {
 
       mutate(DOCUMENTS_CACHE_KEY);
     },
+    [supabase]
+  );
 
   // Get signed URL for viewing/downloading
   const getSignedUrl = useCallback(
