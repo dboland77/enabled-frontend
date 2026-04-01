@@ -137,10 +137,11 @@ export function useUserProfile() {
       if (!user) throw new Error('Not authenticated');
 
       const now = new Date().toISOString();
+      
+      // Use UPDATE instead of UPSERT since the profile should already exist
       const { data, error: updateError } = await supabase
         .from('user_profile')
-        .upsert({
-          userId: user.id,
+        .update({
           firstname: updates.firstname,
           lastname: updates.lastname,
           job_title: updates.job_title ?? null,
@@ -149,14 +150,12 @@ export function useUserProfile() {
           line_manager_id: updates.line_manager_id ?? null,
           is_disabled: updates.is_disabled ?? false,
           is_first_login: false,
-          createdAt: now,
           updatedAt: now,
-        }, {
-          onConflict: 'userId',
         })
+        .eq('userId', user.id)
         .select();
 
-      if (updateError) throw updateError;
+      if (updateError) throw new Error(`Failed to update profile: ${updateError.message}`);
 
       // Update the SWR cache immediately for all components
       mutate(PROFILE_CACHE_KEY, (current: UserProfile | null | undefined) => 
