@@ -94,6 +94,7 @@ export default function UserProfileEditForm() {
   const {
     handleSubmit,
     watch,
+    setValue,
     formState: { isSubmitting },
   } = methods;
 
@@ -154,6 +155,8 @@ export default function UserProfileEditForm() {
   // Stage a disability for addition (will be saved on form submit)
   const handleStageDisability = (disability: { id: string; disability_name: string }) => {
     setPendingAdditions((prev) => [...prev, disability]);
+    // Reset the RHF-controlled autocomplete field so the dropdown clears
+    setValue('selectedDisability', null);
   };
 
   // Unstage a pending addition
@@ -342,7 +345,6 @@ export default function UserProfileEditForm() {
                         label="Add Disability"
                         placeholder="Select a disability to add..."
                         options={availableDisabilities}
-                        value={null}
                         getOptionLabel={(option) => typeof option === 'string' ? option : (option as { disability_name: string }).disability_name}
                         isOptionEqualToValue={(option, value) => (option as { id: string }).id === (value as { id: string }).id}
                         onChange={(_, newValue) => {
