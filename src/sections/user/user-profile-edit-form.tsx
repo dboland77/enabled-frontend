@@ -37,6 +37,8 @@ export default function UserProfileEditForm() {
   const [userDisabilities, setUserDisabilities] = useState<UserDisability[]>([]);
   const [userAdjustments, setUserAdjustments] = useState<UserAdjustment[]>([]);
   const [loadingDisabilities, setLoadingDisabilities] = useState(true);
+  const [selectedDisabilityValue, setSelectedDisabilityValue] = useState<{ id: string; disability_name: string } | null>(null);
+  const [isAddingDisability, setIsAddingDisability] = useState(false);
 
   // Fetch user disabilities and adjustments on mount
   useEffect(() => {
@@ -130,14 +132,18 @@ export default function UserProfileEditForm() {
   });
 
   const handleAddDisability = async (disabilityId: string) => {
+    setIsAddingDisability(true);
     try {
       await addUserDisability(disabilityId);
       const updatedDisabilities = await fetchUserDisabilities();
       setUserDisabilities(updatedDisabilities);
+      setSelectedDisabilityValue(null); // Reset the autocomplete after successful add
       enqueueSnackbar('Disability added successfully!');
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to add disability';
       enqueueSnackbar(errorMessage, { variant: 'error' });
+    } finally {
+      setIsAddingDisability(false);
     }
   };
 
@@ -280,12 +286,19 @@ export default function UserProfileEditForm() {
                       <RHFAutocomplete
                         name="selectedDisability"
                         label="Add Disability"
+                        placeholder="Select a disability to add..."
                         options={availableDisabilities}
+                        value={selectedDisabilityValue}
+                        loading={isAddingDisability}
+                        disabled={isAddingDisability}
                         getOptionLabel={(option) => typeof option === 'string' ? option : (option as { disability_name: string }).disability_name}
                         isOptionEqualToValue={(option, value) => (option as { id: string }).id === (value as { id: string }).id}
                         onChange={(_, newValue) => {
                           if (newValue && typeof newValue !== 'string' && 'id' in newValue) {
+                            setSelectedDisabilityValue(newValue as { id: string; disability_name: string });
                             handleAddDisability((newValue as { id: string }).id);
+                          } else {
+                            setSelectedDisabilityValue(null);
                           }
                         }}
                         renderOption={(props, option) => (
@@ -293,6 +306,7 @@ export default function UserProfileEditForm() {
                             {(option as { disability_name: string }).disability_name}
                           </li>
                         )}
+                        helperText="Select disabilities one at a time. They will be added to your list above."
                       />
                     )}
                   </>
