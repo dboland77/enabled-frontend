@@ -255,7 +255,7 @@ export function useUserProfile() {
     }));
   }, [supabase]);
 
-  // Add disability to user
+  // Add disability to user (uses upsert to handle duplicates gracefully)
   const addUserDisability = useCallback(async (disabilityId: string) => {
     const {
       data: { user },
@@ -263,14 +263,25 @@ export function useUserProfile() {
 
     if (!user) throw new Error('Not authenticated');
 
-    const { error: insertError } = await supabase
+    // First check if this disability is already added
+    const { data: existing } = await supabase
       .from('user_disabilities')
-      .insert({
-        user_id: user.id,
-        disability_id: disabilityId,
-      });
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('disability_id', disabilityId)
+      .maybeSingle();
 
-    if (insertError) throw insertError;
+    // Only insert if it doesn't already exist
+    if (!existing) {
+      const { error: insertError } = await supabase
+        .from('user_disabilities')
+        .insert({
+          user_id: user.id,
+          disability_id: disabilityId,
+        });
+
+      if (insertError) throw new Error(`Failed to add disability: ${insertError.message}`);
+    }
   }, [supabase]);
 
   // Remove disability from user
