@@ -228,7 +228,7 @@ export function useDocuments() {
         .from('documents')
         .insert({
           user_id: user.id,
-          name: input.title,
+          name: input.name,
           category: input.category,
           file_path: storagePath,
           file_size_bytes: input.file.size,
@@ -297,12 +297,12 @@ export function useDocuments() {
   const updateDocument = useCallback(
     async (
       documentId: string,
-      updates: { title?: string; category?: DocumentCategory }
+      updates: { name?: string; category?: DocumentCategory }
     ) => {
       const { error } = await supabase
         .from('documents')
         .update({
-          name: updates.title,
+          name: updates.name,
           category: updates.category,
           updated_at: new Date().toISOString(),
         })

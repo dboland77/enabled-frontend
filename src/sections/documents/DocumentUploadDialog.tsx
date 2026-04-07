@@ -109,8 +109,7 @@ export default function DocumentUploadDialog({
     try {
       await onUpload({
         file,
-        title: title.trim(),
-        description: description.trim() || undefined,
+        name: title.trim(),
         category,
       });
       resetForm();

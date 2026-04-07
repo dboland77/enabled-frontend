@@ -73,7 +73,7 @@ export interface IEligibleRecipient {
 
 // Document upload input
 export interface IDocumentUpload {
-  title: string;
+  name: string;
   category: DocumentCategory;
   file: File;
 }
