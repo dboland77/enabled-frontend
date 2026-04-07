@@ -186,40 +186,21 @@ export function useUserProfile() {
       return [];
     }
 
-    // Extract disability IDs and fetch details separately
+    // Extract disability IDs and fetch details from disabilities table
     const disabilityIds = userDisabilitiesData.map((ud: any) => ud.disability_id);
 
-    // Try disability_index table first
     const { data: disabilityDetails, error: detailsError } = await supabase
-      .from('disability_index')
+      .from('disabilities')
       .select('id, disability_name, disability_nhs_slug')
       .in('id', disabilityIds);
 
-    if (detailsError) {
-      // Fallback to 'disabilities' table
-      const { data: disabilityDetailsAlt, error: detailsErrorAlt } = await supabase
-        .from('disabilities')
-        .select('id, disability_name, disability_nhs_slug')
-        .in('id', disabilityIds);
-      
-      if (detailsErrorAlt || !disabilityDetailsAlt) {
-        return userDisabilitiesData.map((ud: any) => ({
-          id: ud.id,
-          disability_id: ud.disability_id,
-          disability_name: 'Unknown',
-          disability_nhs_slug: '',
-        }));
-      }
-
-      return userDisabilitiesData.map((ud: any) => {
-        const detail = disabilityDetailsAlt.find((d: any) => d.id === ud.disability_id);
-        return {
-          id: ud.id,
-          disability_id: ud.disability_id,
-          disability_name: detail?.disability_name ?? 'Unknown',
-          disability_nhs_slug: detail?.disability_nhs_slug ?? '',
-        };
-      });
+    if (detailsError || !disabilityDetails) {
+      return userDisabilitiesData.map((ud: any) => ({
+        id: ud.id,
+        disability_id: ud.disability_id,
+        disability_name: 'Unknown',
+        disability_nhs_slug: '',
+      }));
     }
 
     // Merge user disabilities with their names
