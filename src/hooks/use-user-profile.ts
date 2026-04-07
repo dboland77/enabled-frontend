@@ -170,16 +170,27 @@ export function useUserProfile() {
 
   // Fetch user's disabilities
   const fetchUserDisabilities = useCallback(async (): Promise<UserDisability[]> => {
+    console.log('[v0] fetchUserDisabilities: starting');
+    
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (!user) return [];
+    if (!user) {
+      console.log('[v0] fetchUserDisabilities: no user');
+      return [];
+    }
+
+    console.log('[v0] fetchUserDisabilities: user.id =', user.id);
 
     type DisabilityQueryResult = {
       id: string;
       disability_id: string;
       disability_index: {
+        disability_name: string;
+        disability_nhs_slug: string;
+      } | null;
+      disabilities?: {
         disability_name: string;
         disability_nhs_slug: string;
       } | null;
@@ -197,14 +208,45 @@ export function useUserProfile() {
       `)
       .eq('user_id', user.id);
 
-    if (fetchError || !data) return [];
+    console.log('[v0] fetchUserDisabilities: query result =', data, 'error =', fetchError);
 
-    return (data as unknown as DisabilityQueryResult[]).map((item) => ({
+    if (fetchError || !data) {
+      console.log('[v0] fetchUserDisabilities: trying alternative join name');
+      
+      // Try alternative table name 'disabilities'
+      const { data: dataAlt, error: fetchErrorAlt } = await supabase
+        .from('user_disabilities')
+        .select(`
+          id,
+          disability_id,
+          disabilities (
+            disability_name,
+            disability_nhs_slug
+          )
+        `)
+        .eq('user_id', user.id);
+      
+      console.log('[v0] fetchUserDisabilities: alt query result =', dataAlt, 'error =', fetchErrorAlt);
+      
+      if (fetchErrorAlt || !dataAlt) return [];
+      
+      return (dataAlt as unknown as DisabilityQueryResult[]).map((item) => ({
+        id: item.id,
+        disability_id: item.disability_id,
+        disability_name: item.disabilities?.disability_name ?? '',
+        disability_nhs_slug: item.disabilities?.disability_nhs_slug ?? '',
+      }));
+    }
+
+    const result = (data as unknown as DisabilityQueryResult[]).map((item) => ({
       id: item.id,
       disability_id: item.disability_id,
       disability_name: item.disability_index?.disability_name ?? '',
       disability_nhs_slug: item.disability_index?.disability_nhs_slug ?? '',
     }));
+
+    console.log('[v0] fetchUserDisabilities: returning', result);
+    return result;
   }, [supabase]);
 
   // Fetch user's approved adjustments
