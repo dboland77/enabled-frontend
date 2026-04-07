@@ -70,6 +70,7 @@ export default function UserProfileEditForm() {
     department: Yup.mixed().nullable(),
     line_manager_id: Yup.string().nullable(),
     is_disabled: Yup.boolean(),
+    selectedDisability: Yup.mixed().nullable(),
   });
 
   const defaultValues = useMemo(
@@ -81,6 +82,7 @@ export default function UserProfileEditForm() {
       department: profile?.department ?? '',
       line_manager_id: profile?.line_manager_id ?? '',
       is_disabled: profile?.is_disabled ?? false,
+      selectedDisability: null,
     }),
     [profile]
   );
