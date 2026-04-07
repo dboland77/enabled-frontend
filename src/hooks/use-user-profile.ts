@@ -168,55 +168,39 @@ export function useUserProfile() {
     [supabase]
   );
 
-  // Fetch user's disabilities
+  // Fetch user's disabilities (uses two queries since no FK relationship exists)
   const fetchUserDisabilities = useCallback(async (): Promise<UserDisability[]> => {
-    console.log('[v0] fetchUserDisabilities: starting');
-    
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (!user) {
-      console.log('[v0] fetchUserDisabilities: no user');
-      return [];
-    }
+    if (!user) return [];
 
-    console.log('[v0] fetchUserDisabilities: user.id =', user.id);
-
-    // Fetch user_disabilities WITHOUT trying to join (no FK exists)
+    // Fetch user_disabilities without join (no FK exists in DB)
     const { data: userDisabilitiesData, error: userDisError } = await supabase
       .from('user_disabilities')
       .select('id, disability_id')
       .eq('user_id', user.id);
 
-    console.log('[v0] fetchUserDisabilities: user disabilities =', userDisabilitiesData, 'error =', userDisError);
-
     if (userDisError || !userDisabilitiesData || userDisabilitiesData.length === 0) {
-      console.log('[v0] fetchUserDisabilities: no disabilities found');
       return [];
     }
 
-    // Extract disability IDs
+    // Extract disability IDs and fetch details separately
     const disabilityIds = userDisabilitiesData.map((ud: any) => ud.disability_id);
-    console.log('[v0] fetchUserDisabilities: disability IDs =', disabilityIds);
 
-    // Fetch disability names from disability_index table
+    // Try disability_index table first
     const { data: disabilityDetails, error: detailsError } = await supabase
       .from('disability_index')
       .select('id, disability_name, disability_nhs_slug')
       .in('id', disabilityIds);
 
-    console.log('[v0] fetchUserDisabilities: disability details =', disabilityDetails, 'error =', detailsError);
-
     if (detailsError) {
-      console.log('[v0] fetchUserDisabilities: trying "disabilities" table instead');
-      
+      // Fallback to 'disabilities' table
       const { data: disabilityDetailsAlt, error: detailsErrorAlt } = await supabase
         .from('disabilities')
         .select('id, disability_name, disability_nhs_slug')
         .in('id', disabilityIds);
-
-      console.log('[v0] fetchUserDisabilities: alt disability details =', disabilityDetailsAlt, 'error =', detailsErrorAlt);
       
       if (detailsErrorAlt || !disabilityDetailsAlt) {
         return userDisabilitiesData.map((ud: any) => ({
@@ -227,8 +211,7 @@ export function useUserProfile() {
         }));
       }
 
-      // Merge with disability names
-      const result = userDisabilitiesData.map((ud: any) => {
+      return userDisabilitiesData.map((ud: any) => {
         const detail = disabilityDetailsAlt.find((d: any) => d.id === ud.disability_id);
         return {
           id: ud.id,
@@ -237,13 +220,10 @@ export function useUserProfile() {
           disability_nhs_slug: detail?.disability_nhs_slug ?? '',
         };
       });
-
-      console.log('[v0] fetchUserDisabilities: returning (from alt table)', result);
-      return result;
     }
 
     // Merge user disabilities with their names
-    const result = userDisabilitiesData.map((ud: any) => {
+    return userDisabilitiesData.map((ud: any) => {
       const detail = disabilityDetails.find((d: any) => d.id === ud.disability_id);
       return {
         id: ud.id,
@@ -252,9 +232,6 @@ export function useUserProfile() {
         disability_nhs_slug: detail?.disability_nhs_slug ?? '',
       };
     });
-
-    console.log('[v0] fetchUserDisabilities: returning', result);
-    return result;
   }, [supabase]);
 
   // Fetch user's approved adjustments
@@ -305,47 +282,32 @@ export function useUserProfile() {
     }));
   }, [supabase]);
 
-  // Add disability to user (uses upsert to handle duplicates gracefully)
+  // Add disability to user (checks for duplicates first)
   const addUserDisability = useCallback(async (disabilityId: string) => {
-    console.log('[v0] addUserDisability called with disabilityId:', disabilityId);
-    
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (!user) {
-      console.log('[v0] addUserDisability: No authenticated user');
-      throw new Error('Not authenticated');
-    }
-    
-    console.log('[v0] addUserDisability: user.id =', user.id);
+    if (!user) throw new Error('Not authenticated');
 
-    // First check if this disability is already added
-    const { data: existing, error: checkError } = await supabase
+    // Check if this disability is already added
+    const { data: existing } = await supabase
       .from('user_disabilities')
       .select('id')
       .eq('user_id', user.id)
       .eq('disability_id', disabilityId)
       .maybeSingle();
 
-    console.log('[v0] addUserDisability: existing check result =', existing, 'error =', checkError);
-
     // Only insert if it doesn't already exist
     if (!existing) {
-      console.log('[v0] addUserDisability: Inserting new record');
-      const { data: insertData, error: insertError } = await supabase
+      const { error: insertError } = await supabase
         .from('user_disabilities')
         .insert({
           user_id: user.id,
           disability_id: disabilityId,
-        })
-        .select();
-
-      console.log('[v0] addUserDisability: Insert result =', insertData, 'error =', insertError);
+        });
 
       if (insertError) throw new Error(`Failed to add disability: ${insertError.message}`);
-    } else {
-      console.log('[v0] addUserDisability: Record already exists, skipping insert');
     }
   }, [supabase]);
 

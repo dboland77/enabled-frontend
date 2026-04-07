@@ -129,9 +129,7 @@ export default function UserProfileEditForm() {
       });
 
       // Process pending disability additions
-      console.log('[v0] Processing pendingAdditions:', pendingAdditions);
       for (const disability of pendingAdditions) {
-        console.log('[v0] Calling addUserDisability with:', disability.id, disability.disability_name);
         await addUserDisability(disability.id);
       }
 
