@@ -61,7 +61,6 @@
     "@types/react-lazy-load-image-component": "^1.6.5",
     "eslint": "^9",
     "eslint-config-next": "16.1.1",
-    "supabase": "^2.87.0",
     "typescript": "^5"
   }
 }
