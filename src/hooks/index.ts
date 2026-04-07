@@ -16,3 +16,4 @@ export * from '@/hooks/use-user-profile';
 export * from '@/hooks/use-roles';
 export * from '@/hooks/use-departments';
 export * from '@/hooks/use-adjustment-requests';
+export * from '@/hooks/use-documents';

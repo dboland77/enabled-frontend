@@ -137,10 +137,11 @@ export function useUserProfile() {
       if (!user) throw new Error('Not authenticated');
 
       const now = new Date().toISOString();
+      
+      // Use UPDATE instead of UPSERT since the profile should already exist
       const { data, error: updateError } = await supabase
         .from('user_profile')
-        .upsert({
-          userId: user.id,
+        .update({
           firstname: updates.firstname,
           lastname: updates.lastname,
           job_title: updates.job_title ?? null,
@@ -149,14 +150,12 @@ export function useUserProfile() {
           line_manager_id: updates.line_manager_id ?? null,
           is_disabled: updates.is_disabled ?? false,
           is_first_login: false,
-          createdAt: now,
           updatedAt: now,
-        }, {
-          onConflict: 'userId',
         })
+        .eq('userId', user.id)
         .select();
 
-      if (updateError) throw updateError;
+      if (updateError) throw new Error(`Failed to update profile: ${updateError.message}`);
 
       // Update the SWR cache immediately for all components
       mutate(PROFILE_CACHE_KEY, (current: UserProfile | null | undefined) => 
@@ -169,7 +168,7 @@ export function useUserProfile() {
     [supabase]
   );
 
-  // Fetch user's disabilities
+  // Fetch user's disabilities (uses two queries since no FK relationship exists)
   const fetchUserDisabilities = useCallback(async (): Promise<UserDisability[]> => {
     const {
       data: { user },
@@ -177,35 +176,43 @@ export function useUserProfile() {
 
     if (!user) return [];
 
-    type DisabilityQueryResult = {
-      id: string;
-      disability_id: string;
-      disability_index: {
-        disability_name: string;
-        disability_nhs_slug: string;
-      } | null;
-    };
-
-    const { data, error: fetchError } = await supabase
+    // Fetch user_disabilities without join (no FK exists in DB)
+    const { data: userDisabilitiesData, error: userDisError } = await supabase
       .from('user_disabilities')
-      .select(`
-        id,
-        disability_id,
-        disability_index (
-          disability_name,
-          disability_nhs_slug
-        )
-      `)
+      .select('id, disability_id')
       .eq('user_id', user.id);
 
-    if (fetchError || !data) return [];
+    if (userDisError || !userDisabilitiesData || userDisabilitiesData.length === 0) {
+      return [];
+    }
 
-    return (data as unknown as DisabilityQueryResult[]).map((item) => ({
-      id: item.id,
-      disability_id: item.disability_id,
-      disability_name: item.disability_index?.disability_name ?? '',
-      disability_nhs_slug: item.disability_index?.disability_nhs_slug ?? '',
-    }));
+    // Extract disability IDs and fetch details from disabilities table
+    const disabilityIds = userDisabilitiesData.map((ud: any) => ud.disability_id);
+
+    const { data: disabilityDetails, error: detailsError } = await supabase
+      .from('disabilities')
+      .select('id, disability_name, disability_nhs_slug')
+      .in('id', disabilityIds);
+
+    if (detailsError || !disabilityDetails) {
+      return userDisabilitiesData.map((ud: any) => ({
+        id: ud.id,
+        disability_id: ud.disability_id,
+        disability_name: 'Unknown',
+        disability_nhs_slug: '',
+      }));
+    }
+
+    // Merge user disabilities with their names
+    return userDisabilitiesData.map((ud: any) => {
+      const detail = disabilityDetails.find((d: any) => d.id === ud.disability_id);
+      return {
+        id: ud.id,
+        disability_id: ud.disability_id,
+        disability_name: detail?.disability_name ?? 'Unknown',
+        disability_nhs_slug: detail?.disability_nhs_slug ?? '',
+      };
+    });
   }, [supabase]);
 
   // Fetch user's approved adjustments
@@ -256,7 +263,7 @@ export function useUserProfile() {
     }));
   }, [supabase]);
 
-  // Add disability to user
+  // Add disability to user (checks for duplicates first)
   const addUserDisability = useCallback(async (disabilityId: string) => {
     const {
       data: { user },
@@ -264,14 +271,25 @@ export function useUserProfile() {
 
     if (!user) throw new Error('Not authenticated');
 
-    const { error: insertError } = await supabase
+    // Check if this disability is already added
+    const { data: existing } = await supabase
       .from('user_disabilities')
-      .insert({
-        user_id: user.id,
-        disability_id: disabilityId,
-      });
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('disability_id', disabilityId)
+      .maybeSingle();
 
-    if (insertError) throw insertError;
+    // Only insert if it doesn't already exist
+    if (!existing) {
+      const { error: insertError } = await supabase
+        .from('user_disabilities')
+        .insert({
+          user_id: user.id,
+          disability_id: disabilityId,
+        });
+
+      if (insertError) throw new Error(`Failed to add disability: ${insertError.message}`);
+    }
   }, [supabase]);
 
   // Remove disability from user

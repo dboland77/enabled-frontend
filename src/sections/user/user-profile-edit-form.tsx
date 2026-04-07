@@ -37,6 +37,10 @@ export default function UserProfileEditForm() {
   const [userDisabilities, setUserDisabilities] = useState<UserDisability[]>([]);
   const [userAdjustments, setUserAdjustments] = useState<UserAdjustment[]>([]);
   const [loadingDisabilities, setLoadingDisabilities] = useState(true);
+  
+  // Track pending changes - only saved when form is submitted
+  const [pendingAdditions, setPendingAdditions] = useState<{ id: string; disability_name: string }[]>([]);
+  const [pendingRemovals, setPendingRemovals] = useState<string[]>([]); // IDs of user_disabilities to remove
 
   // Fetch user disabilities and adjustments on mount
   useEffect(() => {
@@ -66,6 +70,7 @@ export default function UserProfileEditForm() {
     department: Yup.mixed().nullable(),
     line_manager_id: Yup.string().nullable(),
     is_disabled: Yup.boolean(),
+    selectedDisability: Yup.mixed().nullable(),
   });
 
   const defaultValues = useMemo(
@@ -77,6 +82,7 @@ export default function UserProfileEditForm() {
       department: profile?.department ?? '',
       line_manager_id: profile?.line_manager_id ?? '',
       is_disabled: profile?.is_disabled ?? false,
+      selectedDisability: null,
     }),
     [profile]
   );
@@ -90,6 +96,7 @@ export default function UserProfileEditForm() {
   const {
     handleSubmit,
     watch,
+    setValue,
     formState: { isSubmitting },
   } = methods;
 
@@ -112,6 +119,7 @@ export default function UserProfileEditForm() {
         departmentValue = data.department || null;
       }
 
+      // Save profile data
       await updateProfile({
         firstname: data.firstname,
         lastname: data.lastname,
@@ -121,6 +129,23 @@ export default function UserProfileEditForm() {
         line_manager_id: data.line_manager_id || null,
         is_disabled: data.is_disabled,
       });
+
+      // Process pending disability additions
+      for (const disability of pendingAdditions) {
+        await addUserDisability(disability.id);
+      }
+
+      // Process pending disability removals
+      for (const userDisabilityId of pendingRemovals) {
+        await removeUserDisability(userDisabilityId);
+      }
+
+      // Refresh disabilities list and clear pending changes
+      const updatedDisabilities = await fetchUserDisabilities();
+      setUserDisabilities(updatedDisabilities);
+      setPendingAdditions([]);
+      setPendingRemovals([]);
+
       enqueueSnackbar('Profile updated successfully!');
     } catch (error) {
       console.error(error);
@@ -129,33 +154,37 @@ export default function UserProfileEditForm() {
     }
   });
 
-  const handleAddDisability = async (disabilityId: string) => {
-    try {
-      await addUserDisability(disabilityId);
-      const updatedDisabilities = await fetchUserDisabilities();
-      setUserDisabilities(updatedDisabilities);
-      enqueueSnackbar('Disability added successfully!');
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to add disability';
-      enqueueSnackbar(errorMessage, { variant: 'error' });
-    }
+  // Stage a disability for addition (will be saved on form submit)
+  const handleStageDisability = (disability: { id: string; disability_name: string }) => {
+    setPendingAdditions((prev) => [...prev, disability]);
+    // Reset the RHF-controlled autocomplete field so the dropdown clears
+    setValue('selectedDisability', null);
   };
 
-  const handleRemoveDisability = async (userDisabilityId: string) => {
-    try {
-      await removeUserDisability(userDisabilityId);
-      setUserDisabilities((prev) => prev.filter((d) => d.id !== userDisabilityId));
-      enqueueSnackbar('Disability removed successfully!');
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to remove disability';
-      enqueueSnackbar(errorMessage, { variant: 'error' });
-    }
+  // Unstage a pending addition
+  const handleUnstageDisability = (disabilityId: string) => {
+    setPendingAdditions((prev) => prev.filter((d) => d.id !== disabilityId));
   };
 
-  // Filter out already selected disabilities
+  // Stage an existing disability for removal (will be removed on form submit)
+  const handleStageRemoval = (userDisabilityId: string) => {
+    setPendingRemovals((prev) => [...prev, userDisabilityId]);
+  };
+
+  // Unstage a pending removal (restore it)
+  const handleUnstageRemoval = (userDisabilityId: string) => {
+    setPendingRemovals((prev) => prev.filter((id) => id !== userDisabilityId));
+  };
+
+  // Filter out already selected disabilities and pending additions
   const availableDisabilities = allDisabilities.filter(
-    (d) => !userDisabilities.some((ud) => ud.disability_id === d.id)
+    (d) => 
+      !userDisabilities.some((ud) => ud.disability_id === d.id) &&
+      !pendingAdditions.some((pa) => pa.id === d.id)
   );
+
+  // Check if there are unsaved changes
+  const hasUnsavedDisabilityChanges = pendingAdditions.length > 0 || pendingRemovals.length > 0;
 
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
@@ -258,17 +287,47 @@ export default function UserProfileEditForm() {
                   <Typography color="text.secondary">Loading...</Typography>
                 ) : (
                   <>
-                    {userDisabilities.length > 0 ? (
+                    {/* Existing disabilities (saved) */}
+                    {userDisabilities.length > 0 || pendingAdditions.length > 0 ? (
                       <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mb: 2 }}>
-                        {userDisabilities.map((disability) => (
+                        {/* Saved disabilities */}
+                        {userDisabilities
+                          .filter((d) => !pendingRemovals.includes(d.id))
+                          .map((disability) => (
+                            <Chip
+                              key={disability.id}
+                              label={disability.disability_name}
+                              onDelete={() => handleStageRemoval(disability.id)}
+                              color="primary"
+                              variant="outlined"
+                            />
+                          ))}
+                        
+                        {/* Pending additions (not yet saved) */}
+                        {pendingAdditions.map((disability) => (
                           <Chip
-                            key={disability.id}
+                            key={`pending-${disability.id}`}
                             label={disability.disability_name}
-                            onDelete={() => handleRemoveDisability(disability.id)}
-                            color="primary"
-                            variant="outlined"
+                            onDelete={() => handleUnstageDisability(disability.id)}
+                            color="success"
+                            variant="filled"
+                            sx={{ fontStyle: 'italic' }}
                           />
                         ))}
+
+                        {/* Pending removals (will be removed on save) */}
+                        {userDisabilities
+                          .filter((d) => pendingRemovals.includes(d.id))
+                          .map((disability) => (
+                            <Chip
+                              key={`removing-${disability.id}`}
+                              label={disability.disability_name}
+                              onDelete={() => handleUnstageRemoval(disability.id)}
+                              color="error"
+                              variant="outlined"
+                              sx={{ textDecoration: 'line-through', opacity: 0.7 }}
+                            />
+                          ))}
                       </Stack>
                     ) : (
                       <Alert severity="info" sx={{ mb: 2 }}>
@@ -276,16 +335,23 @@ export default function UserProfileEditForm() {
                       </Alert>
                     )}
 
+                    {hasUnsavedDisabilityChanges && (
+                      <Alert severity="warning" sx={{ mb: 2 }}>
+                        You have unsaved disability changes. Click &quot;Save Changes&quot; to apply them.
+                      </Alert>
+                    )}
+
                     {availableDisabilities.length > 0 && (
                       <RHFAutocomplete
                         name="selectedDisability"
                         label="Add Disability"
+                        placeholder="Select a disability to add..."
                         options={availableDisabilities}
                         getOptionLabel={(option) => typeof option === 'string' ? option : (option as { disability_name: string }).disability_name}
                         isOptionEqualToValue={(option, value) => (option as { id: string }).id === (value as { id: string }).id}
                         onChange={(_, newValue) => {
                           if (newValue && typeof newValue !== 'string' && 'id' in newValue) {
-                            handleAddDisability((newValue as { id: string }).id);
+                            handleStageDisability(newValue as { id: string; disability_name: string });
                           }
                         }}
                         renderOption={(props, option) => (
@@ -293,6 +359,7 @@ export default function UserProfileEditForm() {
                             {(option as { disability_name: string }).disability_name}
                           </li>
                         )}
+                        helperText="Select disabilities to add. Changes are saved when you click Save Changes."
                       />
                     )}
                   </>
