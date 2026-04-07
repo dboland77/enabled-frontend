@@ -183,67 +183,75 @@ export function useUserProfile() {
 
     console.log('[v0] fetchUserDisabilities: user.id =', user.id);
 
-    type DisabilityQueryResult = {
-      id: string;
-      disability_id: string;
-      disability_index: {
-        disability_name: string;
-        disability_nhs_slug: string;
-      } | null;
-      disabilities?: {
-        disability_name: string;
-        disability_nhs_slug: string;
-      } | null;
-    };
-
-    const { data, error: fetchError } = await supabase
+    // Fetch user_disabilities WITHOUT trying to join (no FK exists)
+    const { data: userDisabilitiesData, error: userDisError } = await supabase
       .from('user_disabilities')
-      .select(`
-        id,
-        disability_id,
-        disability_index (
-          disability_name,
-          disability_nhs_slug
-        )
-      `)
+      .select('id, disability_id')
       .eq('user_id', user.id);
 
-    console.log('[v0] fetchUserDisabilities: query result =', data, 'error =', fetchError);
+    console.log('[v0] fetchUserDisabilities: user disabilities =', userDisabilitiesData, 'error =', userDisError);
 
-    if (fetchError || !data) {
-      console.log('[v0] fetchUserDisabilities: trying alternative join name');
-      
-      // Try alternative table name 'disabilities'
-      const { data: dataAlt, error: fetchErrorAlt } = await supabase
-        .from('user_disabilities')
-        .select(`
-          id,
-          disability_id,
-          disabilities (
-            disability_name,
-            disability_nhs_slug
-          )
-        `)
-        .eq('user_id', user.id);
-      
-      console.log('[v0] fetchUserDisabilities: alt query result =', dataAlt, 'error =', fetchErrorAlt);
-      
-      if (fetchErrorAlt || !dataAlt) return [];
-      
-      return (dataAlt as unknown as DisabilityQueryResult[]).map((item) => ({
-        id: item.id,
-        disability_id: item.disability_id,
-        disability_name: item.disabilities?.disability_name ?? '',
-        disability_nhs_slug: item.disabilities?.disability_nhs_slug ?? '',
-      }));
+    if (userDisError || !userDisabilitiesData || userDisabilitiesData.length === 0) {
+      console.log('[v0] fetchUserDisabilities: no disabilities found');
+      return [];
     }
 
-    const result = (data as unknown as DisabilityQueryResult[]).map((item) => ({
-      id: item.id,
-      disability_id: item.disability_id,
-      disability_name: item.disability_index?.disability_name ?? '',
-      disability_nhs_slug: item.disability_index?.disability_nhs_slug ?? '',
-    }));
+    // Extract disability IDs
+    const disabilityIds = userDisabilitiesData.map((ud: any) => ud.disability_id);
+    console.log('[v0] fetchUserDisabilities: disability IDs =', disabilityIds);
+
+    // Fetch disability names from disability_index table
+    const { data: disabilityDetails, error: detailsError } = await supabase
+      .from('disability_index')
+      .select('id, disability_name, disability_nhs_slug')
+      .in('id', disabilityIds);
+
+    console.log('[v0] fetchUserDisabilities: disability details =', disabilityDetails, 'error =', detailsError);
+
+    if (detailsError) {
+      console.log('[v0] fetchUserDisabilities: trying "disabilities" table instead');
+      
+      const { data: disabilityDetailsAlt, error: detailsErrorAlt } = await supabase
+        .from('disabilities')
+        .select('id, disability_name, disability_nhs_slug')
+        .in('id', disabilityIds);
+
+      console.log('[v0] fetchUserDisabilities: alt disability details =', disabilityDetailsAlt, 'error =', detailsErrorAlt);
+      
+      if (detailsErrorAlt || !disabilityDetailsAlt) {
+        return userDisabilitiesData.map((ud: any) => ({
+          id: ud.id,
+          disability_id: ud.disability_id,
+          disability_name: 'Unknown',
+          disability_nhs_slug: '',
+        }));
+      }
+
+      // Merge with disability names
+      const result = userDisabilitiesData.map((ud: any) => {
+        const detail = disabilityDetailsAlt.find((d: any) => d.id === ud.disability_id);
+        return {
+          id: ud.id,
+          disability_id: ud.disability_id,
+          disability_name: detail?.disability_name ?? 'Unknown',
+          disability_nhs_slug: detail?.disability_nhs_slug ?? '',
+        };
+      });
+
+      console.log('[v0] fetchUserDisabilities: returning (from alt table)', result);
+      return result;
+    }
+
+    // Merge user disabilities with their names
+    const result = userDisabilitiesData.map((ud: any) => {
+      const detail = disabilityDetails.find((d: any) => d.id === ud.disability_id);
+      return {
+        id: ud.id,
+        disability_id: ud.disability_id,
+        disability_name: detail?.disability_name ?? 'Unknown',
+        disability_nhs_slug: detail?.disability_nhs_slug ?? '',
+      };
+    });
 
     console.log('[v0] fetchUserDisabilities: returning', result);
     return result;
