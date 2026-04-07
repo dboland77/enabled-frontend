@@ -154,13 +154,6 @@ export default function ProfileReadView() {
               tooltip="Your display name across the platform"
               color="primary"
             />
-            <InfoItem 
-              icon="solar:letter-bold" 
-              label="Email" 
-              value={profile?.email}
-              tooltip="Used for notifications and account recovery"
-              color="info"
-            />
           </Stack>
         </Card>
       </Grid>
