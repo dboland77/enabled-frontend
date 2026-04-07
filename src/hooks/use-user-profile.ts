@@ -257,30 +257,45 @@ export function useUserProfile() {
 
   // Add disability to user (uses upsert to handle duplicates gracefully)
   const addUserDisability = useCallback(async (disabilityId: string) => {
+    console.log('[v0] addUserDisability called with disabilityId:', disabilityId);
+    
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (!user) throw new Error('Not authenticated');
+    if (!user) {
+      console.log('[v0] addUserDisability: No authenticated user');
+      throw new Error('Not authenticated');
+    }
+    
+    console.log('[v0] addUserDisability: user.id =', user.id);
 
     // First check if this disability is already added
-    const { data: existing } = await supabase
+    const { data: existing, error: checkError } = await supabase
       .from('user_disabilities')
       .select('id')
       .eq('user_id', user.id)
       .eq('disability_id', disabilityId)
       .maybeSingle();
 
+    console.log('[v0] addUserDisability: existing check result =', existing, 'error =', checkError);
+
     // Only insert if it doesn't already exist
     if (!existing) {
-      const { error: insertError } = await supabase
+      console.log('[v0] addUserDisability: Inserting new record');
+      const { data: insertData, error: insertError } = await supabase
         .from('user_disabilities')
         .insert({
           user_id: user.id,
           disability_id: disabilityId,
-        });
+        })
+        .select();
+
+      console.log('[v0] addUserDisability: Insert result =', insertData, 'error =', insertError);
 
       if (insertError) throw new Error(`Failed to add disability: ${insertError.message}`);
+    } else {
+      console.log('[v0] addUserDisability: Record already exists, skipping insert');
     }
   }, [supabase]);
 
