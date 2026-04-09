@@ -17,20 +17,20 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { alpha, useTheme } from '@mui/material/styles';
 
 import Iconify from '@/components/iconify';
-import { ILimitationItem, LIMITATION_CATEGORIES } from '@/types/wizard';
+import { IChallengeItem, CHALLENGE_CATEGORIES } from '@/types/wizard';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  limitations: ILimitationItem[];
+  challenges: IChallengeItem[];
   selectedIds: string[];
   onSelectionChange: (ids: string[]) => void;
   loading?: boolean;
   error?: string | null;
 };
 
-export default function WizardStepLimitations({
-  limitations,
+export default function WizardStepChallenges({
+  challenges,
   selectedIds,
   onSelectionChange,
   loading,
@@ -40,9 +40,9 @@ export default function WizardStepLimitations({
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
 
-  // Group limitations by category
-  const groupedLimitations = useMemo(() => {
-    const filtered = limitations.filter((l) => {
+  // Group challenges by category
+  const groupedChallenges = useMemo(() => {
+    const filtered = challenges.filter((l) => {
       const matchesSearch =
         !searchQuery ||
         l.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -53,23 +53,23 @@ export default function WizardStepLimitations({
     });
 
     return filtered.reduce(
-      (acc, limitation) => {
-        const category = limitation.category || 'Other';
+      (acc, challenge) => {
+        const category = challenge.category || 'Other';
         if (!acc[category]) {
           acc[category] = [];
         }
-        acc[category].push(limitation);
+        acc[category].push(challenge);
         return acc;
       },
-      {} as Record<string, ILimitationItem[]>
+      {} as Record<string, IChallengeItem[]>
     );
-  }, [limitations, searchQuery, categoryFilter]);
+  }, [challenges, searchQuery, categoryFilter]);
 
   // Get available categories
   const availableCategories = useMemo(() => {
-    const cats = limitations.map((l) => l.category);
+    const cats = challenges.map((l) => l.category);
     return [...new Set(cats)].sort();
-  }, [limitations]);
+  }, [challenges]);
 
   const handleToggle = (id: string) => {
     const newSelection = selectedIds.includes(id)
@@ -79,7 +79,7 @@ export default function WizardStepLimitations({
   };
 
   const handleSelectAll = (category: string, checked: boolean) => {
-    const categoryIds = groupedLimitations[category]?.map((l) => l.id) || [];
+    const categoryIds = groupedChallenges[category]?.map((l) => l.id) || [];
     if (checked) {
       const newSelection = [...new Set([...selectedIds, ...categoryIds])];
       onSelectionChange(newSelection);
@@ -126,10 +126,10 @@ export default function WizardStepLimitations({
     <Stack spacing={3}>
       <Box>
         <Typography variant="h5" sx={{ mb: 1 }}>
-          Identify Functional Limitations
+          Identify Functional Challenges
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Select any functional limitations you experience that may affect your work. These help us
+          Select any functional challenges you experience that may affect your work. These help us
           provide more specific adjustment recommendations.
         </Typography>
       </Box>
@@ -138,7 +138,7 @@ export default function WizardStepLimitations({
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
         <TextField
           fullWidth
-          placeholder="Search limitations..."
+          placeholder="Search challenges..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           InputProps={{
@@ -176,13 +176,13 @@ export default function WizardStepLimitations({
       {/* Selected count */}
       {selectedIds.length > 0 && (
         <Alert severity="info" icon={<Iconify icon="mdi:information" />}>
-          {selectedIds.length} {selectedIds.length === 1 ? 'limitation' : 'limitations'} selected
+          {selectedIds.length} {selectedIds.length === 1 ? 'challenge' : 'challenges'} selected
         </Alert>
       )}
 
-      {/* Limitation cards grouped by category */}
+      {/* Challenge cards grouped by category */}
       <Stack spacing={3}>
-        {Object.entries(groupedLimitations).map(([category, items]) => {
+        {Object.entries(groupedChallenges).map(([category, items]) => {
           const categorySelectedCount = items.filter((l) => selectedIds.includes(l.id)).length;
           const allSelected = categorySelectedCount === items.length;
           const someSelected = categorySelectedCount > 0 && !allSelected;
@@ -216,7 +216,7 @@ export default function WizardStepLimitations({
                         {category}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        {items.length} {items.length === 1 ? 'limitation' : 'limitations'}
+                        {items.length} {items.length === 1 ? 'challenge' : 'challenges'}
                       </Typography>
                     </Box>
                   </Stack>
@@ -240,13 +240,13 @@ export default function WizardStepLimitations({
                 </Stack>
 
                 <Stack spacing={1.5}>
-                  {items.map((limitation) => {
-                    const isSelected = selectedIds.includes(limitation.id);
+                  {items.map((challenge) => {
+                    const isSelected = selectedIds.includes(challenge.id);
 
                     return (
                       <Box
-                        key={limitation.id}
-                        onClick={() => handleToggle(limitation.id)}
+                        key={challenge.id}
+                        onClick={() => handleToggle(challenge.id)}
                         sx={{
                           p: 2,
                           borderRadius: 1.5,
@@ -271,7 +271,7 @@ export default function WizardStepLimitations({
                         onKeyDown={(e) => {
                           if (e.key === 'Enter' || e.key === ' ') {
                             e.preventDefault();
-                            handleToggle(limitation.id);
+                            handleToggle(challenge.id);
                           }
                         }}
                       >
@@ -284,11 +284,11 @@ export default function WizardStepLimitations({
                           />
                           <Box sx={{ flex: 1 }}>
                             <Typography variant="body2" fontWeight={500}>
-                              {limitation.name}
+                              {challenge.name}
                             </Typography>
-                            {limitation.description && (
+                            {challenge.description && (
                               <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
-                                {limitation.description}
+                                {challenge.description}
                               </Typography>
                             )}
                           </Box>
@@ -303,11 +303,11 @@ export default function WizardStepLimitations({
         })}
       </Stack>
 
-      {Object.keys(groupedLimitations).length === 0 && (
+      {Object.keys(groupedChallenges).length === 0 && (
         <Box sx={{ textAlign: 'center', py: 6 }}>
           <Iconify icon="eva:search-fill" width={48} sx={{ color: 'text.disabled', mb: 2 }} />
           <Typography variant="body1" color="text.secondary">
-            No limitations found matching your search
+            No challenges found matching your search
           </Typography>
         </Box>
       )}

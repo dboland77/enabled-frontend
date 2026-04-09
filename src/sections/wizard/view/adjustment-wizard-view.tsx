@@ -23,13 +23,13 @@ import { useSettingsContext } from '@/components/settings';
 import CustomBreadcrumbs from '@/components/custom-breadcrumbs';
 
 import { useDisabilities } from '@/hooks/use-disabilities';
-import { useLimitations, useRecommendedAdjustments, useWizardSession } from '@/hooks/use-wizard';
-import { WIZARD_STEPS, IRecommendedAdjustment, ILimitationItem } from '@/types/wizard';
+import { useChallenges, useRecommendedAdjustments, useWizardSession } from '@/hooks/use-wizard';
+import { WIZARD_STEPS, IRecommendedAdjustment, IChallengeItem } from '@/types/wizard';
 import { IDisabilityItem } from '@/types/disability';
 
 import WizardStepper from '../wizard-stepper';
 import WizardStepReview from '../steps/wizard-step-review';
-import WizardStepLimitations from '../steps/wizard-step-limitations';
+import WizardStepChallenges from '../steps/wizard-step-challenges';
 import WizardStepAdjustments from '../steps/wizard-step-adjustments';
 import WizardStepDisabilities from '../steps/wizard-step-disabilities';
 
@@ -47,14 +47,14 @@ export default function AdjustmentWizardView() {
 
   // Data fetching
   const { disabilities, loading: disabilitiesLoading, error: disabilitiesError } = useDisabilities();
-  const { limitations, loading: limitationsLoading, error: limitationsError } = useLimitations(
+  const { challenges, loading: challengesLoading, error: challengesError } = useChallenges(
     session.selectedDisabilities
   );
   const {
     recommendations,
     loading: recommendationsLoading,
     error: recommendationsError,
-  } = useRecommendedAdjustments(session.selectedDisabilities, session.selectedLimitations);
+  } = useRecommendedAdjustments(session.selectedDisabilities, session.selectedChallenges);
 
   // Get selected items for review
   const selectedDisabilities = useMemo(
@@ -68,9 +68,9 @@ export default function AdjustmentWizardView() {
     [disabilities, session.selectedDisabilities]
   );
 
-  const selectedLimitations = useMemo(
-    () => limitations.filter((l) => session.selectedLimitations.includes(l.id)),
-    [limitations, session.selectedLimitations]
+  const selectedChallenges = useMemo(
+    () => challenges.filter((l) => session.selectedChallenges.includes(l.id)),
+    [challenges, session.selectedChallenges]
   );
 
   const selectedAdjustments = useMemo(
@@ -108,9 +108,9 @@ export default function AdjustmentWizardView() {
     [updateSession]
   );
 
-  const handleLimitationsChange = useCallback(
+  const handleChallengesChange = useCallback(
     (ids: string[]) => {
-      updateSession({ selectedLimitations: ids });
+      updateSession({ selectedChallenges: ids });
     },
     [updateSession]
   );
@@ -184,12 +184,12 @@ export default function AdjustmentWizardView() {
         );
       case 2:
         return (
-          <WizardStepLimitations
-            limitations={limitations}
-            selectedIds={session.selectedLimitations}
-            onSelectionChange={handleLimitationsChange}
-            loading={limitationsLoading}
-            error={limitationsError}
+          <WizardStepChallenges
+            challenges={challenges}
+            selectedIds={session.selectedChallenges}
+            onSelectionChange={handleChallengesChange}
+            loading={challengesLoading}
+            error={challengesError}
           />
         );
       case 3:
@@ -206,7 +206,7 @@ export default function AdjustmentWizardView() {
         return (
           <WizardStepReview
             selectedDisabilities={selectedDisabilities}
-            selectedLimitations={selectedLimitations}
+            selectedChallenges={selectedChallenges}
             selectedAdjustments={selectedAdjustments}
             additionalNotes={session.additionalNotes}
             onNotesChange={handleNotesChange}

@@ -3,91 +3,91 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 
 import { createClient } from '@/lib/supabase/client';
-import { ILimitationItem, IRecommendedAdjustment, IWizardState } from '@/types/wizard';
+import { IChallengeItem, IRecommendedAdjustment, IWizardState } from '@/types/wizard';
 import { IDisabilityItem } from '@/types/disability';
 import { IAdjustmentItem } from '@/types/adjustment';
 
 // ----------------------------------------------------------------------
-// Hook: useLimitations
-// Fetches all limitations, optionally filtered by disability IDs
+// Hook: useChallenges
+// Fetches all challenges, optionally filtered by disability IDs
 // ----------------------------------------------------------------------
 
-export function useLimitations(disabilityIds?: string[]) {
+export function useChallenges(disabilityIds?: string[]) {
   const supabase = useMemo(() => createClient(), []);
-  const [limitations, setLimitations] = useState<ILimitationItem[]>([]);
+  const [challenges, setChallenges] = useState<IChallengeItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchLimitations = useCallback(async () => {
+  const fetchChallenges = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
       if (disabilityIds && disabilityIds.length > 0) {
-        // Fetch limitations linked to selected disabilities
-        const { data: linkedLimitations, error: linkError } = await supabase
-          .from('disability_limitations')
-          .select('limitation_id')
+        // Fetch challenges linked to selected disabilities
+        const { data: linkedChallenges, error: linkError } = await supabase
+          .from('disability_challenges')
+          .select('challenge_id')
           .in('disability_id', disabilityIds);
 
         if (linkError) throw linkError;
 
-        const limitationIds = [...new Set(linkedLimitations?.map((l) => l.limitation_id) || [])];
+        const challengeIds = [...new Set(linkedChallenges?.map((l) => l.challenge_id) || [])];
 
-        if (limitationIds.length > 0) {
+        if (challengeIds.length > 0) {
           const { data, error: fetchError } = await supabase
-            .from('limitations')
+            .from('challenges')
             .select('*')
-            .in('id', limitationIds)
+            .in('id', challengeIds)
             .order('category', { ascending: true })
             .order('name', { ascending: true });
 
           if (fetchError) throw fetchError;
-          setLimitations((data || []) as ILimitationItem[]);
+          setChallenges((data || []) as IChallengeItem[]);
         } else {
-          // No linked limitations, fetch all
+          // No linked challenges, fetch all
           const { data, error: fetchError } = await supabase
-            .from('limitations')
+            .from('challenges')
             .select('*')
             .order('category', { ascending: true })
             .order('name', { ascending: true });
 
           if (fetchError) throw fetchError;
-          setLimitations((data || []) as ILimitationItem[]);
+          setChallenges((data || []) as IChallengeItem[]);
         }
       } else {
-        // No disabilities selected, fetch all limitations
+        // No disabilities selected, fetch all challenges
         const { data, error: fetchError } = await supabase
-          .from('limitations')
+          .from('challenges')
           .select('*')
           .order('category', { ascending: true })
           .order('name', { ascending: true });
 
         if (fetchError) throw fetchError;
-        setLimitations((data || []) as ILimitationItem[]);
+        setChallenges((data || []) as IChallengeItem[]);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch limitations');
+      setError(err instanceof Error ? err.message : 'Failed to fetch challenges');
     } finally {
       setLoading(false);
     }
   }, [supabase, disabilityIds]);
 
   useEffect(() => {
-    fetchLimitations();
-  }, [fetchLimitations]);
+    fetchChallenges();
+  }, [fetchChallenges]);
 
-  return { limitations, loading, error, refetch: fetchLimitations };
+  return { challenges, loading, error, refetch: fetchChallenges };
 }
 
 // ----------------------------------------------------------------------
 // Hook: useRecommendedAdjustments
-// Calculates recommended adjustments based on selected disabilities and limitations
+// Calculates recommended adjustments based on selected disabilities and challenges
 // ----------------------------------------------------------------------
 
 export function useRecommendedAdjustments(
   selectedDisabilities: string[],
-  selectedLimitations: string[]
+  selectedChallenges: string[]
 ) {
   const supabase = useMemo(() => createClient(), []);
   const [recommendations, setRecommendations] = useState<IRecommendedAdjustment[]>([]);
@@ -103,7 +103,7 @@ export function useRecommendedAdjustments(
         string,
         {
           adjustment: IAdjustmentItem;
-          sources: { type: 'disability' | 'limitation'; name: string; score: number }[];
+          sources: { type: 'disability' | 'challenge'; name: string; score: number }[];
           totalScore: number;
         }
       >();
@@ -146,28 +146,28 @@ export function useRecommendedAdjustments(
         });
       }
 
-      // 2. Get adjustments from limitations
-      if (selectedLimitations.length > 0) {
-        const { data: limitationAdjustments, error: laError } = await supabase
-          .from('limitation_adjustments')
+      // 2. Get adjustments from challenges
+      if (selectedChallenges.length > 0) {
+        const { data: challengeAdjustments, error: laError } = await supabase
+          .from('challenge_adjustments')
           .select(
             `
             relevance_score,
-            limitation:limitations(id, name),
+            challenge:challenges(id, name),
             adjustment:adjustments(*)
           `
           )
-          .in('limitation_id', selectedLimitations);
+          .in('challenge_id', selectedChallenges);
 
         if (laError) throw laError;
 
-        limitationAdjustments?.forEach((la: any) => {
+        challengeAdjustments?.forEach((la: any) => {
           const adjId = la.adjustment.id;
           const existing = adjustmentMap.get(adjId);
 
           const source = {
-            type: 'limitation' as const,
-            name: la.limitation.name,
+            type: 'challenge' as const,
+            name: la.challenge.name,
             score: la.relevance_score,
           };
 
@@ -203,16 +203,16 @@ export function useRecommendedAdjustments(
     } finally {
       setLoading(false);
     }
-  }, [supabase, selectedDisabilities, selectedLimitations]);
+  }, [supabase, selectedDisabilities, selectedChallenges]);
 
   useEffect(() => {
-    if (selectedDisabilities.length > 0 || selectedLimitations.length > 0) {
+    if (selectedDisabilities.length > 0 || selectedChallenges.length > 0) {
       fetchRecommendations();
     } else {
       setRecommendations([]);
       setLoading(false);
     }
-  }, [fetchRecommendations, selectedDisabilities.length, selectedLimitations.length]);
+  }, [fetchRecommendations, selectedDisabilities.length, selectedChallenges.length]);
 
   return { recommendations, loading, error, refetch: fetchRecommendations };
 }
@@ -227,7 +227,7 @@ export function useWizardSession() {
   const [session, setSession] = useState<IWizardState>({
     currentStep: 1,
     selectedDisabilities: [],
-    selectedLimitations: [],
+    selectedChallenges: [],
     selectedAdjustments: [],
     additionalNotes: '',
     sessionId: null,
@@ -267,7 +267,7 @@ export function useWizardSession() {
         setSession({
           currentStep: data.current_step,
           selectedDisabilities: data.selected_disabilities || [],
-          selectedLimitations: data.selected_limitations || [],
+          selectedChallenges: data.selected_challenges || [],
           selectedAdjustments: data.selected_adjustments || [],
           additionalNotes: data.additional_notes || '',
           sessionId: data.id,
@@ -285,7 +285,7 @@ export function useWizardSession() {
           setSession({
             currentStep: 1,
             selectedDisabilities: disabilityIds,
-            selectedLimitations: [],
+            selectedChallenges: [],
             selectedAdjustments: [],
             additionalNotes: '',
             sessionId: null,
@@ -318,7 +318,7 @@ export function useWizardSession() {
           user_id: user.id,
           current_step: updatedSession.currentStep,
           selected_disabilities: updatedSession.selectedDisabilities,
-          selected_limitations: updatedSession.selectedLimitations,
+          selected_challenges: updatedSession.selectedChallenges,
           selected_adjustments: updatedSession.selectedAdjustments,
           additional_notes: updatedSession.additionalNotes,
         };
@@ -440,7 +440,7 @@ export function useWizardSession() {
     setSession({
       currentStep: 1,
       selectedDisabilities: [],
-      selectedLimitations: [],
+      selectedChallenges: [],
       selectedAdjustments: [],
       additionalNotes: '',
       sessionId: null,

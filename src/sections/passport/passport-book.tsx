@@ -16,7 +16,7 @@ import PassportCover from './passport-cover';
 import PassportInsideCover from './passport-inside-cover';
 import PassportPersonalPage from './passport-personal-page';
 import PassportDisabilitiesPage from './passport-disabilities-page';
-import PassportLimitationsPage from './passport-limitations-page';
+import PassportChallengesPage from './passport-challenges-page';
 import PassportAdjustmentPage from './passport-adjustment-page';
 
 // Dynamically import HTMLFlipBook with no SSR
@@ -67,7 +67,7 @@ export default function PassportBook({ data, onPdfRef, scale = 1 }: PassportBook
     setIsMounted(true);
   }, []);
 
-  // Calculate total pages: front cover + inside front + personal page + disabilities page + limitations page + adjustment pages + inside back + back cover
+  // Calculate total pages: front cover + inside front + personal page + disabilities page + challenges page + adjustment pages + inside back + back cover
   const totalPages = 5 + data.approvedAdjustments.length + 2;
 
   const handleFlipNext = useCallback(() => {
@@ -197,10 +197,10 @@ export default function PassportBook({ data, onPdfRef, scale = 1 }: PassportBook
             />
           </PageWrapper>
 
-          {/* Limitations Page (I Struggle With) */}
+          {/* Challenges Page (I Struggle With) */}
           <PageWrapper>
-            <PassportLimitationsPage
-              limitations={data.limitations || []}
+            <PassportChallengesPage
+              challenges={data.challenges || []}
               pageNumber={3}
             />
           </PageWrapper>
