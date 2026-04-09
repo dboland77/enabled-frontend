@@ -18,7 +18,6 @@ import LinearProgress from '@mui/material/LinearProgress';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import CircularProgress from '@mui/material/CircularProgress';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import { alpha, useTheme } from '@mui/material/styles';
 
 import Iconify from '@/components/iconify';
@@ -262,59 +261,31 @@ export default function WizardStepAdjustments({
                   },
                 }}
               >
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="space-between"
-                  sx={{ width: '100%', pr: 2 }}
-                >
-                  <Stack direction="row" alignItems="center" spacing={1.5}>
-                    <Box
-                      sx={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: 1,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backgroundColor: alpha(theme.palette.primary.main, 0.08),
-                        color: theme.palette.primary.main,
-                      }}
-                    >
-                      <Iconify icon="mdi:lightbulb-on" width={22} />
-                    </Box>
-                    <Box>
-                      <Typography variant="subtitle1" fontWeight={600}>
-                        {category}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {categorySelectedCount > 0 && `${categorySelectedCount} of `}
-                        {items.length} {items.length === 1 ? 'adjustment' : 'adjustments'} • Avg{' '}
-                        {avgRelevance}% relevance
-                      </Typography>
-                    </Box>
-                  </Stack>
-
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={allSelected}
-                        indeterminate={someSelected}
-                        onChange={(e) => {
-                          e.stopPropagation();
-                          handleSelectAllInCategory(category, e.target.checked);
-                        }}
-                        onClick={(e) => e.stopPropagation()}
-                      />
-                    }
-                    label={
-                      <Typography variant="caption" color="text.secondary">
-                        Select all
-                      </Typography>
-                    }
-                    sx={{ mr: 0 }}
-                    onClick={(e) => e.stopPropagation()}
-                  />
+                <Stack direction="row" alignItems="center" spacing={1.5}>
+                  <Box
+                    sx={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: alpha(theme.palette.primary.main, 0.08),
+                      color: theme.palette.primary.main,
+                    }}
+                  >
+                    <Iconify icon="mdi:lightbulb-on" width={22} />
+                  </Box>
+                  <Box>
+                    <Typography variant="subtitle1" fontWeight={600}>
+                      {category}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {categorySelectedCount > 0 && `${categorySelectedCount} of `}
+                      {items.length} {items.length === 1 ? 'adjustment' : 'adjustments'} • Avg{' '}
+                      {avgRelevance}% relevance
+                    </Typography>
+                  </Box>
                 </Stack>
               </AccordionSummary>
 

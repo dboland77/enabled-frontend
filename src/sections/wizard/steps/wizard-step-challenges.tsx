@@ -3,7 +3,6 @@
 import { useState, useMemo } from 'react';
 
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
 import Checkbox from '@mui/material/Checkbox';
@@ -12,7 +11,6 @@ import Typography from '@mui/material/Typography';
 import Pagination from '@mui/material/Pagination';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import CircularProgress from '@mui/material/CircularProgress';
 import { alpha, useTheme } from '@mui/material/styles';
 
@@ -61,17 +59,6 @@ export default function WizardStepChallenges({
       ? selectedIds.filter((sid) => sid !== id)
       : [...selectedIds, id];
     onSelectionChange(newSelection);
-  };
-
-  const handleSelectAll = (category: string, checked: boolean) => {
-    const categoryIds = groupedChallenges[category]?.map((l) => l.id) || [];
-    if (checked) {
-      const newSelection = [...new Set([...selectedIds, ...categoryIds])];
-      onSelectionChange(newSelection);
-    } else {
-      const newSelection = selectedIds.filter((id) => !categoryIds.includes(id));
-      onSelectionChange(newSelection);
-    }
   };
 
   // Get category icon
@@ -161,58 +148,30 @@ export default function WizardStepChallenges({
                   },
                 }}
               >
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="space-between"
-                  sx={{ width: '100%', pr: 2 }}
-                >
-                  <Stack direction="row" alignItems="center" spacing={1.5}>
-                    <Box
-                      sx={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: 1,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backgroundColor: alpha(theme.palette.primary.main, 0.08),
-                        color: theme.palette.primary.main,
-                      }}
-                    >
-                      <Iconify icon={getCategoryIcon(category)} width={22} />
-                    </Box>
-                    <Box>
-                      <Typography variant="subtitle1" fontWeight={600}>
-                        {category}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {categorySelectedCount > 0 && `${categorySelectedCount} of `}
-                        {items.length} {items.length === 1 ? 'challenge' : 'challenges'}
-                      </Typography>
-                    </Box>
-                  </Stack>
-
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={allSelected}
-                        indeterminate={someSelected}
-                        onChange={(e) => {
-                          e.stopPropagation();
-                          handleSelectAll(category, e.target.checked);
-                        }}
-                        onClick={(e) => e.stopPropagation()}
-                      />
-                    }
-                    label={
-                      <Typography variant="caption" color="text.secondary">
-                        Select all
-                      </Typography>
-                    }
-                    sx={{ mr: 0 }}
-                    onClick={(e) => e.stopPropagation()}
-                  />
+                <Stack direction="row" alignItems="center" spacing={1.5}>
+                  <Box
+                    sx={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: alpha(theme.palette.primary.main, 0.08),
+                      color: theme.palette.primary.main,
+                    }}
+                  >
+                    <Iconify icon={getCategoryIcon(category)} width={22} />
+                  </Box>
+                  <Box>
+                    <Typography variant="subtitle1" fontWeight={600}>
+                      {category}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {categorySelectedCount > 0 && `${categorySelectedCount} of `}
+                      {items.length} {items.length === 1 ? 'challenge' : 'challenges'}
+                    </Typography>
+                  </Box>
                 </Stack>
               </AccordionSummary>
 
