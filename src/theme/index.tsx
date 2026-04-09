@@ -51,7 +51,7 @@ export default function ThemeProvider({ children }: Props) {
     ]
   );
 
-  const theme = createTheme(memoValue as ThemeOptions);
+  const theme = createTheme(memoisedValue as ThemeOptions);
 
   theme.components = merge(componentsOverrides(theme), contrast.components);
 
