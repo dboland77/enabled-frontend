@@ -48,26 +48,27 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
   };
 
   const renderContent = (
-    <Scrollbar
-      sx={{
-        height: 1,
-        '& .simplebar-content': {
-          height: 1,
-          display: 'flex',
-          flexDirection: 'column',
-        },
-      }}
-    >
-      <Logo sx={{ mt: 3, ml: 4, mb: 1 }} />
+    <Stack sx={{ height: 1 }}>
+      <Box sx={{ px: 4, pt: 3, pb: 6 }}>
+        <Logo />
+      </Box>
 
-      <NavSectionVertical
-        data={navData}
-        slotProps={{
-          currentRole: role ?? '',
+      <Scrollbar
+        sx={{
+          flexGrow: 1,
+          '& .simplebar-content': {
+            display: 'flex',
+            flexDirection: 'column',
+          },
         }}
-      />
-
-      <Box sx={{ flexGrow: 1 }} />
+      >
+        <NavSectionVertical
+          data={navData}
+          slotProps={{
+            currentRole: role ?? '',
+          }}
+        />
+      </Scrollbar>
 
       <Divider sx={{ borderStyle: 'dashed', mx: 2 }} />
 
@@ -95,7 +96,7 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
           www.getenabled.co.uk
         </Link>
       </Stack>
-    </Scrollbar>
+    </Stack>
   );
 
   return (
