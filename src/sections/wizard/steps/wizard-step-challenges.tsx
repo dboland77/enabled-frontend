@@ -7,9 +7,11 @@ import Card from '@mui/material/Card';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
+import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import Pagination from '@mui/material/Pagination';
 import CardContent from '@mui/material/CardContent';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -39,6 +41,8 @@ export default function WizardStepChallenges({
   const theme = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 5;
 
   // Group challenges by category
   const groupedChallenges = useMemo(() => {
@@ -135,43 +139,76 @@ export default function WizardStepChallenges({
       </Box>
 
       {/* Search and filters */}
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-        <TextField
-          fullWidth
-          placeholder="Search challenges..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
-              </InputAdornment>
-            ),
-          }}
-          sx={{ maxWidth: { sm: 320 } }}
-        />
-
-        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-          <Chip
-            label="All"
-            variant={categoryFilter === null ? 'filled' : 'outlined'}
-            color={categoryFilter === null ? 'primary' : 'default'}
-            onClick={() => setCategoryFilter(null)}
-            sx={{ cursor: 'pointer' }}
-          />
-          {availableCategories.map((cat) => (
-            <Chip
-              key={cat}
-              icon={<Iconify icon={getCategoryIcon(cat)} width={16} />}
-              label={cat}
-              variant={categoryFilter === cat ? 'filled' : 'outlined'}
-              color={categoryFilter === cat ? 'primary' : 'default'}
-              onClick={() => setCategoryFilter(cat)}
-              sx={{ cursor: 'pointer' }}
+      <Card variant="outlined" sx={{ bgcolor: 'background.neutral' }}>
+        <CardContent>
+          <Stack spacing={2}>
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <Iconify icon="mdi:filter-variant" width={20} sx={{ color: 'text.secondary' }} />
+              <Typography variant="subtitle2">Filter Challenges</Typography>
+            </Stack>
+            
+            <TextField
+              fullWidth
+              placeholder="Search challenges..."
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setPage(1);
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
+                  </InputAdornment>
+                ),
+                endAdornment: searchQuery && (
+                  <InputAdornment position="end">
+                    <Button
+                      size="small"
+                      onClick={() => setSearchQuery('')}
+                      sx={{ minWidth: 'auto', p: 0.5 }}
+                    >
+                      <Iconify icon="mdi:close" width={18} />
+                    </Button>
+                  </InputAdornment>
+                ),
+              }}
             />
-          ))}
-        </Stack>
-      </Stack>
+
+            <Box>
+              <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
+                Category
+              </Typography>
+              <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                <Chip
+                  label="All Categories"
+                  variant={categoryFilter === null ? 'filled' : 'outlined'}
+                  color={categoryFilter === null ? 'primary' : 'default'}
+                  onClick={() => {
+                    setCategoryFilter(null);
+                    setPage(1);
+                  }}
+                  sx={{ cursor: 'pointer' }}
+                />
+                {availableCategories.map((cat) => (
+                  <Chip
+                    key={cat}
+                    icon={<Iconify icon={getCategoryIcon(cat)} width={16} />}
+                    label={cat}
+                    variant={categoryFilter === cat ? 'filled' : 'outlined'}
+                    color={categoryFilter === cat ? 'primary' : 'default'}
+                    onClick={() => {
+                      setCategoryFilter(cat);
+                      setPage(1);
+                    }}
+                    sx={{ cursor: 'pointer' }}
+                  />
+                ))}
+              </Stack>
+            </Box>
+          </Stack>
+        </CardContent>
+      </Card>
 
       {/* Selected count */}
       {selectedIds.length > 0 && (
@@ -182,7 +219,9 @@ export default function WizardStepChallenges({
 
       {/* Challenge cards grouped by category */}
       <Stack spacing={3}>
-        {Object.entries(groupedChallenges).map(([category, items]) => {
+        {Object.entries(groupedChallenges)
+          .slice((page - 1) * itemsPerPage, page * itemsPerPage)
+          .map(([category, items]) => {
           const categorySelectedCount = items.filter((l) => selectedIds.includes(l.id)).length;
           const allSelected = categorySelectedCount === items.length;
           const someSelected = categorySelectedCount > 0 && !allSelected;
@@ -309,6 +348,20 @@ export default function WizardStepChallenges({
           <Typography variant="body1" color="text.secondary">
             No challenges found matching your search
           </Typography>
+        </Box>
+      )}
+
+      {/* Pagination */}
+      {Object.keys(groupedChallenges).length > itemsPerPage && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+          <Pagination
+            count={Math.ceil(Object.keys(groupedChallenges).length / itemsPerPage)}
+            page={page}
+            onChange={(_, value) => setPage(value)}
+            color="primary"
+            showFirstButton
+            showLastButton
+          />
         </Box>
       )}
     </Stack>

@@ -12,6 +12,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import Pagination from '@mui/material/Pagination';
 import CardContent from '@mui/material/CardContent';
 import InputAdornment from '@mui/material/InputAdornment';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -42,6 +43,8 @@ export default function WizardStepAdjustments({
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
   const [showOnlySelected, setShowOnlySelected] = useState(false);
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 10;
 
   // Filter and sort recommendations
   const filteredRecommendations = useMemo(() => {
@@ -168,65 +171,97 @@ export default function WizardStepAdjustments({
       </Stack>
 
       {/* Search and filters */}
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-        <TextField
-          fullWidth
-          placeholder="Search adjustments..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
-              </InputAdornment>
-            ),
-          }}
-          sx={{ maxWidth: { sm: 320 } }}
-        />
-
-        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-          <Chip
-            label="All"
-            variant={categoryFilter === null ? 'filled' : 'outlined'}
-            color={categoryFilter === null ? 'primary' : 'default'}
-            onClick={() => setCategoryFilter(null)}
-            sx={{ cursor: 'pointer' }}
-          />
-          {categories.map((cat) => (
-            <Chip
-              key={cat}
-              label={cat}
-              variant={categoryFilter === cat ? 'filled' : 'outlined'}
-              color={categoryFilter === cat ? 'primary' : 'default'}
-              onClick={() => setCategoryFilter(cat)}
-              sx={{ cursor: 'pointer' }}
+      <Card variant="outlined" sx={{ bgcolor: 'background.neutral' }}>
+        <CardContent>
+          <Stack spacing={2}>
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <Iconify icon="mdi:filter-variant" width={20} sx={{ color: 'text.secondary' }} />
+              <Typography variant="subtitle2">Filter Adjustments</Typography>
+            </Stack>
+            
+            <TextField
+              fullWidth
+              placeholder="Search adjustments..."
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setPage(1);
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
+                  </InputAdornment>
+                ),
+                endAdornment: searchQuery && (
+                  <InputAdornment position="end">
+                    <Button
+                      size="small"
+                      onClick={() => setSearchQuery('')}
+                      sx={{ minWidth: 'auto', p: 0.5 }}
+                    >
+                      <Iconify icon="mdi:close" width={18} />
+                    </Button>
+                  </InputAdornment>
+                ),
+              }}
             />
-          ))}
-        </Stack>
-      </Stack>
+
+            <Box>
+              <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
+                Category
+              </Typography>
+              <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                <Chip
+                  label="All Categories"
+                  variant={categoryFilter === null ? 'filled' : 'outlined'}
+                  color={categoryFilter === null ? 'primary' : 'default'}
+                  onClick={() => {
+                    setCategoryFilter(null);
+                    setPage(1);
+                  }}
+                  sx={{ cursor: 'pointer' }}
+                />
+                {categories.map((cat) => (
+                  <Chip
+                    key={cat}
+                    label={cat}
+                    variant={categoryFilter === cat ? 'filled' : 'outlined'}
+                    color={categoryFilter === cat ? 'primary' : 'default'}
+                    onClick={() => {
+                      setCategoryFilter(cat);
+                      setPage(1);
+                    }}
+                    sx={{ cursor: 'pointer' }}
+                  />
+                ))}
+              </Stack>
+            </Box>
+          </Stack>
+        </CardContent>
+      </Card>
 
       {/* Quick actions */}
       <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
         <Button
-          size="small"
-          variant="outlined"
+          variant="soft"
+          color="success"
           startIcon={<Iconify icon="mdi:star" />}
           onClick={handleSelectRecommended}
         >
           Select Highly Recommended
         </Button>
         <Button
-          size="small"
-          variant="outlined"
+          variant="soft"
+          color="primary"
           startIcon={<Iconify icon="mdi:check-all" />}
           onClick={handleSelectAll}
         >
           Select All Visible
         </Button>
         <Button
-          size="small"
-          variant="outlined"
-          color="inherit"
+          variant="soft"
+          color="error"
           startIcon={<Iconify icon="mdi:close-circle" />}
           onClick={handleClearAll}
           disabled={selectedIds.length === 0}
@@ -237,7 +272,10 @@ export default function WizardStepAdjustments({
           label="Show Selected Only"
           variant={showOnlySelected ? 'filled' : 'outlined'}
           color={showOnlySelected ? 'primary' : 'default'}
-          onClick={() => setShowOnlySelected(!showOnlySelected)}
+          onClick={() => {
+            setShowOnlySelected(!showOnlySelected);
+            setPage(1);
+          }}
           icon={
             <Iconify icon={showOnlySelected ? 'mdi:filter' : 'mdi:filter-outline'} width={16} />
           }
@@ -247,7 +285,9 @@ export default function WizardStepAdjustments({
 
       {/* Adjustment cards */}
       <Stack spacing={2}>
-        {filteredRecommendations.map((adjustment) => {
+        {filteredRecommendations
+          .slice((page - 1) * itemsPerPage, page * itemsPerPage)
+          .map((adjustment) => {
           const isSelected = selectedIds.includes(adjustment.id);
 
           return (
@@ -391,6 +431,20 @@ export default function WizardStepAdjustments({
           <Typography variant="body1" color="text.secondary">
             No adjustments found matching your filters
           </Typography>
+        </Box>
+      )}
+
+      {/* Pagination */}
+      {filteredRecommendations.length > itemsPerPage && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+          <Pagination
+            count={Math.ceil(filteredRecommendations.length / itemsPerPage)}
+            page={page}
+            onChange={(_, value) => setPage(value)}
+            color="primary"
+            showFirstButton
+            showLastButton
+          />
         </Box>
       )}
     </Stack>
