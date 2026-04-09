@@ -26,7 +26,7 @@ export function SettingsProvider({ children, defaultSettings }: SettingsProvider
 
   // Check if Arabic language only once on mount
   const isArabicChecked = useRef(false);
-  
+
   useEffect(() => {
     if (!isArabicChecked.current) {
       isArabicChecked.current = true;
@@ -55,17 +55,14 @@ export function SettingsProvider({ children, defaultSettings }: SettingsProvider
   }, []);
 
   // Memoize canReset calculation
-  const canReset = useMemo(
-    () => JSON.stringify(state) !== defaultSettingsString.current,
-    [state]
-  );
+  const canReset = useMemo(() => JSON.stringify(state) !== defaultSettingsString.current, [state]);
 
   // Create stable callback refs
   const resetWithDefaults = useCallback(() => {
     reset();
   }, [reset]);
 
-  const memoizedValue = useMemo(
+  const memoisedValue = useMemo(
     () => ({
       ...state,
       onUpdate: update,
@@ -91,5 +88,5 @@ export function SettingsProvider({ children, defaultSettings }: SettingsProvider
     ]
   );
 
-  return <SettingsContext.Provider value={memoizedValue}>{children}</SettingsContext.Provider>;
+  return <SettingsContext.Provider value={memoisedValue}>{children}</SettingsContext.Provider>;
 }

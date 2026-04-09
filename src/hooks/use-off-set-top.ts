@@ -29,9 +29,9 @@ export function useOffSetTop(top = 0, options?: UseScrollOptions): ReturnType {
     onOffSetTop();
   }, [onOffSetTop]);
 
-  const memoizedValue = useMemo(() => value, [value]);
+  const memoisedValue = useMemo(() => value, [value]);
 
-  return memoizedValue;
+  return memoisedValue;
 }
 
 // Usage
