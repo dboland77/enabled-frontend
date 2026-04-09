@@ -10,11 +10,9 @@ import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import Checkbox from '@mui/material/Checkbox';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Pagination from '@mui/material/Pagination';
 import CardContent from '@mui/material/CardContent';
-import InputAdornment from '@mui/material/InputAdornment';
 import LinearProgress from '@mui/material/LinearProgress';
 import CircularProgress from '@mui/material/CircularProgress';
 import { alpha, useTheme } from '@mui/material/styles';
@@ -40,8 +38,6 @@ export default function WizardStepAdjustments({
   error,
 }: Props) {
   const theme = useTheme();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
   const [showOnlySelected, setShowOnlySelected] = useState(false);
   const [page, setPage] = useState(1);
   const itemsPerPage = 10;
@@ -49,22 +45,10 @@ export default function WizardStepAdjustments({
   // Filter and sort recommendations
   const filteredRecommendations = useMemo(() => {
     return recommendations.filter((r) => {
-      const matchesSearch =
-        !searchQuery ||
-        r.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        r.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        r.category.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = !categoryFilter || r.category === categoryFilter;
       const matchesSelected = !showOnlySelected || selectedIds.includes(r.id);
-      return matchesSearch && matchesCategory && matchesSelected;
+      return matchesSelected;
     });
-  }, [recommendations, searchQuery, categoryFilter, showOnlySelected, selectedIds]);
-
-  // Get unique categories
-  const categories = useMemo(() => {
-    const cats = recommendations.map((r) => r.category);
-    return [...new Set(cats)].sort();
-  }, [recommendations]);
+  }, [recommendations, showOnlySelected, selectedIds]);
 
   const handleToggle = (id: string) => {
     const newSelection = selectedIds.includes(id)
@@ -169,77 +153,6 @@ export default function WizardStepAdjustments({
           variant="soft"
         />
       </Stack>
-
-      {/* Search and filters */}
-      <Card variant="outlined" sx={{ bgcolor: 'background.neutral' }}>
-        <CardContent>
-          <Stack spacing={2}>
-            <Stack direction="row" alignItems="center" spacing={1}>
-              <Iconify icon="mdi:filter-variant" width={20} sx={{ color: 'text.secondary' }} />
-              <Typography variant="subtitle2">Filter Adjustments</Typography>
-            </Stack>
-            
-            <TextField
-              fullWidth
-              placeholder="Search adjustments..."
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setPage(1);
-              }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
-                  </InputAdornment>
-                ),
-                endAdornment: searchQuery && (
-                  <InputAdornment position="end">
-                    <Button
-                      size="small"
-                      onClick={() => setSearchQuery('')}
-                      sx={{ minWidth: 'auto', p: 0.5 }}
-                    >
-                      <Iconify icon="mdi:close" width={18} />
-                    </Button>
-                  </InputAdornment>
-                ),
-              }}
-            />
-
-            <Box>
-              <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
-                Category
-              </Typography>
-              <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                <Chip
-                  label="All Categories"
-                  variant={categoryFilter === null ? 'filled' : 'outlined'}
-                  color={categoryFilter === null ? 'primary' : 'default'}
-                  onClick={() => {
-                    setCategoryFilter(null);
-                    setPage(1);
-                  }}
-                  sx={{ cursor: 'pointer' }}
-                />
-                {categories.map((cat) => (
-                  <Chip
-                    key={cat}
-                    label={cat}
-                    variant={categoryFilter === cat ? 'filled' : 'outlined'}
-                    color={categoryFilter === cat ? 'primary' : 'default'}
-                    onClick={() => {
-                      setCategoryFilter(cat);
-                      setPage(1);
-                    }}
-                    sx={{ cursor: 'pointer' }}
-                  />
-                ))}
-              </Stack>
-            </Box>
-          </Stack>
-        </CardContent>
-      </Card>
 
       {/* Quick actions */}
       <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
@@ -424,15 +337,6 @@ export default function WizardStepAdjustments({
           );
         })}
       </Stack>
-
-      {filteredRecommendations.length === 0 && (
-        <Box sx={{ textAlign: 'center', py: 6 }}>
-          <Iconify icon="eva:search-fill" width={48} sx={{ color: 'text.disabled', mb: 2 }} />
-          <Typography variant="body1" color="text.secondary">
-            No adjustments found matching your filters
-          </Typography>
-        </Box>
-      )}
 
       {/* Pagination */}
       {filteredRecommendations.length > itemsPerPage && (
