@@ -272,6 +272,25 @@ export function useWizardSession() {
           additionalNotes: data.additional_notes || '',
           sessionId: data.id,
         });
+      } else {
+        // No existing session - load user's saved disabilities from their profile
+        const { data: userDisabilities, error: disabilitiesError } = await supabase
+          .from('user_disabilities')
+          .select('disability_id')
+          .eq('user_id', user.id);
+
+        if (!disabilitiesError && userDisabilities && userDisabilities.length > 0) {
+          // Pre-populate session with user's profile disabilities
+          const disabilityIds = userDisabilities.map((ud) => ud.disability_id);
+          setSession({
+            currentStep: 1,
+            selectedDisabilities: disabilityIds,
+            selectedLimitations: [],
+            selectedAdjustments: [],
+            additionalNotes: '',
+            sessionId: null,
+          });
+        }
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load session');
