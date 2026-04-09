@@ -9,10 +9,13 @@ import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
+import Accordion from '@mui/material/Accordion';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Pagination from '@mui/material/Pagination';
 import CardContent from '@mui/material/CardContent';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -42,7 +45,8 @@ export default function WizardStepDisabilities({
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
   const [page, setPage] = useState(1);
-  const itemsPerPage = 5;
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+  const itemsPerPage = 10;
 
   // Group disabilities by category
   const groupedDisabilities = useMemo(() => {
@@ -198,29 +202,71 @@ export default function WizardStepDisabilities({
         </Alert>
       )}
 
-      {/* Disability cards grouped by category */}
-      <Stack spacing={3}>
+      {/* Disability accordions grouped by category */}
+      <Stack spacing={2}>
         {Object.entries(groupedDisabilities)
           .slice((page - 1) * itemsPerPage, page * itemsPerPage)
           .map(([category, items]) => {
           const categorySelectedCount = items.filter((d) => selectedIds.includes(d.id)).length;
           const allSelected = categorySelectedCount === items.length;
           const someSelected = categorySelectedCount > 0 && !allSelected;
+          const isExpanded = expandedCategory === category;
 
           return (
-            <Card key={category} variant="outlined">
-              <CardContent>
+            <Accordion
+              key={category}
+              expanded={isExpanded}
+              onChange={(_, expanded) => setExpandedCategory(expanded ? category : null)}
+              sx={{
+                '&:before': { display: 'none' },
+                boxShadow: 'none',
+                border: `1px solid ${theme.palette.divider}`,
+                '&.Mui-expanded': {
+                  borderColor: theme.palette.primary.main,
+                  boxShadow: `0 0 0 1px ${alpha(theme.palette.primary.main, 0.1)}`,
+                },
+              }}
+            >
+              <AccordionSummary
+                expandIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}
+                sx={{
+                  minHeight: 64,
+                  '&.Mui-expanded': {
+                    minHeight: 64,
+                    bgcolor: alpha(theme.palette.primary.main, 0.04),
+                  },
+                }}
+              >
                 <Stack
                   direction="row"
                   alignItems="center"
                   justifyContent="space-between"
-                  sx={{ mb: 2 }}
+                  sx={{ width: '100%', pr: 2 }}
                 >
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <Typography variant="subtitle1" fontWeight={600}>
-                      {category}
-                    </Typography>
-                    <Chip label={items.length} size="small" variant="soft" />
+                  <Stack direction="row" alignItems="center" spacing={1.5}>
+                    <Box
+                      sx={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: alpha(theme.palette.primary.main, 0.08),
+                        color: theme.palette.primary.main,
+                      }}
+                    >
+                      <Iconify icon="mdi:folder-heart" width={22} />
+                    </Box>
+                    <Box>
+                      <Typography variant="subtitle1" fontWeight={600}>
+                        {category}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {categorySelectedCount > 0 && `${categorySelectedCount} of `}
+                        {items.length} {items.length === 1 ? 'disability' : 'disabilities'}
+                      </Typography>
+                    </Box>
                   </Stack>
 
                   <FormControlLabel
@@ -228,8 +274,11 @@ export default function WizardStepDisabilities({
                       <Checkbox
                         checked={allSelected}
                         indeterminate={someSelected}
-                        onChange={(e) => handleSelectAll(category, e.target.checked)}
-                        size="small"
+                        onChange={(e) => {
+                          e.stopPropagation();
+                          handleSelectAll(category, e.target.checked);
+                        }}
+                        onClick={(e) => e.stopPropagation()}
                       />
                     }
                     label={
@@ -238,9 +287,12 @@ export default function WizardStepDisabilities({
                       </Typography>
                     }
                     sx={{ mr: 0 }}
+                    onClick={(e) => e.stopPropagation()}
                   />
                 </Stack>
+              </AccordionSummary>
 
+              <AccordionDetails sx={{ pt: 0 }}>
                 <Box
                   sx={{
                     display: 'grid',
@@ -272,10 +324,6 @@ export default function WizardStepDisabilities({
                             borderColor: theme.palette.primary.main,
                             backgroundColor: alpha(theme.palette.primary.main, 0.04),
                           },
-                          '&:focus-visible': {
-                            outline: `2px solid ${theme.palette.primary.main}`,
-                            outlineOffset: 2,
-                          },
                         }}
                         role="checkbox"
                         aria-checked={isSelected}
@@ -294,7 +342,7 @@ export default function WizardStepDisabilities({
                             sx={{ p: 0, mt: 0.25 }}
                             tabIndex={-1}
                           />
-                          <Box>
+                          <Box sx={{ flex: 1 }}>
                             <Typography variant="body2" fontWeight={500}>
                               {disability.disability_name}
                             </Typography>
@@ -309,8 +357,8 @@ export default function WizardStepDisabilities({
                     );
                   })}
                 </Box>
-              </CardContent>
-            </Card>
+              </AccordionDetails>
+            </Accordion>
           );
         })}
       </Stack>

@@ -9,10 +9,13 @@ import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
+import Accordion from '@mui/material/Accordion';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Pagination from '@mui/material/Pagination';
 import CardContent from '@mui/material/CardContent';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -42,7 +45,8 @@ export default function WizardStepChallenges({
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
   const [page, setPage] = useState(1);
-  const itemsPerPage = 5;
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+  const itemsPerPage = 10;
 
   // Group challenges by category
   const groupedChallenges = useMemo(() => {
@@ -217,29 +221,52 @@ export default function WizardStepChallenges({
         </Alert>
       )}
 
-      {/* Challenge cards grouped by category */}
-      <Stack spacing={3}>
+      {/* Challenge accordions grouped by category */}
+      <Stack spacing={2}>
         {Object.entries(groupedChallenges)
           .slice((page - 1) * itemsPerPage, page * itemsPerPage)
           .map(([category, items]) => {
           const categorySelectedCount = items.filter((l) => selectedIds.includes(l.id)).length;
           const allSelected = categorySelectedCount === items.length;
           const someSelected = categorySelectedCount > 0 && !allSelected;
+          const isExpanded = expandedCategory === category;
 
           return (
-            <Card key={category} variant="outlined">
-              <CardContent>
+            <Accordion
+              key={category}
+              expanded={isExpanded}
+              onChange={(_, expanded) => setExpandedCategory(expanded ? category : null)}
+              sx={{
+                '&:before': { display: 'none' },
+                boxShadow: 'none',
+                border: `1px solid ${theme.palette.divider}`,
+                '&.Mui-expanded': {
+                  borderColor: theme.palette.primary.main,
+                  boxShadow: `0 0 0 1px ${alpha(theme.palette.primary.main, 0.1)}`,
+                },
+              }}
+            >
+              <AccordionSummary
+                expandIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}
+                sx={{
+                  minHeight: 64,
+                  '&.Mui-expanded': {
+                    minHeight: 64,
+                    bgcolor: alpha(theme.palette.primary.main, 0.04),
+                  },
+                }}
+              >
                 <Stack
                   direction="row"
                   alignItems="center"
                   justifyContent="space-between"
-                  sx={{ mb: 2 }}
+                  sx={{ width: '100%', pr: 2 }}
                 >
                   <Stack direction="row" alignItems="center" spacing={1.5}>
                     <Box
                       sx={{
-                        width: 36,
-                        height: 36,
+                        width: 40,
+                        height: 40,
                         borderRadius: 1,
                         display: 'flex',
                         alignItems: 'center',
@@ -248,13 +275,14 @@ export default function WizardStepChallenges({
                         color: theme.palette.primary.main,
                       }}
                     >
-                      <Iconify icon={getCategoryIcon(category)} width={20} />
+                      <Iconify icon={getCategoryIcon(category)} width={22} />
                     </Box>
                     <Box>
                       <Typography variant="subtitle1" fontWeight={600}>
                         {category}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
+                        {categorySelectedCount > 0 && `${categorySelectedCount} of `}
                         {items.length} {items.length === 1 ? 'challenge' : 'challenges'}
                       </Typography>
                     </Box>
@@ -265,8 +293,11 @@ export default function WizardStepChallenges({
                       <Checkbox
                         checked={allSelected}
                         indeterminate={someSelected}
-                        onChange={(e) => handleSelectAll(category, e.target.checked)}
-                        size="small"
+                        onChange={(e) => {
+                          e.stopPropagation();
+                          handleSelectAll(category, e.target.checked);
+                        }}
+                        onClick={(e) => e.stopPropagation()}
                       />
                     }
                     label={
@@ -275,9 +306,12 @@ export default function WizardStepChallenges({
                       </Typography>
                     }
                     sx={{ mr: 0 }}
+                    onClick={(e) => e.stopPropagation()}
                   />
                 </Stack>
+              </AccordionSummary>
 
+              <AccordionDetails sx={{ pt: 0 }}>
                 <Stack spacing={1.5}>
                   {items.map((challenge) => {
                     const isSelected = selectedIds.includes(challenge.id);
@@ -298,10 +332,6 @@ export default function WizardStepChallenges({
                           '&:hover': {
                             borderColor: theme.palette.primary.main,
                             backgroundColor: alpha(theme.palette.primary.main, 0.04),
-                          },
-                          '&:focus-visible': {
-                            outline: `2px solid ${theme.palette.primary.main}`,
-                            outlineOffset: 2,
                           },
                         }}
                         role="checkbox"
@@ -336,8 +366,8 @@ export default function WizardStepChallenges({
                     );
                   })}
                 </Stack>
-              </CardContent>
-            </Card>
+              </AccordionDetails>
+            </Accordion>
           );
         })}
       </Stack>
