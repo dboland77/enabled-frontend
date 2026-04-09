@@ -43,13 +43,29 @@ export default function AdjustmentWizardView() {
   const confirmSubmit = useBoolean();
 
   // Session management
-  const { session, loading: sessionLoading, saving, error: sessionError, updateSession, updateSessionLocal, saveNotes, completeWizard, resetWizard } = useWizardSession();
+  const {
+    session,
+    loading: sessionLoading,
+    saving,
+    error: sessionError,
+    updateSession,
+    updateSessionLocal,
+    saveNotes,
+    completeWizard,
+    resetWizard,
+  } = useWizardSession();
 
   // Data fetching
-  const { disabilities, loading: disabilitiesLoading, error: disabilitiesError } = useDisabilities();
-  const { challenges, loading: challengesLoading, error: challengesError } = useChallenges(
-    session.selectedDisabilities
-  );
+  const {
+    disabilities,
+    loading: disabilitiesLoading,
+    error: disabilitiesError,
+  } = useDisabilities();
+  const {
+    challenges,
+    loading: challengesLoading,
+    error: challengesError,
+  } = useChallenges(session.selectedDisabilities);
   const {
     recommendations,
     loading: recommendationsLoading,
@@ -159,7 +175,7 @@ export default function AdjustmentWizardView() {
       case 1:
         return true; // Can skip disabilities
       case 2:
-        return true; // Can skip limitations
+        return true; // Can skip challenges
       case 3:
         return session.selectedAdjustments.length > 0;
       case 4:
@@ -258,12 +274,7 @@ export default function AdjustmentWizardView() {
         </Card>
 
         {/* Navigation buttons */}
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-          sx={{ mt: 3 }}
-        >
+        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mt: 3 }}>
           <Button
             variant="outlined"
             color="inherit"

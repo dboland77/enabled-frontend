@@ -72,9 +72,7 @@ export default function WizardStepAdjustments({
 
   const handleSelectRecommended = () => {
     // Select all adjustments with relevance score >= 70
-    const recommendedIds = recommendations
-      .filter((r) => r.relevance_score >= 70)
-      .map((r) => r.id);
+    const recommendedIds = recommendations.filter((r) => r.relevance_score >= 70).map((r) => r.id);
     const newSelection = [...new Set([...selectedIds, ...recommendedIds])];
     onSelectionChange(newSelection);
   };
@@ -128,7 +126,7 @@ export default function WizardStepAdjustments({
           No Recommendations Yet
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 400, mx: 'auto' }}>
-          Please go back and select at least one disability or limitation to receive personalised
+          Please go back and select at least one disability or challenge to receive personalised
           adjustment recommendations.
         </Typography>
       </Box>
@@ -240,7 +238,9 @@ export default function WizardStepAdjustments({
           variant={showOnlySelected ? 'filled' : 'outlined'}
           color={showOnlySelected ? 'primary' : 'default'}
           onClick={() => setShowOnlySelected(!showOnlySelected)}
-          icon={<Iconify icon={showOnlySelected ? 'mdi:filter' : 'mdi:filter-outline'} width={16} />}
+          icon={
+            <Iconify icon={showOnlySelected ? 'mdi:filter' : 'mdi:filter-outline'} width={16} />
+          }
           sx={{ cursor: 'pointer' }}
         />
       </Stack>
@@ -283,7 +283,12 @@ export default function WizardStepAdjustments({
             >
               <CardContent sx={{ py: 2, '&:last-child': { pb: 2 } }}>
                 <Stack direction="row" alignItems="flex-start" spacing={2}>
-                  <Checkbox checked={isSelected} size="small" sx={{ p: 0, mt: 0.5 }} tabIndex={-1} />
+                  <Checkbox
+                    checked={isSelected}
+                    size="small"
+                    sx={{ p: 0, mt: 0.5 }}
+                    tabIndex={-1}
+                  />
 
                   <Box sx={{ flex: 1, minWidth: 0 }}>
                     <Stack
@@ -314,7 +319,10 @@ export default function WizardStepAdjustments({
                               flex: 1,
                               height: 6,
                               borderRadius: 3,
-                              backgroundColor: alpha(getRelevanceColor(adjustment.relevance_score), 0.2),
+                              backgroundColor: alpha(
+                                getRelevanceColor(adjustment.relevance_score),
+                                0.2
+                              ),
                               '& .MuiLinearProgress-bar': {
                                 backgroundColor: getRelevanceColor(adjustment.relevance_score),
                                 borderRadius: 3,
@@ -324,7 +332,10 @@ export default function WizardStepAdjustments({
                           <Typography
                             variant="caption"
                             fontWeight={600}
-                            sx={{ color: getRelevanceColor(adjustment.relevance_score), minWidth: 32 }}
+                            sx={{
+                              color: getRelevanceColor(adjustment.relevance_score),
+                              minWidth: 32,
+                            }}
                           >
                             {adjustment.relevance_score}%
                           </Typography>
