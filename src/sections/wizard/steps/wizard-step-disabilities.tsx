@@ -3,16 +3,14 @@
 import { useState, useMemo } from 'react';
 
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
 import Checkbox from '@mui/material/Checkbox';
-import TextField from '@mui/material/TextField';
+import Accordion from '@mui/material/Accordion';
 import Typography from '@mui/material/Typography';
-import CardContent from '@mui/material/CardContent';
-import InputAdornment from '@mui/material/InputAdornment';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import Pagination from '@mui/material/Pagination';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
 import CircularProgress from '@mui/material/CircularProgress';
 import { alpha, useTheme } from '@mui/material/styles';
 
@@ -37,21 +35,13 @@ export default function WizardStepDisabilities({
   error,
 }: Props) {
   const theme = useTheme();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+  const itemsPerPage = 10;
 
   // Group disabilities by category
   const groupedDisabilities = useMemo(() => {
-    const filtered = disabilities.filter((d) => {
-      const matchesSearch =
-        !searchQuery ||
-        d.disability_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        d.category.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = !categoryFilter || d.category === categoryFilter;
-      return matchesSearch && matchesCategory;
-    });
-
-    return filtered.reduce(
+    return disabilities.reduce(
       (acc, disability) => {
         const category = disability.category || 'Other';
         if (!acc[category]) {
@@ -62,12 +52,6 @@ export default function WizardStepDisabilities({
       },
       {} as Record<string, IDisabilityItem[]>
     );
-  }, [disabilities, searchQuery, categoryFilter]);
-
-  // Get unique categories
-  const categories = useMemo(() => {
-    const cats = disabilities.map((d) => d.category);
-    return [...new Set(cats)].sort();
   }, [disabilities]);
 
   const handleToggle = (id: string) => {
@@ -75,17 +59,6 @@ export default function WizardStepDisabilities({
       ? selectedIds.filter((sid) => sid !== id)
       : [...selectedIds, id];
     onSelectionChange(newSelection);
-  };
-
-  const handleSelectAll = (category: string, checked: boolean) => {
-    const categoryIds = groupedDisabilities[category]?.map((d) => d.id) || [];
-    if (checked) {
-      const newSelection = [...new Set([...selectedIds, ...categoryIds])];
-      onSelectionChange(newSelection);
-    } else {
-      const newSelection = selectedIds.filter((id) => !categoryIds.includes(id));
-      onSelectionChange(newSelection);
-    }
   };
 
   if (loading) {
@@ -116,44 +89,6 @@ export default function WizardStepDisabilities({
         </Typography>
       </Box>
 
-      {/* Search and filters */}
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-        <TextField
-          fullWidth
-          placeholder="Search disabilities..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
-              </InputAdornment>
-            ),
-          }}
-          sx={{ maxWidth: { sm: 320 } }}
-        />
-
-        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-          <Chip
-            label="All"
-            variant={categoryFilter === null ? 'filled' : 'outlined'}
-            color={categoryFilter === null ? 'primary' : 'default'}
-            onClick={() => setCategoryFilter(null)}
-            sx={{ cursor: 'pointer' }}
-          />
-          {categories.map((cat) => (
-            <Chip
-              key={cat}
-              label={cat}
-              variant={categoryFilter === cat ? 'filled' : 'outlined'}
-              color={categoryFilter === cat ? 'primary' : 'default'}
-              onClick={() => setCategoryFilter(cat)}
-              sx={{ cursor: 'pointer' }}
-            />
-          ))}
-        </Stack>
-      </Stack>
-
       {/* Selected count */}
       {selectedIds.length > 0 && (
         <Alert severity="info" icon={<Iconify icon="mdi:information" />}>
@@ -161,47 +96,69 @@ export default function WizardStepDisabilities({
         </Alert>
       )}
 
-      {/* Disability cards grouped by category */}
-      <Stack spacing={3}>
-        {Object.entries(groupedDisabilities).map(([category, items]) => {
+      {/* Disability accordions grouped by category */}
+      <Stack spacing={2}>
+        {Object.entries(groupedDisabilities)
+          .slice((page - 1) * itemsPerPage, page * itemsPerPage)
+          .map(([category, items]) => {
           const categorySelectedCount = items.filter((d) => selectedIds.includes(d.id)).length;
           const allSelected = categorySelectedCount === items.length;
           const someSelected = categorySelectedCount > 0 && !allSelected;
+          const isExpanded = expandedCategory === category;
 
           return (
-            <Card key={category} variant="outlined">
-              <CardContent>
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  justifyContent="space-between"
-                  sx={{ mb: 2 }}
-                >
-                  <Stack direction="row" alignItems="center" spacing={1}>
+            <Accordion
+              key={category}
+              expanded={isExpanded}
+              onChange={(_, expanded) => setExpandedCategory(expanded ? category : null)}
+              sx={{
+                '&:before': { display: 'none' },
+                boxShadow: 'none',
+                border: `1px solid ${theme.palette.divider}`,
+                '&.Mui-expanded': {
+                  borderColor: theme.palette.primary.main,
+                  boxShadow: `0 0 0 1px ${alpha(theme.palette.primary.main, 0.1)}`,
+                },
+              }}
+            >
+              <AccordionSummary
+                expandIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}
+                sx={{
+                  minHeight: 64,
+                  '&.Mui-expanded': {
+                    minHeight: 64,
+                    bgcolor: alpha(theme.palette.primary.main, 0.04),
+                  },
+                }}
+              >
+                <Stack direction="row" alignItems="center" spacing={1.5}>
+                  <Box
+                    sx={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: alpha(theme.palette.primary.main, 0.08),
+                      color: theme.palette.primary.main,
+                    }}
+                  >
+                    <Iconify icon="mdi:folder-heart" width={22} />
+                  </Box>
+                  <Box>
                     <Typography variant="subtitle1" fontWeight={600}>
                       {category}
                     </Typography>
-                    <Chip label={items.length} size="small" variant="soft" />
-                  </Stack>
-
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={allSelected}
-                        indeterminate={someSelected}
-                        onChange={(e) => handleSelectAll(category, e.target.checked)}
-                        size="small"
-                      />
-                    }
-                    label={
-                      <Typography variant="caption" color="text.secondary">
-                        Select all
-                      </Typography>
-                    }
-                    sx={{ mr: 0 }}
-                  />
+                    <Typography variant="caption" color="text.secondary">
+                      {categorySelectedCount > 0 && `${categorySelectedCount} of `}
+                      {items.length} {items.length === 1 ? 'disability' : 'disabilities'}
+                    </Typography>
+                  </Box>
                 </Stack>
+              </AccordionSummary>
 
+              <AccordionDetails sx={{ pt: 0 }}>
                 <Box
                   sx={{
                     display: 'grid',
@@ -233,10 +190,6 @@ export default function WizardStepDisabilities({
                             borderColor: theme.palette.primary.main,
                             backgroundColor: alpha(theme.palette.primary.main, 0.04),
                           },
-                          '&:focus-visible': {
-                            outline: `2px solid ${theme.palette.primary.main}`,
-                            outlineOffset: 2,
-                          },
                         }}
                         role="checkbox"
                         aria-checked={isSelected}
@@ -255,7 +208,7 @@ export default function WizardStepDisabilities({
                             sx={{ p: 0, mt: 0.25 }}
                             tabIndex={-1}
                           />
-                          <Box>
+                          <Box sx={{ flex: 1 }}>
                             <Typography variant="body2" fontWeight={500}>
                               {disability.disability_name}
                             </Typography>
@@ -270,18 +223,23 @@ export default function WizardStepDisabilities({
                     );
                   })}
                 </Box>
-              </CardContent>
-            </Card>
+              </AccordionDetails>
+            </Accordion>
           );
         })}
       </Stack>
 
-      {Object.keys(groupedDisabilities).length === 0 && (
-        <Box sx={{ textAlign: 'center', py: 6 }}>
-          <Iconify icon="eva:search-fill" width={48} sx={{ color: 'text.disabled', mb: 2 }} />
-          <Typography variant="body1" color="text.secondary">
-            No disabilities found matching your search
-          </Typography>
+      {/* Pagination */}
+      {Object.keys(groupedDisabilities).length > itemsPerPage && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+          <Pagination
+            count={Math.ceil(Object.keys(groupedDisabilities).length / itemsPerPage)}
+            page={page}
+            onChange={(_, value) => setPage(value)}
+            color="primary"
+            showFirstButton
+            showLastButton
+          />
         </Box>
       )}
     </Stack>

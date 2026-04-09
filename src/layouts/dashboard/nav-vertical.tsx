@@ -48,35 +48,36 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
   };
 
   const renderContent = (
-    <Scrollbar
-      sx={{
-        height: 1,
-        '& .simplebar-content': {
-          height: 1,
-          display: 'flex',
-          flexDirection: 'column',
-        },
-      }}
-    >
-      <Logo sx={{ mt: 3, ml: 4, mb: 1 }} />
+    <Stack sx={{ height: 1 }}>
+      <Box sx={{ px: 4, pt: 3, pb: 6 }}>
+        <Logo />
+      </Box>
 
-      <NavSectionVertical
-        data={navData}
-        slotProps={{
-          currentRole: role ?? '',
+      <Scrollbar
+        sx={{
+          flexGrow: 1,
+          '& .simplebar-content': {
+            display: 'flex',
+            flexDirection: 'column',
+          },
         }}
-      />
-
-      <Box sx={{ flexGrow: 1 }} />
+      >
+        <NavSectionVertical
+          data={navData}
+          slotProps={{
+            currentRole: role ?? '',
+          }}
+        />
+      </Scrollbar>
 
       <Divider sx={{ borderStyle: 'dashed', mx: 2 }} />
 
       <Stack
-        spacing={0.5}
+        spacing={1}
         alignItems="center"
         sx={{ py: 3, px: 2 }}
       >
-        <Typography variant="caption" color="text.disabled">
+        <Typography variant="caption" fontWeight={500} color="text.primary">
           &copy; {new Date().getFullYear()} Enabled
         </Typography>
         <Link
@@ -84,7 +85,8 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
           target="_blank"
           rel="noopener noreferrer"
           variant="caption"
-          color="text.disabled"
+          fontWeight={500}
+          color="text.secondary"
           underline="hover"
           sx={{
             '&:hover': { color: 'primary.main' },
@@ -94,7 +96,7 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
           www.getenabled.co.uk
         </Link>
       </Stack>
-    </Scrollbar>
+    </Stack>
   );
 
   return (

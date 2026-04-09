@@ -78,12 +78,6 @@ export default function AdjustmentWizardView() {
     [disabilities, session.selectedDisabilities]
   );
 
-  // Filter disabilities to only show pre-selected ones in the wizard
-  const wizardDisabilities = useMemo(
-    () => disabilities.filter((d) => session.selectedDisabilities.includes(d.id)),
-    [disabilities, session.selectedDisabilities]
-  );
-
   const selectedChallenges = useMemo(
     () => challenges.filter((l) => session.selectedChallenges.includes(l.id)),
     [challenges, session.selectedChallenges]
@@ -191,7 +185,7 @@ export default function AdjustmentWizardView() {
       case 1:
         return (
           <WizardStepDisabilities
-            disabilities={wizardDisabilities}
+            disabilities={disabilities}
             selectedIds={session.selectedDisabilities}
             onSelectionChange={handleDisabilitiesChange}
             loading={disabilitiesLoading}
@@ -247,8 +241,8 @@ export default function AdjustmentWizardView() {
           ]}
           action={
             <Button
-              variant="outlined"
-              color="inherit"
+              variant="soft"
+              color="error"
               startIcon={<Iconify icon="mdi:refresh" />}
               onClick={confirmReset.onTrue}
               disabled={saving}
@@ -276,11 +270,18 @@ export default function AdjustmentWizardView() {
         {/* Navigation buttons */}
         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mt: 3 }}>
           <Button
+            size="large"
             variant="outlined"
-            color="inherit"
             startIcon={<Iconify icon="eva:arrow-back-fill" />}
             onClick={handleBack}
             disabled={session.currentStep === 1 || saving}
+            sx={{
+              borderColor: 'divider',
+              '&:hover': {
+                borderColor: 'text.primary',
+                bgcolor: alpha(theme.palette.grey[500], 0.08),
+              },
+            }}
           >
             Back
           </Button>
@@ -297,20 +298,37 @@ export default function AdjustmentWizardView() {
 
             {session.currentStep < 4 ? (
               <Button
+                size="large"
                 variant="contained"
+                color="primary"
                 endIcon={<Iconify icon="eva:arrow-forward-fill" />}
                 onClick={handleNext}
                 disabled={!canProceed() || saving}
+                sx={{
+                  minWidth: 140,
+                  boxShadow: theme.shadows[8],
+                  '&:hover': {
+                    boxShadow: theme.shadows[12],
+                  },
+                }}
               >
                 {session.currentStep === 3 ? 'Review' : 'Continue'}
               </Button>
             ) : (
               <Button
+                size="large"
                 variant="contained"
                 color="success"
                 endIcon={<Iconify icon="mdi:check" />}
                 onClick={confirmSubmit.onTrue}
                 disabled={!canProceed() || saving}
+                sx={{
+                  minWidth: 140,
+                  boxShadow: theme.shadows[8],
+                  '&:hover': {
+                    boxShadow: theme.shadows[12],
+                  },
+                }}
               >
                 Submit Request
               </Button>
