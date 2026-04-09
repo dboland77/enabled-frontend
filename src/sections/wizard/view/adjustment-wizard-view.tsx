@@ -62,6 +62,12 @@ export default function AdjustmentWizardView() {
     [disabilities, session.selectedDisabilities]
   );
 
+  // Filter disabilities to only show pre-selected ones in the wizard
+  const wizardDisabilities = useMemo(
+    () => disabilities.filter((d) => session.selectedDisabilities.includes(d.id)),
+    [disabilities, session.selectedDisabilities]
+  );
+
   const selectedLimitations = useMemo(
     () => limitations.filter((l) => session.selectedLimitations.includes(l.id)),
     [limitations, session.selectedLimitations]
@@ -169,7 +175,7 @@ export default function AdjustmentWizardView() {
       case 1:
         return (
           <WizardStepDisabilities
-            disabilities={disabilities}
+            disabilities={wizardDisabilities}
             selectedIds={session.selectedDisabilities}
             onSelectionChange={handleDisabilitiesChange}
             loading={disabilitiesLoading}
