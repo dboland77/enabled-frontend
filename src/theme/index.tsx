@@ -26,7 +26,7 @@ export default function ThemeProvider({ children }: Props) {
 
   const contrast = createContrast(settings.themeContrast, settings.themeMode);
 
-  const memoizedValue = useMemo(
+  const memoisedValue = useMemo(
     () => ({
       palette: {
         ...palette(settings.themeMode),
@@ -51,7 +51,7 @@ export default function ThemeProvider({ children }: Props) {
     ]
   );
 
-  const theme = createTheme(memoizedValue as ThemeOptions);
+  const theme = createTheme(memoisedValue as ThemeOptions);
 
   theme.components = merge(componentsOverrides(theme), contrast.components);
 

@@ -35,28 +35,28 @@ import PassportFullscreenModal from '../passport-fullscreen-modal';
 
 export default function PassportView() {
   const theme = useTheme();
-  const { passportData, loading, error, addLimitation, removeLimitation } = usePassport();
+  const { passportData, loading, error, addChallenge, removeChallenge } = usePassport();
   const [sendDialogOpen, setSendDialogOpen] = useState(false);
   const [fullscreenOpen, setFullscreenOpen] = useState(false);
   const { download, downloading } = usePassportDownload(passportData);
-  
-  // Limitations management
-  const limitationsDialog = useBoolean();
-  const [newLimitation, setNewLimitation] = useState('');
-  const [addingLimitation, setAddingLimitation] = useState(false);
 
-  const handleAddLimitation = async () => {
-    if (!newLimitation.trim()) return;
-    setAddingLimitation(true);
-    const success = await addLimitation(newLimitation.trim());
+  // challenges management
+  const challengesDialog = useBoolean();
+  const [newchallenge, setNewchallenge] = useState('');
+  const [addingchallenge, setAddingchallenge] = useState(false);
+
+  const handleAddchallenge = async () => {
+    if (!newchallenge.trim()) return;
+    setAddingchallenge(true);
+    const success = await addChallenge(newchallenge.trim());
     if (success) {
-      setNewLimitation('');
+      setNewchallenge('');
     }
-    setAddingLimitation(false);
+    setAddingchallenge(false);
   };
 
-  const handleRemoveLimitation = async (id: string) => {
-    await removeLimitation(id);
+  const handleRemovechallenge = async (id: string) => {
+    await removeChallenge(id);
   };
 
   if (loading) {
@@ -109,8 +109,9 @@ export default function PassportView() {
             My Passport
           </Typography>
           <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-            Your official Reasonable Adjustments Passport with {passportData.approvedAdjustments.length}{' '}
-            approved adjustment{passportData.approvedAdjustments.length !== 1 ? 's' : ''}
+            Your official Reasonable Adjustments Passport with{' '}
+            {passportData.approvedAdjustments.length} approved adjustment
+            {passportData.approvedAdjustments.length !== 1 ? 's' : ''}
           </Typography>
         </Box>
 
@@ -119,9 +120,9 @@ export default function PassportView() {
             variant="outlined"
             color="warning"
             startIcon={<Iconify icon="mdi:alert-circle-outline" />}
-            onClick={limitationsDialog.onTrue}
+            onClick={challengesDialog.onTrue}
           >
-            Manage Limitations
+            Manage challenges
           </Button>
           <Button
             variant="outlined"
@@ -223,9 +224,7 @@ export default function PassportView() {
               <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
                 My Conditions
               </Typography>
-              <Typography variant="subtitle2">
-                {passportData.disabilities?.length || 0}
-              </Typography>
+              <Typography variant="subtitle2">{passportData.disabilities?.length || 0}</Typography>
             </Box>
           </Box>
         </Card>
@@ -243,15 +242,16 @@ export default function PassportView() {
                 justifyContent: 'center',
               }}
             >
-              <Iconify icon="eva:checkmark-circle-2-fill" sx={{ color: theme.palette.success.main }} />
+              <Iconify
+                icon="eva:checkmark-circle-2-fill"
+                sx={{ color: theme.palette.success.main }}
+              />
             </Box>
             <Box>
               <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
                 Approved Adjustments
               </Typography>
-              <Typography variant="subtitle2">
-                {passportData.approvedAdjustments.length}
-              </Typography>
+              <Typography variant="subtitle2">{passportData.approvedAdjustments.length}</Typography>
             </Box>
           </Box>
         </Card>
@@ -276,7 +276,7 @@ export default function PassportView() {
                 I Struggle With
               </Typography>
               <Typography variant="subtitle2">
-                {passportData.limitations?.length || 0} items
+                {passportData.challenges?.length || 0} items
               </Typography>
             </Box>
           </Box>
@@ -299,10 +299,10 @@ export default function PassportView() {
         data={passportData}
       />
 
-      {/* Limitations Management Dialog */}
+      {/* challenges Management Dialog */}
       <Dialog
-        open={limitationsDialog.value}
-        onClose={limitationsDialog.onFalse}
+        open={challengesDialog.value}
+        onClose={challengesDialog.onFalse}
         maxWidth="sm"
         fullWidth
       >
@@ -314,41 +314,39 @@ export default function PassportView() {
         </DialogTitle>
         <DialogContent>
           <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mb: 3 }}>
-            Add things you find challenging at work. These will appear in your passport to help others understand your needs.
+            Add things you find challenging at work. These will appear in your passport to help
+            others understand your needs.
           </Typography>
 
-          {/* Add new limitation */}
+          {/* Add new challenge */}
           <Box sx={{ display: 'flex', gap: 1, mb: 3 }}>
             <TextField
               fullWidth
               size="small"
               placeholder="e.g., Concentrating in noisy environments"
-              value={newLimitation}
-              onChange={(e) => setNewLimitation(e.target.value)}
+              value={newchallenge}
+              onChange={(e) => setNewchallenge(e.target.value)}
               onKeyPress={(e) => {
                 if (e.key === 'Enter') {
-                  handleAddLimitation();
+                  handleAddchallenge();
                 }
               }}
             />
             <Button
               variant="contained"
-              onClick={handleAddLimitation}
-              disabled={!newLimitation.trim() || addingLimitation}
+              onClick={handleAddchallenge}
+              disabled={!newchallenge.trim() || addingchallenge}
               sx={{ minWidth: 80 }}
             >
-              {addingLimitation ? <CircularProgress size={20} /> : 'Add'}
+              {addingchallenge ? <CircularProgress size={20} /> : 'Add'}
             </Button>
           </Box>
 
-          {/* Current limitations list */}
-          {passportData.limitations && passportData.limitations.length > 0 ? (
+          {/* Current challenges list */}
+          {passportData.challenges && passportData.challenges.length > 0 ? (
             <List sx={{ bgcolor: alpha(theme.palette.grey[500], 0.04), borderRadius: 1 }}>
-              {passportData.limitations.map((limitation, index) => (
-                <ListItem
-                  key={limitation.id}
-                  divider={index < passportData.limitations!.length - 1}
-                >
+              {passportData.challenges.map((challenge, index) => (
+                <ListItem key={challenge.id} divider={index < passportData.challenges!.length - 1}>
                   <Chip
                     label={index + 1}
                     size="small"
@@ -360,15 +358,12 @@ export default function PassportView() {
                       color: theme.palette.warning.dark,
                     }}
                   />
-                  <ListItemText
-                    primary={limitation.description}
-                    secondary={limitation.category}
-                  />
+                  <ListItemText primary={challenge.description} secondary={challenge.category} />
                   <ListItemSecondaryAction>
                     <IconButton
                       edge="end"
                       color="error"
-                      onClick={() => handleRemoveLimitation(limitation.id)}
+                      onClick={() => handleRemovechallenge(challenge.id)}
                       size="small"
                     >
                       <Iconify icon="eva:trash-2-outline" />
@@ -388,7 +383,7 @@ export default function PassportView() {
               }}
             >
               <Iconify icon="mdi:hand-heart-outline" width={40} sx={{ mb: 1, opacity: 0.5 }} />
-              <Typography variant="body2">No limitations added yet</Typography>
+              <Typography variant="body2">No challenges added yet</Typography>
               <Typography variant="caption">
                 Add items above to help others understand your needs
               </Typography>
@@ -396,7 +391,7 @@ export default function PassportView() {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={limitationsDialog.onFalse}>Done</Button>
+          <Button onClick={challengesDialog.onFalse}>Done</Button>
         </DialogActions>
       </Dialog>
     </Box>

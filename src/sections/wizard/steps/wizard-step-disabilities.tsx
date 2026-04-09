@@ -112,7 +112,7 @@ export default function WizardStepDisabilities({
         </Typography>
         <Typography variant="body2" color="text.secondary">
           Choose any disabilities that apply to you. This helps us recommend appropriate workplace
-          adjustments. You can skip this step if you prefer to select limitations directly.
+          adjustments. You can skip this step if you prefer to select challenges directly.
         </Typography>
       </Box>
 

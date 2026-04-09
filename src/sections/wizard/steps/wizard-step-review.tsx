@@ -13,13 +13,13 @@ import { alpha, useTheme } from '@mui/material/styles';
 
 import Iconify from '@/components/iconify';
 import { IDisabilityItem } from '@/types/disability';
-import { ILimitationItem, IRecommendedAdjustment } from '@/types/wizard';
+import { IChallengeItem, IRecommendedAdjustment } from '@/types/wizard';
 
 // ----------------------------------------------------------------------
 
 type Props = {
   selectedDisabilities: IDisabilityItem[];
-  selectedLimitations: ILimitationItem[];
+  selectedChallenges: IChallengeItem[];
   selectedAdjustments: IRecommendedAdjustment[];
   additionalNotes: string;
   onNotesChange: (notes: string) => void;
@@ -29,7 +29,7 @@ type Props = {
 
 export default function WizardStepReview({
   selectedDisabilities,
-  selectedLimitations,
+  selectedChallenges,
   selectedAdjustments,
   additionalNotes,
   onNotesChange,
@@ -40,7 +40,7 @@ export default function WizardStepReview({
 
   const hasSelections =
     selectedDisabilities.length > 0 ||
-    selectedLimitations.length > 0 ||
+    selectedChallenges.length > 0 ||
     selectedAdjustments.length > 0;
 
   return (
@@ -72,8 +72,8 @@ export default function WizardStepReview({
               onEdit={() => onEditStep(1)}
             />
             <SummaryCard
-              title="Limitations"
-              count={selectedLimitations.length}
+              title="Challenges"
+              count={selectedChallenges.length}
               icon="mdi:hand-heart"
               color={theme.palette.info.main}
               onEdit={() => onEditStep(2)}
@@ -111,24 +111,24 @@ export default function WizardStepReview({
               </ReviewSection>
             )}
 
-            {/* Limitations */}
-            {selectedLimitations.length > 0 && (
+            {/* Challenges */}
+            {selectedChallenges.length > 0 && (
               <ReviewSection
-                title="Selected Limitations"
+                title="Selected Challenges"
                 icon="mdi:hand-heart"
                 color={theme.palette.info.main}
                 onEdit={() => onEditStep(2)}
               >
                 <Stack spacing={1}>
                   {Object.entries(
-                    selectedLimitations.reduce(
+                    selectedChallenges.reduce(
                       (acc, l) => {
                         const cat = l.category || 'Other';
                         if (!acc[cat]) acc[cat] = [];
                         acc[cat].push(l);
                         return acc;
                       },
-                      {} as Record<string, ILimitationItem[]>
+                      {} as Record<string, IChallengeItem[]>
                     )
                   ).map(([category, items]) => (
                     <Box key={category}>
