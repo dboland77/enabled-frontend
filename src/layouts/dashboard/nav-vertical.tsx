@@ -72,11 +72,11 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
       <Divider sx={{ borderStyle: 'dashed', mx: 2 }} />
 
       <Stack
-        spacing={0.5}
+        spacing={1}
         alignItems="center"
         sx={{ py: 3, px: 2 }}
       >
-        <Typography variant="caption" color="text.disabled">
+        <Typography variant="caption" fontWeight={500} color="text.primary">
           &copy; {new Date().getFullYear()} Enabled
         </Typography>
         <Link
@@ -84,7 +84,8 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
           target="_blank"
           rel="noopener noreferrer"
           variant="caption"
-          color="text.disabled"
+          fontWeight={500}
+          color="text.secondary"
           underline="hover"
           sx={{
             '&:hover': { color: 'primary.main' },

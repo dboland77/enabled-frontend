@@ -23,7 +23,7 @@ export function useNavData() {
   const data = useMemo(
     () => [
       {
-        subheader: 'About me',
+        subheader: 'My Workspace',
         items: [
           {
             title: 'Home',
@@ -80,7 +80,7 @@ export function useNavData() {
       },
 
       {
-        subheader: 'Knowledge Hub',
+        subheader: 'Resources',
         items: [
           {
             title: 'Disability Information',
