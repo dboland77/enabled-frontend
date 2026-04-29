@@ -1,77 +1,63 @@
 import { forwardRef } from 'react';
 
 import Link from '@mui/material/Link';
-import { useTheme } from '@mui/material/styles';
-import Box, { BoxProps } from '@mui/material/Box';
 
-export interface LogoProps extends BoxProps {
+import styles from './logo.module.css';
+
+export interface LogoProps {
   disabledLink?: boolean;
+  /** Show the compact eD icon mark instead of the full wordmark */
+  compact?: boolean;
+  /** Hide the Beta badge (e.g. in footers, print) */
+  hideBeta?: boolean;
+  /** 'lg' renders a larger wordmark for prominent placements like the login screen */
+  size?: 'md' | 'lg';
+  /** White wordmark for use on dark/coloured backgrounds */
+  light?: boolean;
+  className?: string;
 }
 
-const NICE_BLUE = '#2596be';
-
 const Logo = forwardRef<HTMLDivElement, LogoProps>(
-  ({ disabledLink = false, sx, ...other }, ref) => {
-    const theme = useTheme();
+  ({ disabledLink = false, compact = false, hideBeta = false, size = 'md', light = false, className }, ref) => {
 
-    const PRIMARY_LIGHT = theme.palette.primary.light;
-
-    const PRIMARY_MAIN = theme.palette.primary.main;
-
-    const PRIMARY_DARK = theme.palette.primary.dark;
-
-    const logo = (
-      <Box
-        ref={ref}
-        component="div"
-        sx={{
-          width: 200,
-          height: 20,
-          display: 'inline-flex',
-          ...sx,
-        }}
-        {...other}
-      >
-        <svg height="50" width="300">
-          <defs>
-            <linearGradient id="BG1" x1="100%" x2="50%" y1="9.946%" y2="50%">
-              <stop offset="0%" stopColor={PRIMARY_DARK} />
-              <stop offset="100%" stopColor={PRIMARY_MAIN} />
-            </linearGradient>
-
-            <linearGradient id="BG2" x1="50%" x2="50%" y1="0%" y2="100%">
-              <stop offset="0%" stopColor={PRIMARY_LIGHT} />
-              <stop offset="100%" stopColor={PRIMARY_MAIN} />
-            </linearGradient>
-
-            <linearGradient id="BG3" x1="50%" x2="50%" y1="0%" y2="100%">
-              <stop offset="0%" stopColor={PRIMARY_LIGHT} />
-              <stop offset="100%" stopColor={PRIMARY_MAIN} />
-            </linearGradient>
-          </defs>
-          <svg height="50" width="300">
-            <text x="0" y="30" fill={NICE_BLUE} letterSpacing="2" fontSize="35">
-              enableD
-            </text>
-            <rect x="155" y="10" width="40" height="18" rx="4" fill={NICE_BLUE} />
-            <text x="175" y="23" fill="#ffffff" fontSize="10" fontWeight="600" textAnchor="middle">
-              BETA
-            </text>
-          </svg>
-        </svg>
-      </Box>
+    // ── eD icon mark — compact / collapsed sidebar ─────────────
+    const iconMark = (
+      <div ref={ref} className={`${styles.iconMark}${className ? ` ${className}` : ''}`}>
+        <span className={styles.iconMarkText}>
+          <span className={styles.e}>e</span>D
+        </span>
+      </div>
     );
 
-    if (disabledLink) {
-      return logo;
-    }
+    // ── Full wordmark ──────────────────────────────────────────
+    const textClass = [
+      styles.wordmarkText,
+      size === 'lg' ? styles.wordmarkLg : styles.wordmarkMd,
+      light ? styles.wordmarkLight : '',
+    ].filter(Boolean).join(' ');
+
+    const wordmark = (
+      <div ref={ref} className={`${styles.wordmark}${className ? ` ${className}` : ''}`}>
+        <span className={textClass}>
+          enable<span className={styles.cap}>D</span>
+        </span>
+
+        {/* Beta badge — remove this element entirely when platform exits beta */}
+        {!hideBeta && <span className={styles.betaBadge}>Beta</span>}
+      </div>
+    );
+
+    const logo = compact ? iconMark : wordmark;
+
+    if (disabledLink) return logo;
 
     return (
-      <Link href="/" sx={{ display: 'contents' }}>
+      <Link href="/" className={styles.link}>
         {logo}
       </Link>
     );
   }
 );
 
+Logo.displayName = 'Logo';
 export default Logo;

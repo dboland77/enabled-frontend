@@ -1,4 +1,7 @@
+'use client';
+
 import Box, { BoxProps } from '@mui/material/Box';
+import { usePathname } from 'next/navigation';
 
 import { NAV, HEADER } from '@/layouts/config-layout';
 import { useResponsive } from '@/hooks/use-responsive';
@@ -12,12 +15,22 @@ type MainProps = BoxProps & {
 
 export default function Main({ children, sx, id, ...other }: MainProps) {
   const settings = useSettingsContext();
-
   const lgUp = useResponsive('up', 'lg');
+  const pathname = usePathname();
 
   const isNavHorizontal = settings.themeLayout === 'horizontal';
-
   const isNavMini = settings.themeLayout === 'mini';
+
+  const sharedSx = {
+    flexGrow: 1,
+    display: 'flex',
+    flexDirection: 'column' as const,
+    '@keyframes pageEnter': {
+      from: { opacity: 0, transform: 'translateY(6px)' },
+      to: { opacity: 1, transform: 'none' },
+    },
+    animation: 'pageEnter 0.18s ease-out',
+  };
 
   if (isNavHorizontal) {
     return (
@@ -35,12 +48,12 @@ export default function Main({ children, sx, id, ...other }: MainProps) {
             pt: `${HEADER.H_MOBILE * 2 + 40}px`,
             pb: 15,
           }),
-          '&:focus': {
-            outline: 'none',
-          },
+          '&:focus': { outline: 'none' },
         }}
       >
-        {children}
+        <Box key={pathname} sx={sharedSx}>
+          {children}
+        </Box>
       </Box>
     );
   }
@@ -64,14 +77,14 @@ export default function Main({ children, sx, id, ...other }: MainProps) {
             width: `calc(100% - ${NAV.W_MINI}px)`,
           }),
         }),
-        '&:focus': {
-          outline: 'none',
-        },
+        '&:focus': { outline: 'none' },
         ...sx,
       }}
       {...other}
     >
-      {children}
+      <Box key={pathname} sx={sharedSx}>
+        {children}
+      </Box>
     </Box>
   );
 }
