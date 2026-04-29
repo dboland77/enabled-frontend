@@ -50,7 +50,7 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
   const renderContent = (
     <Stack sx={{ height: 1 }}>
       <Box sx={{ px: 4, pt: 3, pb: 6 }}>
-        <Logo />
+        <Logo size="lg" />
       </Box>
 
       <Scrollbar

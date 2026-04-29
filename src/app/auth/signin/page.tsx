@@ -14,6 +14,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import InputAdornment from '@mui/material/InputAdornment';
 
+import Logo from '@/components/logo';
 import Iconify from '@/components/iconify';
 import { useBoolean } from '@/hooks';
 import FormProvider, { RHFTextField } from '@/components/hook-form';
@@ -63,7 +64,21 @@ export default function SignInView() {
 
   const renderHead = (
     <Stack spacing={2} sx={{ mb: 5 }}>
-      <Typography variant="h4">Sign in to enableD</Typography>
+      <Stack direction="row" alignItems="center" spacing={1}>
+        <Typography
+          sx={{
+            fontFamily: '"DM Sans", sans-serif',
+            fontWeight: 800,
+            fontSize: 36,
+            letterSpacing: '-0.03em',
+            lineHeight: 1,
+            color: 'text.primary',
+          }}
+        >
+          Sign in to
+        </Typography>
+        <Logo size="lg" disabledLink />
+      </Stack>
 
       {/* TODO: Re-enable sign up after testing phase
       <Stack direction="row" spacing={0.5}>

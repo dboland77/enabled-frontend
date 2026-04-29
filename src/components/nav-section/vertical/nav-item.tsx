@@ -5,6 +5,7 @@ import Link from '@mui/material/Link';
 import Tooltip from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 import ListItemButton from '@mui/material/ListItemButton';
+import NextLink from 'next/link';
 
 import Iconify from '@/components/iconify';
 
@@ -119,6 +120,7 @@ const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
 
     return (
       <Link
+        component={NextLink}
         href={path}
         color="inherit"
         underline="none"
