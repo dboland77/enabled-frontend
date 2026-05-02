@@ -44,9 +44,9 @@ export function usePassport(): UsePassportReturn {
 
       // Fetch user profile for additional details
       const { data: profile } = await supabase
-        .from('profiles')
+        .from('user_profile')
         .select('*')
-        .eq('id', user.id)
+        .eq('userId', user.id)
         .single();
 
       // Fetch user's saved disabilities
@@ -130,11 +130,14 @@ export function usePassport(): UsePassportReturn {
       }));
 
       // Build holder info from user metadata and profile
+      const profileFullName = profile
+        ? `${profile.firstname || ''} ${profile.lastname || ''}`.trim()
+        : '';
       const holder: IPassportHolder = {
         id: user.id,
-        fullName: profile?.display_name || user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+        fullName: profileFullName || user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
         email: user.email || '',
-        avatarUrl: profile?.avatar_url || user.user_metadata?.avatar_url,
+        avatarUrl: profile?.avatar || user.user_metadata?.avatar_url,
         jobTitle: profile?.job_title,
         department: profile?.department,
         issueDate: new Date(user.created_at || Date.now()),

@@ -1,162 +1,58 @@
 'use client';
 
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import { alpha, useTheme } from '@mui/material/styles';
+export const STAMP_CONFIGS = {
+  approved:        { label: 'APPROVED',     color: '#007867', bg: 'rgba(0,120,103,0.08)' },
+  declined:        { label: 'DECLINED',     color: '#B71D18', bg: 'rgba(183,29,24,0.07)' },
+  'under-review':  { label: 'UNDER REVIEW', color: '#B76E00', bg: 'rgba(183,110,0,0.07)' },
+  pending:         { label: 'PENDING',      color: '#637381', bg: 'rgba(99,115,129,0.07)' },
+  expired:         { label: 'EXPIRED',      color: '#454F5B', bg: 'rgba(69,79,91,0.07)'  },
+  renewed:         { label: 'RENEWED',      color: '#006C9C', bg: 'rgba(0,108,156,0.07)' },
+} as const;
 
-import { format } from 'date-fns';
-
-// ----------------------------------------------------------------------
+export type StampStatus = keyof typeof STAMP_CONFIGS;
+export type StampSize   = 'sm' | 'md' | 'lg';
 
 interface PassportStampProps {
-  approvalDate: string;
-  approverInitials: string;
+  status:    StampStatus;
+  date?:     string;
   rotation?: number;
+  size?:     StampSize;
 }
 
-export default function PassportStamp({ approvalDate, approverInitials, rotation = 0 }: PassportStampProps) {
-  const theme = useTheme();
-  
-  // Format date for display
-  const formattedDate = (() => {
-    try {
-      return format(new Date(approvalDate), 'dd MMM yyyy').toUpperCase();
-    } catch {
-      return approvalDate;
-    }
-  })();
+export default function PassportStamp({ status, date, rotation = 0, size = 'md' }: PassportStampProps) {
+  const cfg = STAMP_CONFIGS[status] ?? STAMP_CONFIGS.pending;
+  const w   = size === 'lg' ? 110 : size === 'sm' ? 72 : 90;
+  const h   = size === 'lg' ?  52 : size === 'sm' ? 34 : 42;
+  const fs  = size === 'lg' ?  11 : size === 'sm' ?  7 :  9;
+  const dfs = size === 'lg' ?   8 : size === 'sm' ? 5.5 : 6.5;
 
   return (
-    <Box
-      sx={{
-        position: 'relative',
-        width: 120,
-        height: 120,
-        transform: `rotate(${rotation}deg)`,
-        transition: 'transform 0.3s ease',
-        '&:hover': {
-          transform: `rotate(${rotation}deg) scale(1.05)`,
-        },
+    <div
+      style={{
+        display: 'inline-flex', flexDirection: 'column', alignItems: 'center',
+        justifyContent: 'center', width: w, height: h,
+        border: `2px solid ${cfg.color}`, borderRadius: 3, background: cfg.bg,
+        transform: `rotate(${rotation}deg)`, opacity: 0.88, flexShrink: 0, gap: 2,
+        boxShadow: `inset 0 0 0 1px ${cfg.color}22`, position: 'relative', overflow: 'hidden',
       }}
     >
-      {/* Outer circle */}
-      <Box
-        sx={{
-          position: 'absolute',
-          inset: 0,
-          borderRadius: '50%',
-          border: `3px solid ${alpha('#8B0000', 0.85)}`,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexDirection: 'column',
-          bgcolor: alpha('#8B0000', 0.08),
-          boxShadow: `inset 0 0 10px ${alpha('#8B0000', 0.15)}`,
-        }}
-      >
-        {/* Inner decorative circle */}
-        <Box
-          sx={{
-            position: 'absolute',
-            inset: 6,
-            borderRadius: '50%',
-            border: `1.5px solid ${alpha('#8B0000', 0.6)}`,
-          }}
-        />
+      {/* ink bleed */}
+      <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(ellipse at 30% 40%, ${cfg.color}08, transparent 70%)`, pointerEvents: 'none' }} />
 
-        {/* APPROVED text - curved at top */}
-        <Typography
-          sx={{
-            position: 'absolute',
-            top: 12,
-            fontSize: '10px',
-            fontWeight: 700,
-            letterSpacing: '2px',
-            color: alpha('#8B0000', 0.9),
-            textTransform: 'uppercase',
-          }}
-        >
-          Approved
-        </Typography>
+      <span style={{ fontFamily: "'Georgia','Times New Roman',serif", fontWeight: 700, fontSize: fs, color: cfg.color, letterSpacing: '0.12em', lineHeight: 1, textTransform: 'uppercase', zIndex: 1 }}>
+        {cfg.label}
+      </span>
+      {date && (
+        <span style={{ fontFamily: "'Georgia','Times New Roman',serif", fontSize: dfs, color: cfg.color, opacity: 0.7, letterSpacing: '0.06em', zIndex: 1 }}>
+          {date}
+        </span>
+      )}
 
-        {/* Star decorations */}
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 24,
-            display: 'flex',
-            gap: 0.5,
-            color: alpha('#8B0000', 0.7),
-            fontSize: '8px',
-          }}
-        >
-          <span>★</span>
-          <span>★</span>
-          <span>★</span>
-        </Box>
-
-        {/* Date */}
-        <Typography
-          sx={{
-            fontSize: '9px',
-            fontWeight: 600,
-            color: alpha('#8B0000', 0.85),
-            mt: 1,
-          }}
-        >
-          {formattedDate}
-        </Typography>
-
-        {/* Approver initials */}
-        <Box
-          sx={{
-            mt: 0.5,
-            px: 1,
-            py: 0.25,
-            borderRadius: 0.5,
-            border: `1px solid ${alpha('#8B0000', 0.5)}`,
-            bgcolor: alpha('#8B0000', 0.05),
-          }}
-        >
-          <Typography
-            sx={{
-              fontSize: '11px',
-              fontWeight: 700,
-              color: alpha('#8B0000', 0.9),
-              fontFamily: theme.typography.fontFamily,
-            }}
-          >
-            {approverInitials}
-          </Typography>
-        </Box>
-
-        {/* Bottom decoration */}
-        <Box
-          sx={{
-            position: 'absolute',
-            bottom: 14,
-            display: 'flex',
-            gap: 0.5,
-            color: alpha('#8B0000', 0.7),
-            fontSize: '8px',
-          }}
-        >
-          <span>★</span>
-          <span>★</span>
-          <span>★</span>
-        </Box>
-      </Box>
-
-      {/* Ink texture overlay */}
-      <Box
-        sx={{
-          position: 'absolute',
-          inset: 0,
-          borderRadius: '50%',
-          background: `radial-gradient(ellipse at 30% 30%, transparent 60%, ${alpha('#8B0000', 0.1)} 100%)`,
-          pointerEvents: 'none',
-        }}
-      />
-    </Box>
+      {/* corner serifs */}
+      <div style={{ position: 'absolute', top: 2, left:  2, width: 6, height: 6, borderTop:    `1.5px solid ${cfg.color}`, borderLeft:  `1.5px solid ${cfg.color}` }} />
+      <div style={{ position: 'absolute', top: 2, right: 2, width: 6, height: 6, borderTop:    `1.5px solid ${cfg.color}`, borderRight: `1.5px solid ${cfg.color}` }} />
+      <div style={{ position: 'absolute', bottom: 2, left:  2, width: 6, height: 6, borderBottom: `1.5px solid ${cfg.color}`, borderLeft:  `1.5px solid ${cfg.color}` }} />
+      <div style={{ position: 'absolute', bottom: 2, right: 2, width: 6, height: 6, borderBottom: `1.5px solid ${cfg.color}`, borderRight: `1.5px solid ${cfg.color}` }} />
+    </div>
   );
 }

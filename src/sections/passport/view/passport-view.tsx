@@ -4,396 +4,171 @@ import { useState } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import Button from '@mui/material/Button';
+import Alert from '@mui/material/Alert';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
-import Alert from '@mui/material/Alert';
-import TextField from '@mui/material/TextField';
-import IconButton from '@mui/material/IconButton';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
-import Chip from '@mui/material/Chip';
-import { alpha, useTheme } from '@mui/material/styles';
 
-import Iconify from '@/components/iconify';
 import { usePassport } from '@/hooks/use-passport';
 import { usePassportDownload } from '@/hooks/use-passport-download';
-import { useBoolean } from '@/hooks/use-boolean';
 
 import PassportBook from '../passport-book';
 import PassportEmpty from '../passport-empty';
 import PassportSendDialog from '../passport-send-dialog';
 import PassportFullscreenModal from '../passport-fullscreen-modal';
+import PassportStamp, { STAMP_CONFIGS, type StampStatus } from '../passport-stamp';
 
-// ----------------------------------------------------------------------
+// ──────────────────────────────────────────────────────────────────────────────
 
 export default function PassportView() {
-  const theme = useTheme();
-  const { passportData, loading, error, addChallenge, removeChallenge } = usePassport();
+  const { passportData, loading, error } = usePassport();
   const [sendDialogOpen, setSendDialogOpen] = useState(false);
   const [fullscreenOpen, setFullscreenOpen] = useState(false);
   const { download, downloading } = usePassportDownload(passportData);
 
-  // challenges management
-  const challengesDialog = useBoolean();
-  const [newchallenge, setNewchallenge] = useState('');
-  const [addingchallenge, setAddingchallenge] = useState(false);
-
-  const handleAddchallenge = async () => {
-    if (!newchallenge.trim()) return;
-    setAddingchallenge(true);
-    const success = await addChallenge(newchallenge.trim());
-    if (success) {
-      setNewchallenge('');
-    }
-    setAddingchallenge(false);
-  };
-
-  const handleRemovechallenge = async (id: string) => {
-    await removeChallenge(id);
-  };
-
   if (loading) {
     return (
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: 400,
-        }}
-      >
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 400 }}>
         <CircularProgress />
       </Box>
     );
   }
 
   if (error) {
-    return (
-      <Alert severity="error" sx={{ mb: 3 }}>
-        {error}
-      </Alert>
-    );
+    return <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>;
   }
 
-  // Show empty state if no approved adjustments
-  if (!passportData || passportData.approvedAdjustments.length === 0) {
-    return (
-      <Card sx={{ p: 3 }}>
-        <PassportEmpty />
-      </Card>
-    );
+  if (!passportData) {
+    return <Card sx={{ p: 3 }}><PassportEmpty /></Card>;
   }
+
+  const d             = passportData;
+  const approvedCount = d.approvedAdjustments.length;
+  const fmt           = (date: Date | string) =>
+    new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(date));
+  const issuedStr     = fmt(d.issueDate);
+  const validUntilStr = fmt(new Date(new Date(d.issueDate).setFullYear(new Date(d.issueDate).getFullYear() + 2)));
+
+  // Shared card style
+  const card: React.CSSProperties = {
+    background: '#fff',
+    borderRadius: 10,
+    boxShadow: '0 0 2px rgba(145,158,171,0.2), 0 8px 24px -4px rgba(145,158,171,0.12)',
+    padding: '16px 20px',
+  };
+
+  const sectionLabel: React.CSSProperties = {
+    fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.1em',
+    color: '#919EAB', marginBottom: 12, fontFamily: "'DM Sans',sans-serif",
+    display: 'block',
+  };
 
   return (
     <Box>
-      {/* Header */}
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          mb: 4,
-          flexWrap: 'wrap',
-          gap: 2,
-        }}
-      >
-        <Box>
-          <Typography variant="h4" sx={{ mb: 0.5 }}>
+      {/* Breadcrumb + heading */}
+      <Box sx={{ mb: 3 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: '6px', mb: '6px' }}>
+          <Typography variant="caption" sx={{ color: '#919EAB', fontFamily: "'Atkinson Hyperlegible Next',sans-serif" }}>
+            My Workspace
+          </Typography>
+          <Typography variant="caption" sx={{ color: '#C4CDD5' }}>/</Typography>
+          <Typography variant="caption" sx={{ color: '#212B36', fontWeight: 600, fontFamily: "'Atkinson Hyperlegible Next',sans-serif" }}>
             My Passport
           </Typography>
-          <Typography variant="body2" sx={{ color: theme.palette.text.secondary }}>
-            Your official Reasonable Adjustments Passport with{' '}
-            {passportData.approvedAdjustments.length} approved adjustment
-            {passportData.approvedAdjustments.length !== 1 ? 's' : ''}
-          </Typography>
         </Box>
+        <Typography variant="h4" sx={{ fontFamily: "'DM Sans',sans-serif", color: '#212B36', fontWeight: 700 }}>
+          My Accessibility Passport
+        </Typography>
+      </Box>
 
-        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-          <Button
-            variant="outlined"
-            color="warning"
-            startIcon={<Iconify icon="mdi:alert-circle-outline" />}
-            onClick={challengesDialog.onTrue}
-          >
-            Manage challenges
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={<Iconify icon="eva:expand-fill" />}
-            onClick={() => setFullscreenOpen(true)}
-          >
-            Fullscreen
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={
-              downloading ? (
-                <Iconify icon="eva:loader-outline" />
-              ) : (
-                <Iconify icon="eva:download-outline" />
-              )
-            }
-            onClick={download}
-            disabled={downloading}
-          >
-            {downloading ? 'Generating...' : 'Download PDF'}
-          </Button>
-          <Button
-            variant="contained"
-            startIcon={<Iconify icon="eva:email-outline" />}
-            onClick={() => setSendDialogOpen(true)}
-          >
-            Send Passport
-          </Button>
+      {/* Two-column layout */}
+      <Box sx={{ display: 'flex', gap: '28px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+
+        {/* Left: Passport booklet */}
+        <PassportBook data={d} />
+
+        {/* Right: Info panel */}
+        <Box sx={{ flex: 1, minWidth: 260, display: 'flex', flexDirection: 'column', gap: '14px' }}>
+
+          {/* ── Passport Status ── */}
+          <div style={card}>
+            <span style={sectionLabel}>Passport Status</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+              <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#00A76F', boxShadow: '0 0 0 3px rgba(0,167,111,0.2)' }} />
+              <span style={{ fontSize: 14, fontWeight: 700, color: '#007867', fontFamily: "'Atkinson Hyperlegible Next',sans-serif" }}>Active</span>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 0' }}>
+              {([
+                ['Issued',       issuedStr],
+                ['Valid until',  validUntilStr],
+                ['Adjustments',  `${approvedCount} total`],
+                ['Approved',     String(approvedCount)],
+              ] as [string, string][]).map(([k, v]) => (
+                <div key={k}>
+                  <div style={{ fontSize: 9, color: '#919EAB', fontFamily: "'DM Sans',sans-serif", fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.07em' }}>{k}</div>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: '#212B36', fontFamily: "'Atkinson Hyperlegible Next',sans-serif" }}>{v}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ── Stamp Legend ── */}
+          <div style={card}>
+            <span style={sectionLabel}>Stamp Legend</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {(Object.entries(STAMP_CONFIGS) as [StampStatus, (typeof STAMP_CONFIGS)[StampStatus]][]).map(([key, cfg]) => (
+                <div key={key} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <PassportStamp status={key} size="sm" />
+                  <span style={{ fontSize: 11, color: '#637381', fontFamily: "'DM Sans',sans-serif" }}>
+                    {cfg.label.charAt(0) + cfg.label.slice(1).toLowerCase()}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ── Actions ── */}
+          <div style={card}>
+            <span style={sectionLabel}>Actions</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {([
+                ['Share with HR',  'Share a secure link with your HR team',       () => setSendDialogOpen(true)],
+                ['Download PDF',   downloading ? 'Generating…' : 'Export a print-ready version', download],
+                ['Fullscreen',     'View your passport in full screen',            () => setFullscreenOpen(true)],
+              ] as [string, string, () => void][]).map(([label, desc, onClick]) => (
+                <button
+                  key={label}
+                  onClick={onClick}
+                  disabled={label === 'Download PDF' && downloading}
+                  style={{ display: 'flex', alignItems: 'center', gap: 10, background: '#F4F6F8', border: 'none', borderRadius: 7, padding: '9px 12px', cursor: 'pointer', textAlign: 'left', transition: 'background .15s', width: '100%' }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = '#DFE3E8'; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = '#F4F6F8'; }}
+                >
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: '#212B36', fontFamily: "'Atkinson Hyperlegible Next',sans-serif" }}>{label}</div>
+                    <div style={{ fontSize: 10, color: '#919EAB', fontFamily: "'DM Sans',sans-serif" }}>{desc}</div>
+                  </div>
+                  <span style={{ color: '#C4CDD5', fontSize: 14 }}>›</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
         </Box>
       </Box>
 
-      {/* Passport book */}
-      <Card
-        sx={{
-          p: { xs: 2, sm: 4 },
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          bgcolor: alpha(theme.palette.grey[500], 0.04),
-          backgroundImage: `radial-gradient(${alpha(theme.palette.grey[500], 0.1)} 1px, transparent 1px)`,
-          backgroundSize: '20px 20px',
-        }}
-      >
-        <PassportBook data={passportData} />
-      </Card>
-
-      {/* Info cards */}
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' },
-          gap: 2,
-          mt: 3,
-        }}
-      >
-        <Card sx={{ p: 2.5 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-            <Box
-              sx={{
-                width: 40,
-                height: 40,
-                borderRadius: 1,
-                bgcolor: alpha(theme.palette.primary.main, 0.1),
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Iconify icon="mdi:passport" sx={{ color: theme.palette.primary.main }} />
-            </Box>
-            <Box>
-              <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
-                Passport Number
-              </Typography>
-              <Typography variant="subtitle2" sx={{ fontFamily: 'monospace' }}>
-                {passportData.passportNumber}
-              </Typography>
-            </Box>
-          </Box>
-        </Card>
-
-        <Card sx={{ p: 2.5 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-            <Box
-              sx={{
-                width: 40,
-                height: 40,
-                borderRadius: 1,
-                bgcolor: alpha(theme.palette.info.main, 0.1),
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Iconify icon="mdi:medical-bag" sx={{ color: theme.palette.info.main }} />
-            </Box>
-            <Box>
-              <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
-                My Conditions
-              </Typography>
-              <Typography variant="subtitle2">{passportData.disabilities?.length || 0}</Typography>
-            </Box>
-          </Box>
-        </Card>
-
-        <Card sx={{ p: 2.5 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-            <Box
-              sx={{
-                width: 40,
-                height: 40,
-                borderRadius: 1,
-                bgcolor: alpha(theme.palette.success.main, 0.1),
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Iconify
-                icon="eva:checkmark-circle-2-fill"
-                sx={{ color: theme.palette.success.main }}
-              />
-            </Box>
-            <Box>
-              <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
-                Approved Adjustments
-              </Typography>
-              <Typography variant="subtitle2">{passportData.approvedAdjustments.length}</Typography>
-            </Box>
-          </Box>
-        </Card>
-
-        <Card sx={{ p: 2.5 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-            <Box
-              sx={{
-                width: 40,
-                height: 40,
-                borderRadius: 1,
-                bgcolor: alpha(theme.palette.warning.main, 0.1),
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Iconify icon="mdi:alert-circle-outline" sx={{ color: theme.palette.warning.main }} />
-            </Box>
-            <Box>
-              <Typography variant="caption" sx={{ color: theme.palette.text.secondary }}>
-                I Struggle With
-              </Typography>
-              <Typography variant="subtitle2">
-                {passportData.challenges?.length || 0} items
-              </Typography>
-            </Box>
-          </Box>
-        </Card>
-      </Box>
-
-      {/* Send dialog */}
       <PassportSendDialog
         open={sendDialogOpen}
         onClose={() => setSendDialogOpen(false)}
-        passportNumber={passportData.passportNumber}
-        holderName={passportData.holder.fullName}
-        defaultEmail={passportData.holder.email}
+        passportNumber={d.passportNumber}
+        holderName={d.holder.fullName}
+        defaultEmail={d.holder.email}
       />
 
-      {/* Fullscreen modal */}
       <PassportFullscreenModal
         open={fullscreenOpen}
         onClose={() => setFullscreenOpen(false)}
-        data={passportData}
+        data={d}
       />
-
-      {/* challenges Management Dialog */}
-      <Dialog
-        open={challengesDialog.value}
-        onClose={challengesDialog.onFalse}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Iconify icon="mdi:alert-circle-outline" sx={{ color: theme.palette.warning.main }} />
-            Manage &quot;I Struggle With&quot;
-          </Box>
-        </DialogTitle>
-        <DialogContent>
-          <Typography variant="body2" sx={{ color: theme.palette.text.secondary, mb: 3 }}>
-            Add things you find challenging at work. These will appear in your passport to help
-            others understand your needs.
-          </Typography>
-
-          {/* Add new challenge */}
-          <Box sx={{ display: 'flex', gap: 1, mb: 3 }}>
-            <TextField
-              fullWidth
-              size="small"
-              placeholder="e.g., Concentrating in noisy environments"
-              value={newchallenge}
-              onChange={(e) => setNewchallenge(e.target.value)}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter') {
-                  handleAddchallenge();
-                }
-              }}
-            />
-            <Button
-              variant="contained"
-              onClick={handleAddchallenge}
-              disabled={!newchallenge.trim() || addingchallenge}
-              sx={{ minWidth: 80 }}
-            >
-              {addingchallenge ? <CircularProgress size={20} /> : 'Add'}
-            </Button>
-          </Box>
-
-          {/* Current challenges list */}
-          {passportData.challenges && passportData.challenges.length > 0 ? (
-            <List sx={{ bgcolor: alpha(theme.palette.grey[500], 0.04), borderRadius: 1 }}>
-              {passportData.challenges.map((challenge, index) => (
-                <ListItem key={challenge.id} divider={index < passportData.challenges!.length - 1}>
-                  <Chip
-                    label={index + 1}
-                    size="small"
-                    sx={{
-                      mr: 2,
-                      width: 28,
-                      height: 28,
-                      bgcolor: alpha(theme.palette.warning.main, 0.1),
-                      color: theme.palette.warning.dark,
-                    }}
-                  />
-                  <ListItemText primary={challenge.description} secondary={challenge.category} />
-                  <ListItemSecondaryAction>
-                    <IconButton
-                      edge="end"
-                      color="error"
-                      onClick={() => handleRemovechallenge(challenge.id)}
-                      size="small"
-                    >
-                      <Iconify icon="eva:trash-2-outline" />
-                    </IconButton>
-                  </ListItemSecondaryAction>
-                </ListItem>
-              ))}
-            </List>
-          ) : (
-            <Box
-              sx={{
-                py: 4,
-                textAlign: 'center',
-                color: theme.palette.text.secondary,
-                bgcolor: alpha(theme.palette.grey[500], 0.04),
-                borderRadius: 1,
-              }}
-            >
-              <Iconify icon="mdi:hand-heart-outline" width={40} sx={{ mb: 1, opacity: 0.5 }} />
-              <Typography variant="body2">No challenges added yet</Typography>
-              <Typography variant="caption">
-                Add items above to help others understand your needs
-              </Typography>
-            </Box>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={challengesDialog.onFalse}>Done</Button>
-        </DialogActions>
-      </Dialog>
     </Box>
   );
 }
