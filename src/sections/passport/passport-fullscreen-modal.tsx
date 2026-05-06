@@ -19,9 +19,9 @@ interface PassportFullscreenModalProps {
   data: IPassportData;
 }
 
-// Base dimensions of the passport book at scale=1
-const BASE_BOOK_WIDTH = 560;  // two pages side-by-side
-const BASE_BOOK_HEIGHT = 420; // page height + controls
+// Base dimensions of the passport book at scale=1 (single page + nav)
+const BASE_BOOK_WIDTH  = 320;
+const BASE_BOOK_HEIGHT = 560;
 
 export default function PassportFullscreenModal({
   open,

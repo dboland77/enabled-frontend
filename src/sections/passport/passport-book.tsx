@@ -1,294 +1,184 @@
 'use client';
 
-import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import CircularProgress from '@mui/material/CircularProgress';
-import { alpha, useTheme } from '@mui/material/styles';
+import { useState, useCallback } from 'react';
 
-import { useRef, useCallback, useState, forwardRef, useEffect } from 'react';
-import dynamic from 'next/dynamic';
-
-import Iconify from '@/components/iconify';
 import { IPassportData } from '@/types/passport';
 
-import PassportCover from './passport-cover';
-import PassportInsideCover from './passport-inside-cover';
-import PassportPersonalPage from './passport-personal-page';
-import PassportDisabilitiesPage from './passport-disabilities-page';
-import PassportChallengesPage from './passport-challenges-page';
-import PassportAdjustmentPage from './passport-adjustment-page';
+import {
+  CoverPage,
+  PersonalPage,
+  ConditionsPage,
+  AdjustmentsPage,
+  HistoryPage,
+  EmergencyPage,
+  NotesPage,
+  BackCoverPage,
+} from './passport-pages';
 
-// Dynamically import HTMLFlipBook with no SSR
-const HTMLFlipBook = dynamic(() => import('react-pageflip').then((mod) => mod.default), {
-  ssr: false,
-  loading: () => (
-    <Box
-      sx={{
-        width: 280,
-        height: 380,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <CircularProgress />
-    </Box>
-  ),
-});
+// ── CSS animation ─────────────────────────────────────────────────────────────
 
-// ----------------------------------------------------------------------
+const FLIP_CSS = `
+  @keyframes pp-out-fwd {
+    from { transform: rotateY(0deg); }
+    to   { transform: rotateY(-90deg); }
+  }
+  @keyframes pp-in-fwd {
+    from { transform: rotateY(90deg); }
+    to   { transform: rotateY(0deg); }
+  }
+  @keyframes pp-out-bck {
+    from { transform: rotateY(0deg); }
+    to   { transform: rotateY(90deg); }
+  }
+  @keyframes pp-in-bck {
+    from { transform: rotateY(-90deg); }
+    to   { transform: rotateY(0deg); }
+  }
+  .pp-out-fwd { animation: pp-out-fwd 0.18s ease-in  forwards; }
+  .pp-in-fwd  { animation: pp-in-fwd  0.18s ease-out both; }
+  .pp-out-bck { animation: pp-out-bck 0.18s ease-in  forwards; }
+  .pp-in-bck  { animation: pp-in-bck  0.18s ease-out both; }
+`;
 
-// Wrapper component for pages (required by react-pageflip)
-const PageWrapper = forwardRef<HTMLDivElement, { children: React.ReactNode }>(({ children }, ref) => (
-  <div ref={ref} style={{ width: '100%', height: '100%' }}>
-    {children}
-  </div>
-));
-PageWrapper.displayName = 'PageWrapper';
+// ── Page registry ─────────────────────────────────────────────────────────────
 
-// ----------------------------------------------------------------------
+const PAGES = [
+  { id: 'cover',       label: 'Cover',       Component: CoverPage },
+  { id: 'personal',    label: 'Personal',    Component: PersonalPage },
+  { id: 'conditions',  label: 'Conditions',  Component: ConditionsPage },
+  { id: 'adjustments', label: 'Adjustments', Component: AdjustmentsPage },
+  { id: 'history',     label: 'History',     Component: HistoryPage },
+  { id: 'emergency',   label: 'Emergency',   Component: EmergencyPage },
+  { id: 'notes',       label: 'Notes',       Component: NotesPage },
+  { id: 'back',        label: 'Back',        Component: BackCoverPage },
+] as const;
+
+const BOOK_W = 320;
+const BOOK_H = 460;
+
+// ── Component ─────────────────────────────────────────────────────────────────
 
 interface PassportBookProps {
-  data: IPassportData;
+  data:    IPassportData;
+  scale?:  number;
+  /** Legacy prop — no longer used, kept for API compatibility */
   onPdfRef?: (ref: HTMLDivElement | null) => void;
-  scale?: number;
 }
 
-export default function PassportBook({ data, onPdfRef, scale = 1 }: PassportBookProps) {
-  const theme = useTheme();
-  const bookRef = useRef<{ pageFlip: () => { flipNext: () => void; flipPrev: () => void; getCurrentPageIndex: () => number; getPageCount: () => number } }>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [isMounted, setIsMounted] = useState(false);
+export default function PassportBook({ data, scale = 1 }: PassportBookProps) {
+  const [current,   setCurrent]   = useState(0);
+  const [animClass, setAnimClass] = useState('');
 
-  // Ensure component only renders on client
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  // Calculate total pages: front cover + inside front + personal page + disabilities page + challenges page + adjustment pages + inside back + back cover
-  const totalPages = 5 + data.approvedAdjustments.length + 2;
-
-  const handleFlipNext = useCallback(() => {
-    bookRef.current?.pageFlip()?.flipNext();
-  }, []);
-
-  const handleFlipPrev = useCallback(() => {
-    bookRef.current?.pageFlip()?.flipPrev();
-  }, []);
-
-  const handlePageFlip = useCallback((e: { data: number }) => {
-    setCurrentPage(e.data);
-  }, []);
-
-  // Pass container ref to parent for PDF generation
-  const setContainerRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
-      onPdfRef?.(node);
+  const goTo = useCallback(
+    (idx: number) => {
+      if (idx === current || animClass) return;
+      const fwd    = idx > current;
+      const outCls = fwd ? 'pp-out-fwd' : 'pp-out-bck';
+      const inCls  = fwd ? 'pp-in-fwd'  : 'pp-in-bck';
+      setAnimClass(outCls);
+      setTimeout(() => {
+        setCurrent(idx);
+        setAnimClass(inCls);
+        setTimeout(() => setAnimClass(''), 180);
+      }, 180);
     },
-    [onPdfRef]
+    [current, animClass]
   );
 
-  if (!isMounted) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: 2,
-        }}
-      >
-        <Box
-          sx={{
-            width: 280,
-            height: 380,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            bgcolor: alpha(theme.palette.grey[500], 0.1),
-            borderRadius: 1,
-          }}
-        >
-          <CircularProgress />
-        </Box>
-      </Box>
-    );
-  }
+  const prev = () => goTo(Math.max(0, current - 1));
+  const next = () => goTo(Math.min(PAGES.length - 1, current + 1));
+
+  const { Component } = PAGES[current];
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: 2,
+    <div
+      style={{
+        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20,
+        transform: `scale(${scale})`,
+        transformOrigin: 'center top',
+        // Reserve layout space when scaled up so parent layout doesn't collapse
+        width:  BOOK_W,
+        height: BOOK_H + 80,
       }}
     >
-      {/* Book container */}
-      <Box
-        ref={setContainerRef}
-        sx={{
-          position: 'relative',
-          perspective: '1500px',
-          transform: `scale(${scale})`,
-          transformOrigin: 'center center',
-          // Reserve the scaled space so layout doesn't collapse
-          width: 560 * scale,
-          height: 380 * scale,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        {/* @ts-expect-error - react-pageflip types are not fully compatible */}
-        <HTMLFlipBook
-          ref={bookRef}
-          width={280}
-          height={380}
-          size="stretch"
-          minWidth={250}
-          maxWidth={400}
-          minHeight={340}
-          maxHeight={540}
-          showCover={true}
-          maxShadowOpacity={0.5}
-          mobileScrollSupport={true}
-          onFlip={handlePageFlip}
-          className="passport-book"
+      <style>{FLIP_CSS}</style>
+
+      {/* Passport booklet */}
+      <div style={{ perspective: 1200 }}>
+        <div
+          className={animClass || undefined}
           style={{
-            boxShadow: theme.shadows[20],
+            width: BOOK_W, height: BOOK_H,
+            borderRadius: '3px 8px 8px 3px',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.15), 4px 0 8px rgba(0,0,0,0.12), -2px 0 4px rgba(0,0,0,0.1), 0 20px 60px rgba(0,0,0,0.25)',
+            position: 'relative', overflow: 'hidden',
+            userSelect: 'none',
+            borderLeft: '6px solid #0d1722',
           }}
-          flippingTime={600}
-          usePortrait={true}
-          startPage={0}
-          drawShadow={true}
-          useMouseEvents={true}
-          swipeDistance={30}
-          showPageCorners={true}
-          disableFlipByClick={false}
         >
-          {/* Front Cover */}
-          <PageWrapper>
-            <PassportCover variant="front" />
-          </PageWrapper>
+          <Component data={data} />
+        </div>
+      </div>
 
-          {/* Inside Front Cover */}
-          <PageWrapper>
-            <PassportInsideCover variant="front" />
-          </PageWrapper>
+      {/* Navigation */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <button
+          onClick={prev}
+          disabled={current === 0}
+          style={{
+            width: 34, height: 34, borderRadius: '50%',
+            border: '1.5px solid #DFE3E8',
+            background: current === 0 ? '#F4F6F8' : '#fff',
+            cursor: current === 0 ? 'default' : 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 14, color: current === 0 ? '#C4CDD5' : '#212B36',
+            boxShadow: current > 0 ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
+            transition: 'all .15s',
+          }}
+        >
+          ‹
+        </button>
 
-          {/* Personal Information Page */}
-          <PageWrapper>
-            <PassportPersonalPage
-              holder={data.holder}
-              passportNumber={data.passportNumber}
-              totalApprovedAdjustments={data.approvedAdjustments.length}
+        {/* Dot indicators */}
+        <div style={{ display: 'flex', gap: 5 }}>
+          {PAGES.map((p, i) => (
+            <button
+              key={p.id}
+              onClick={() => goTo(i)}
+              title={p.label}
+              style={{
+                width: i === current ? 20 : 7, height: 7, borderRadius: 4,
+                border: 'none',
+                background: i === current ? '#1a7fa8' : '#DFE3E8',
+                cursor: 'pointer', padding: 0,
+                transition: 'all .2s',
+              }}
             />
-          </PageWrapper>
-
-          {/* Disabilities Page (My Conditions) */}
-          <PageWrapper>
-            <PassportDisabilitiesPage
-              disabilities={data.disabilities || []}
-              pageNumber={2}
-            />
-          </PageWrapper>
-
-          {/* Challenges Page (I Struggle With) */}
-          <PageWrapper>
-            <PassportChallengesPage
-              challenges={data.challenges || []}
-              pageNumber={3}
-            />
-          </PageWrapper>
-
-          {/* Adjustment Pages */}
-          {data.approvedAdjustments.map((adjustment, index) => (
-            <PageWrapper key={adjustment.id}>
-              <PassportAdjustmentPage
-                adjustment={adjustment}
-                pageNumber={index + 4}
-              />
-            </PageWrapper>
           ))}
+        </div>
 
-          {/* Inside Back Cover */}
-          <PageWrapper>
-            <PassportInsideCover variant="back" />
-          </PageWrapper>
-
-          {/* Back Cover */}
-          <PageWrapper>
-            <PassportCover variant="back" />
-          </PageWrapper>
-        </HTMLFlipBook>
-      </Box>
-
-      {/* Navigation controls */}
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 2,
-        }}
-      >
-        <IconButton
-          onClick={handleFlipPrev}
-          disabled={currentPage === 0}
-          sx={{
-            bgcolor: alpha(theme.palette.primary.main, 0.1),
-            '&:hover': {
-              bgcolor: alpha(theme.palette.primary.main, 0.2),
-            },
-            '&:disabled': {
-              bgcolor: alpha(theme.palette.grey[500], 0.1),
-            },
+        <button
+          onClick={next}
+          disabled={current === PAGES.length - 1}
+          style={{
+            width: 34, height: 34, borderRadius: '50%',
+            border: '1.5px solid #DFE3E8',
+            background: current === PAGES.length - 1 ? '#F4F6F8' : '#fff',
+            cursor: current === PAGES.length - 1 ? 'default' : 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 14, color: current === PAGES.length - 1 ? '#C4CDD5' : '#212B36',
+            boxShadow: current < PAGES.length - 1 ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
+            transition: 'all .15s',
           }}
         >
-          <Iconify icon="eva:arrow-ios-back-fill" />
-        </IconButton>
+          ›
+        </button>
+      </div>
 
-        <Typography
-          variant="body2"
-          sx={{
-            color: theme.palette.text.secondary,
-            minWidth: 100,
-            textAlign: 'center',
-          }}
-        >
-          Page {currentPage + 1} of {totalPages}
-        </Typography>
-
-        <IconButton
-          onClick={handleFlipNext}
-          disabled={currentPage >= totalPages - 1}
-          sx={{
-            bgcolor: alpha(theme.palette.primary.main, 0.1),
-            '&:hover': {
-              bgcolor: alpha(theme.palette.primary.main, 0.2),
-            },
-            '&:disabled': {
-              bgcolor: alpha(theme.palette.grey[500], 0.1),
-            },
-          }}
-        >
-          <Iconify icon="eva:arrow-ios-forward-fill" />
-        </IconButton>
-      </Box>
-
-      {/* Instructions */}
-      <Typography
-        variant="caption"
-        sx={{
-          color: theme.palette.text.disabled,
-          textAlign: 'center',
-        }}
-      >
-        Click on page corners or use arrows to flip pages
-      </Typography>
-    </Box>
+      {/* Page label */}
+      <div style={{ fontSize: 11, color: '#919EAB', fontFamily: "'DM Sans',sans-serif" }}>
+        {PAGES[current].label} · {current + 1} of {PAGES.length}
+      </div>
+    </div>
   );
 }
