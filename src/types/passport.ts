@@ -19,7 +19,7 @@ export interface IPassportStamp {
   approverInitials: string;
 }
 
-export interface IPassportLimitation {
+export interface IPassportChallenge {
   id: string;
   description: string;
   category?: string;
@@ -30,7 +30,7 @@ export interface IPassportData {
   passportNumber: string;
   holder: IPassportHolder;
   disabilities: IDisabilityItem[];
-  limitations: IPassportLimitation[];
+  challenges: IPassportChallenge[];
   approvedAdjustments: IAdjustmentRequestItem[];
   stamps: IPassportStamp[];
   issueDate: Date;

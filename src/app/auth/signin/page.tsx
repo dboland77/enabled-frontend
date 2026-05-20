@@ -1,12 +1,11 @@
 'use client';
+import { Suspense, useState } from 'react';
 import OneTapComponent from '@/app/auth/signin/GoogleOneTap';
 
 import * as Yup from 'yup';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import Link from '@mui/material/Link';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
@@ -14,18 +13,21 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import InputAdornment from '@mui/material/InputAdornment';
 
+import Logo from '@/components/logo';
 import Iconify from '@/components/iconify';
 import { useBoolean } from '@/hooks';
 import FormProvider, { RHFTextField } from '@/components/hook-form';
 
 import { createClient } from '@/lib/supabase/client';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import { SignInFormValues } from '../types';
 
-export default function SignInView() {
+function SignInForm() {
   const [errorMsg, setErrorMsg] = useState('');
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get('redirectTo') ?? '/dashboard/app';
 
   const showPassword = useBoolean();
 
@@ -54,16 +56,31 @@ export default function SignInView() {
     const { error } = await supabase.auth.signInWithPassword(data);
 
     if (error) {
-      setErrorMsg('Email or password not recognised. Please try again.');
+      reset();
+      setErrorMsg(error.message);
       return;
     }
 
-    router.push('/dashboard/app');
+    router.push(redirectTo);
   };
 
   const renderHead = (
     <Stack spacing={2} sx={{ mb: 5 }}>
-      <Typography variant="h4">Sign in to enableD</Typography>
+      <Stack direction="row" alignItems="center" spacing={1}>
+        <Typography
+          sx={{
+            fontFamily: '"DM Sans", sans-serif',
+            fontWeight: 800,
+            fontSize: 36,
+            letterSpacing: '-0.03em',
+            lineHeight: 1,
+            color: 'text.primary',
+          }}
+        >
+          Sign in to
+        </Typography>
+        <Logo size="lg" disabledLink />
+      </Stack>
 
       {/* TODO: Re-enable sign up after testing phase
       <Stack direction="row" spacing={0.5}>
@@ -134,9 +151,16 @@ export default function SignInView() {
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       {renderHead}
-
       {renderForm}
       <OneTapComponent />
     </FormProvider>
+  );
+}
+
+export default function SignInView() {
+  return (
+    <Suspense>
+      <SignInForm />
+    </Suspense>
   );
 }

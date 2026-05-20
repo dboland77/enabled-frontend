@@ -55,12 +55,12 @@ export default function WizardStepper({ activeStep, onStepClick }: Props) {
                   <Typography
                     variant="subtitle2"
                     sx={{
-                      fontWeight: isActive ? 700 : 500,
+                      fontWeight: isActive ? 700 : 600,
                       color: isActive
                         ? 'primary.main'
                         : isCompleted
                           ? 'text.primary'
-                          : 'text.disabled',
+                          : 'text.secondary',
                     }}
                   >
                     {step.title}
@@ -68,7 +68,8 @@ export default function WizardStepper({ activeStep, onStepClick }: Props) {
                   <Typography
                     variant="caption"
                     sx={{
-                      color: isActive ? 'text.secondary' : 'text.disabled',
+                      fontWeight: 500,
+                      color: isActive ? 'text.primary' : 'text.secondary',
                       display: { xs: 'none', sm: 'block' },
                     }}
                   >

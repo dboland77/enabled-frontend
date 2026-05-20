@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 
 import { createClient } from '@/lib/supabase/client';
 import { IAdjustmentRequestItem, RequestStatusTypes } from '@/types/adjustmentRequest';
-import { IPassportData, IPassportHolder, IPassportLimitation, generatePassportNumber } from '@/types/passport';
+import { IPassportData, IPassportHolder, IPassportChallenge, generatePassportNumber } from '@/types/passport';
 import { IDisabilityItem } from '@/types/disability';
 
 // ----------------------------------------------------------------------
@@ -14,9 +14,9 @@ interface UsePassportReturn {
   loading: boolean;
   error: string | null;
   refetch: () => Promise<void>;
-  addLimitation: (description: string, category?: string) => Promise<boolean>;
-  removeLimitation: (limitationId: string) => Promise<boolean>;
-  updateLimitation: (limitationId: string, description: string, category?: string) => Promise<boolean>;
+  addChallenge: (description: string, category?: string) => Promise<boolean>;
+  removeChallenge: (challengeId: string) => Promise<boolean>;
+  updateChallenge: (challengeId: string, description: string, category?: string) => Promise<boolean>;
 }
 
 export function usePassport(): UsePassportReturn {
@@ -44,9 +44,9 @@ export function usePassport(): UsePassportReturn {
 
       // Fetch user profile for additional details
       const { data: profile } = await supabase
-        .from('profiles')
+        .from('user_profile')
         .select('*')
-        .eq('id', user.id)
+        .eq('userId', user.id)
         .single();
 
       // Fetch user's saved disabilities
@@ -66,9 +66,9 @@ export function usePassport(): UsePassportReturn {
         `)
         .eq('user_id', user.id);
 
-      // Fetch user's limitations ("I struggle with")
-      const { data: userLimitations } = await supabase
-        .from('user_limitations')
+      // Fetch user's challenges ("I struggle with")
+      const { data: userChallenges } = await supabase
+        .from('user_challenges')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
@@ -100,8 +100,8 @@ export function usePassport(): UsePassportReturn {
           updated_at: ud.disabilities.updated_at,
         }));
 
-      // Map limitations
-      const limitations: IPassportLimitation[] = (userLimitations || []).map((lim: any) => ({
+      // Map challenges
+      const challenges: IPassportChallenge[] = (userChallenges || []).map((lim: any) => ({
         id: lim.id,
         description: lim.description,
         category: lim.category,
@@ -130,11 +130,14 @@ export function usePassport(): UsePassportReturn {
       }));
 
       // Build holder info from user metadata and profile
+      const profileFullName = profile
+        ? `${profile.firstname || ''} ${profile.lastname || ''}`.trim()
+        : '';
       const holder: IPassportHolder = {
         id: user.id,
-        fullName: profile?.display_name || user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+        fullName: profileFullName || user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
         email: user.email || '',
-        avatarUrl: profile?.avatar_url || user.user_metadata?.avatar_url,
+        avatarUrl: profile?.avatar || user.user_metadata?.avatar_url,
         jobTitle: profile?.job_title,
         department: profile?.department,
         issueDate: new Date(user.created_at || Date.now()),
@@ -158,7 +161,7 @@ export function usePassport(): UsePassportReturn {
           issueDate: firstApprovalDate,
         },
         disabilities,
-        limitations,
+        challenges,
         approvedAdjustments: mappedAdjustments,
         stamps: mappedAdjustments.map((adj) => ({
           id: adj.id,
@@ -179,13 +182,13 @@ export function usePassport(): UsePassportReturn {
     }
   }, [supabase]);
 
-  const addLimitation = useCallback(async (description: string, category?: string): Promise<boolean> => {
+  const addChallenge = useCallback(async (description: string, category?: string): Promise<boolean> => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return false;
 
       const { error: insertError } = await supabase
-        .from('user_limitations')
+        .from('user_challenges')
         .insert({
           user_id: user.id,
           description,
@@ -193,61 +196,61 @@ export function usePassport(): UsePassportReturn {
         });
 
       if (insertError) {
-        console.error('Error adding limitation:', insertError);
+        console.error('Error adding challenge:', insertError);
         return false;
       }
 
       await fetchPassportData();
       return true;
     } catch (err) {
-      console.error('Error adding limitation:', err);
+      console.error('Error adding challenge:', err);
       return false;
     }
   }, [supabase, fetchPassportData]);
 
-  const removeLimitation = useCallback(async (limitationId: string): Promise<boolean> => {
+  const removeChallenge = useCallback(async (challengeId: string): Promise<boolean> => {
     try {
       const { error: deleteError } = await supabase
-        .from('user_limitations')
+        .from('user_challenges')
         .delete()
-        .eq('id', limitationId);
+        .eq('id', challengeId);
 
       if (deleteError) {
-        console.error('Error removing limitation:', deleteError);
+        console.error('Error removing challenge:', deleteError);
         return false;
       }
 
       await fetchPassportData();
       return true;
     } catch (err) {
-      console.error('Error removing limitation:', err);
+      console.error('Error removing challenge:', err);
       return false;
     }
   }, [supabase, fetchPassportData]);
 
-  const updateLimitation = useCallback(async (
-    limitationId: string,
+  const updateChallenge = useCallback(async (
+    challengeId: string,
     description: string,
     category?: string
   ): Promise<boolean> => {
     try {
       const { error: updateError } = await supabase
-        .from('user_limitations')
+        .from('user_challenges')
         .update({
           description,
           category: category || null,
         })
-        .eq('id', limitationId);
+        .eq('id', challengeId);
 
       if (updateError) {
-        console.error('Error updating limitation:', updateError);
+        console.error('Error updating challenge:', updateError);
         return false;
       }
 
       await fetchPassportData();
       return true;
     } catch (err) {
-      console.error('Error updating limitation:', err);
+      console.error('Error updating challenge:', err);
       return false;
     }
   }, [supabase, fetchPassportData]);
@@ -261,9 +264,9 @@ export function usePassport(): UsePassportReturn {
     loading,
     error,
     refetch: fetchPassportData,
-    addLimitation,
-    removeLimitation,
-    updateLimitation,
+    addChallenge,
+    removeChallenge,
+    updateChallenge,
   };
 }
 

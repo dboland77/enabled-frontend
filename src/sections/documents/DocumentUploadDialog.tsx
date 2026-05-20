@@ -109,8 +109,7 @@ export default function DocumentUploadDialog({
     try {
       await onUpload({
         file,
-        title: title.trim(),
-        description: description.trim() || undefined,
+        name: title.trim(),
         category,
       });
       resetForm();
@@ -181,12 +180,12 @@ export default function DocumentUploadDialog({
               backgroundColor: alpha(theme.palette.grey[500], 0.04),
               border: `2px dashed ${alpha(theme.palette.grey[500], 0.24)}`,
               transition: theme.transitions.create(['border-color', 'background-color']),
-              '&:hover': !uploading
-                ? {
-                    borderColor: theme.palette.primary.main,
-                    backgroundColor: alpha(theme.palette.primary.main, 0.04),
-                  }
-                : undefined,
+              ...(uploading === false && {
+                '&:hover': {
+                  borderColor: theme.palette.primary.main,
+                  backgroundColor: alpha(theme.palette.primary.main, 0.04),
+                },
+              }),
               ...(isDragActive && {
                 borderColor: theme.palette.primary.main,
                 backgroundColor: alpha(theme.palette.primary.main, 0.08),

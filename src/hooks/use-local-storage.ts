@@ -5,7 +5,7 @@ function getInitialState(key: string, initialState: any) {
   if (typeof window === 'undefined') {
     return initialState;
   }
-  
+
   try {
     const stored = window.localStorage.getItem(key);
     if (stored) {
@@ -14,18 +14,18 @@ function getInitialState(key: string, initialState: any) {
   } catch (error) {
     console.error('Error reading from localStorage:', error);
   }
-  
+
   return initialState;
 }
 
 export function useLocalStorage(key: string, initialState: any) {
   // Use ref to track if initial load from storage is done
-  const isInitialized = useRef(false);
-  
+  const isInitialised = useRef(false);
+
   const [state, setState] = useState(() => {
     // Only read from localStorage once during initialization
-    if (typeof window !== 'undefined' && !isInitialized.current) {
-      isInitialized.current = true;
+    if (typeof window !== 'undefined' && !isInitialised.current) {
+      isInitialised.current = true;
       return getInitialState(key, initialState);
     }
     return initialState;
@@ -33,7 +33,7 @@ export function useLocalStorage(key: string, initialState: any) {
 
   // Sync state from localStorage on mount (for SSR hydration)
   useEffect(() => {
-    if (!isInitialized.current) {
+    if (!isInitialised.current) {
       const restored = getStorage(key);
       if (restored) {
         setState((prevValue: any) => ({
@@ -41,7 +41,7 @@ export function useLocalStorage(key: string, initialState: any) {
           ...restored,
         }));
       }
-      isInitialized.current = true;
+      isInitialised.current = true;
     }
   }, [key]);
 
@@ -66,11 +66,14 @@ export function useLocalStorage(key: string, initialState: any) {
   }, [initialState, key]);
 
   // Memoize return value to prevent unnecessary re-renders
-  return useMemo(() => ({
-    state,
-    update,
-    reset,
-  }), [state, update, reset]);
+  return useMemo(
+    () => ({
+      state,
+      update,
+      reset,
+    }),
+    [state, update, reset]
+  );
 }
 
 export const getStorage = (key: string) => {

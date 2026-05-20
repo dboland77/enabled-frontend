@@ -52,7 +52,7 @@ export default function DocumentShareDialog({
   const [error, setError] = useState<string | null>(null);
 
   // Get current shares for this document
-  const currentShares = document?.shares?.filter((s) => !s.revoked_at) || [];
+  const currentShares = document?.shares || [];
   const sharedUserIds = new Set(currentShares.map((s) => s.shared_with_user_id));
 
   // Fetch eligible recipients when dialog opens

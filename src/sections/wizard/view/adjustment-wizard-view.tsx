@@ -23,13 +23,13 @@ import { useSettingsContext } from '@/components/settings';
 import CustomBreadcrumbs from '@/components/custom-breadcrumbs';
 
 import { useDisabilities } from '@/hooks/use-disabilities';
-import { useLimitations, useRecommendedAdjustments, useWizardSession } from '@/hooks/use-wizard';
-import { WIZARD_STEPS, IRecommendedAdjustment, ILimitationItem } from '@/types/wizard';
+import { useChallenges, useRecommendedAdjustments, useWizardSession } from '@/hooks/use-wizard';
+import { WIZARD_STEPS, IRecommendedAdjustment, IChallengeItem } from '@/types/wizard';
 import { IDisabilityItem } from '@/types/disability';
 
 import WizardStepper from '../wizard-stepper';
 import WizardStepReview from '../steps/wizard-step-review';
-import WizardStepLimitations from '../steps/wizard-step-limitations';
+import WizardStepChallenges from '../steps/wizard-step-challenges';
 import WizardStepAdjustments from '../steps/wizard-step-adjustments';
 import WizardStepDisabilities from '../steps/wizard-step-disabilities';
 
@@ -43,18 +43,34 @@ export default function AdjustmentWizardView() {
   const confirmSubmit = useBoolean();
 
   // Session management
-  const { session, loading: sessionLoading, saving, error: sessionError, updateSession, updateSessionLocal, saveNotes, completeWizard, resetWizard } = useWizardSession();
+  const {
+    session,
+    loading: sessionLoading,
+    saving,
+    error: sessionError,
+    updateSession,
+    updateSessionLocal,
+    saveNotes,
+    completeWizard,
+    resetWizard,
+  } = useWizardSession();
 
   // Data fetching
-  const { disabilities, loading: disabilitiesLoading, error: disabilitiesError } = useDisabilities();
-  const { limitations, loading: limitationsLoading, error: limitationsError } = useLimitations(
-    session.selectedDisabilities
-  );
+  const {
+    disabilities,
+    loading: disabilitiesLoading,
+    error: disabilitiesError,
+  } = useDisabilities();
+  const {
+    challenges,
+    loading: challengesLoading,
+    error: challengesError,
+  } = useChallenges(session.selectedDisabilities);
   const {
     recommendations,
     loading: recommendationsLoading,
     error: recommendationsError,
-  } = useRecommendedAdjustments(session.selectedDisabilities, session.selectedLimitations);
+  } = useRecommendedAdjustments(session.selectedDisabilities, session.selectedChallenges);
 
   // Get selected items for review
   const selectedDisabilities = useMemo(
@@ -62,9 +78,9 @@ export default function AdjustmentWizardView() {
     [disabilities, session.selectedDisabilities]
   );
 
-  const selectedLimitations = useMemo(
-    () => limitations.filter((l) => session.selectedLimitations.includes(l.id)),
-    [limitations, session.selectedLimitations]
+  const selectedChallenges = useMemo(
+    () => challenges.filter((l) => session.selectedChallenges.includes(l.id)),
+    [challenges, session.selectedChallenges]
   );
 
   const selectedAdjustments = useMemo(
@@ -102,9 +118,9 @@ export default function AdjustmentWizardView() {
     [updateSession]
   );
 
-  const handleLimitationsChange = useCallback(
+  const handleChallengesChange = useCallback(
     (ids: string[]) => {
-      updateSession({ selectedLimitations: ids });
+      updateSession({ selectedChallenges: ids });
     },
     [updateSession]
   );
@@ -153,7 +169,7 @@ export default function AdjustmentWizardView() {
       case 1:
         return true; // Can skip disabilities
       case 2:
-        return true; // Can skip limitations
+        return true; // Can skip challenges
       case 3:
         return session.selectedAdjustments.length > 0;
       case 4:
@@ -178,12 +194,12 @@ export default function AdjustmentWizardView() {
         );
       case 2:
         return (
-          <WizardStepLimitations
-            limitations={limitations}
-            selectedIds={session.selectedLimitations}
-            onSelectionChange={handleLimitationsChange}
-            loading={limitationsLoading}
-            error={limitationsError}
+          <WizardStepChallenges
+            challenges={challenges}
+            selectedIds={session.selectedChallenges}
+            onSelectionChange={handleChallengesChange}
+            loading={challengesLoading}
+            error={challengesError}
           />
         );
       case 3:
@@ -200,7 +216,7 @@ export default function AdjustmentWizardView() {
         return (
           <WizardStepReview
             selectedDisabilities={selectedDisabilities}
-            selectedLimitations={selectedLimitations}
+            selectedChallenges={selectedChallenges}
             selectedAdjustments={selectedAdjustments}
             additionalNotes={session.additionalNotes}
             onNotesChange={handleNotesChange}
@@ -225,8 +241,8 @@ export default function AdjustmentWizardView() {
           ]}
           action={
             <Button
-              variant="outlined"
-              color="inherit"
+              variant="soft"
+              color="error"
               startIcon={<Iconify icon="mdi:refresh" />}
               onClick={confirmReset.onTrue}
               disabled={saving}
@@ -252,18 +268,20 @@ export default function AdjustmentWizardView() {
         </Card>
 
         {/* Navigation buttons */}
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-          sx={{ mt: 3 }}
-        >
+        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mt: 3 }}>
           <Button
+            size="large"
             variant="outlined"
-            color="inherit"
             startIcon={<Iconify icon="eva:arrow-back-fill" />}
             onClick={handleBack}
             disabled={session.currentStep === 1 || saving}
+            sx={{
+              borderColor: 'divider',
+              '&:hover': {
+                borderColor: 'text.primary',
+                bgcolor: alpha(theme.palette.grey[500], 0.08),
+              },
+            }}
           >
             Back
           </Button>
@@ -280,20 +298,37 @@ export default function AdjustmentWizardView() {
 
             {session.currentStep < 4 ? (
               <Button
+                size="large"
                 variant="contained"
+                color="primary"
                 endIcon={<Iconify icon="eva:arrow-forward-fill" />}
                 onClick={handleNext}
                 disabled={!canProceed() || saving}
+                sx={{
+                  minWidth: 140,
+                  boxShadow: theme.shadows[8],
+                  '&:hover': {
+                    boxShadow: theme.shadows[12],
+                  },
+                }}
               >
                 {session.currentStep === 3 ? 'Review' : 'Continue'}
               </Button>
             ) : (
               <Button
+                size="large"
                 variant="contained"
                 color="success"
                 endIcon={<Iconify icon="mdi:check" />}
                 onClick={confirmSubmit.onTrue}
                 disabled={!canProceed() || saving}
+                sx={{
+                  minWidth: 140,
+                  boxShadow: theme.shadows[8],
+                  '&:hover': {
+                    boxShadow: theme.shadows[12],
+                  },
+                }}
               >
                 Submit Request
               </Button>

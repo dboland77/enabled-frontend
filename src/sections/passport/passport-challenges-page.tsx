@@ -6,18 +6,18 @@ import { alpha, useTheme } from '@mui/material/styles';
 
 import { forwardRef } from 'react';
 
-import { IPassportLimitation } from '@/types/passport';
+import { IPassportChallenge } from '@/types/passport';
 import Iconify from '@/components/iconify';
 
 // ----------------------------------------------------------------------
 
-interface PassportLimitationsPageProps {
-  limitations: IPassportLimitation[];
+interface PassportChallengesPageProps {
+  challenges: IPassportChallenge[];
   pageNumber: number;
 }
 
-const PassportLimitationsPage = forwardRef<HTMLDivElement, PassportLimitationsPageProps>(
-  ({ limitations, pageNumber }, ref) => {
+const PassportChallengesPage = forwardRef<HTMLDivElement, PassportChallengesPageProps>(
+  ({ challenges, pageNumber }, ref) => {
     const theme = useTheme();
 
     return (
@@ -94,8 +94,8 @@ const PassportLimitationsPage = forwardRef<HTMLDivElement, PassportLimitationsPa
           </Typography>
         </Box>
 
-        {/* Limitations list */}
-        {limitations.length === 0 ? (
+        {/* Challenges list */}
+        {challenges.length === 0 ? (
           <Box
             sx={{
               display: 'flex',
@@ -112,7 +112,7 @@ const PassportLimitationsPage = forwardRef<HTMLDivElement, PassportLimitationsPa
               sx={{ mb: 1, opacity: 0.5 }}
             />
             <Typography variant="body2" sx={{ fontSize: '11px' }}>
-              No limitations recorded
+              No challenges recorded
             </Typography>
             <Typography variant="caption" sx={{ fontSize: '9px', mt: 0.5 }}>
               Add items to help others understand your needs
@@ -120,9 +120,9 @@ const PassportLimitationsPage = forwardRef<HTMLDivElement, PassportLimitationsPa
           </Box>
         ) : (
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-            {limitations.map((limitation, index) => (
+            {challenges.map((challenge, index) => (
               <Box
-                key={limitation.id}
+                key={challenge.id}
                 sx={{
                   display: 'flex',
                   alignItems: 'flex-start',
@@ -161,9 +161,9 @@ const PassportLimitationsPage = forwardRef<HTMLDivElement, PassportLimitationsPa
                       lineHeight: 1.4,
                     }}
                   >
-                    {limitation.description}
+                    {challenge.description}
                   </Typography>
-                  {limitation.category && (
+                  {challenge.category && (
                     <Typography
                       variant="caption"
                       sx={{
@@ -173,7 +173,7 @@ const PassportLimitationsPage = forwardRef<HTMLDivElement, PassportLimitationsPa
                         mt: 0.5,
                       }}
                     >
-                      {limitation.category}
+                      {challenge.category}
                     </Typography>
                   )}
                 </Box>
@@ -199,6 +199,6 @@ const PassportLimitationsPage = forwardRef<HTMLDivElement, PassportLimitationsPa
   }
 );
 
-PassportLimitationsPage.displayName = 'PassportLimitationsPage';
+PassportChallengesPage.displayName = 'PassportChallengesPage';
 
-export default PassportLimitationsPage;
+export default PassportChallengesPage;

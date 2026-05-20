@@ -1,0 +1,90 @@
+/* Icon mark — compact / collapsed sidebar */
+.iconMark {
+  width: 36px;
+  height: 36px;
+  background: #1a7fa8;
+  border-radius: 22%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(26, 127, 168, 0.3);
+}
+
+.iconMarkText {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: #fff;
+  user-select: none;
+}
+
+.iconMarkText .e {
+  opacity: 0.75;
+}
+
+/* Full wordmark */
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+}
+
+/* Base wordmark text — no font-size here to avoid cascade order dependency */
+.wordmarkText {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: #1a2e3a;
+  user-select: none;
+}
+
+/* Explicit size classes — always one of these is applied alongside .wordmarkText */
+.wordmarkMd {
+  font-size: 22px;
+}
+
+.wordmarkLg {
+  font-size: 36px;
+}
+
+.wordmarkText .cap {
+  color: #1a7fa8;
+}
+
+/* Light variant — for use on dark/coloured backgrounds */
+.wordmarkLight {
+  color: #fff;
+}
+
+/* Light blue so the D remains distinct against the green gradient */
+.wordmarkLight .cap {
+  color: #7ec8e3;
+}
+
+/* Beta badge — remove this rule entirely when platform exits beta */
+.betaBadge {
+  position: absolute;
+  top: -8px;
+  right: -36px;
+  background: #ff5630;
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+}
+
+.link {
+  display: contents;
+}

@@ -2,7 +2,7 @@
 // Adjustment Wizard Types
 // ----------------------------------------------------------------------
 
-export type ILimitationItem = {
+export type IChallengeItem = {
   id: string;
   name: string;
   description: string | null;
@@ -12,23 +12,23 @@ export type ILimitationItem = {
   updated_at: Date;
 };
 
-export type ILimitationWithSelection = ILimitationItem & {
+export type IChallengeWithSelection = IChallengeItem & {
   selected: boolean;
   severity?: string;
 };
 
-export type IDisabilityLimitation = {
+export type IDisabilityChallenge = {
   id: string;
   disability_id: string;
-  limitation_id: string;
+  challenge_id: string;
   is_common: boolean;
   notes: string | null;
   created_at: Date;
 };
 
-export type ILimitationAdjustment = {
+export type IChallengeAdjustment = {
   id: string;
-  limitation_id: string;
+  challenge_id: string;
   adjustment_id: string;
   relevance_score: number;
   notes: string | null;
@@ -42,7 +42,7 @@ export type IRecommendedAdjustment = {
   description: string;
   relevance_score: number;
   sources: {
-    type: 'disability' | 'limitation';
+    type: 'disability' | 'challenge';
     name: string;
     score: number;
   }[];
@@ -54,7 +54,7 @@ export type IWizardSession = {
   user_id: string;
   current_step: number;
   selected_disabilities: string[];
-  selected_limitations: string[];
+  selected_challenges: string[];
   selected_adjustments: string[];
   additional_notes: string | null;
   completed_at: Date | null;
@@ -65,7 +65,7 @@ export type IWizardSession = {
 export type IWizardState = {
   currentStep: number;
   selectedDisabilities: string[];
-  selectedLimitations: string[];
+  selectedChallenges: string[];
   selectedAdjustments: string[];
   additionalNotes: string;
   sessionId: string | null;
@@ -87,8 +87,8 @@ export const WIZARD_STEPS: WizardStep[] = [
   },
   {
     id: 2,
-    title: 'Limitations',
-    description: 'Identify specific functional limitations',
+    title: 'Challenges',
+    description: 'Identify specific functional challenges',
     icon: 'mdi:hand-heart',
   },
   {
@@ -105,8 +105,8 @@ export const WIZARD_STEPS: WizardStep[] = [
   },
 ];
 
-// Limitation categories for filtering
-export const LIMITATION_CATEGORIES = [
+// Challenge categories for filtering
+export const CHALLENGE_CATEGORIES = [
   'Visual',
   'Hearing',
   'Mobility',
@@ -119,4 +119,4 @@ export const LIMITATION_CATEGORIES = [
   'Other',
 ] as const;
 
-export type LimitationCategory = (typeof LIMITATION_CATEGORIES)[number];
+export type ChallengeCategory = (typeof CHALLENGE_CATEGORIES)[number];

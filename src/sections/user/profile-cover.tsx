@@ -36,10 +36,10 @@ interface ProfileCoverProps extends IUserProfileCover {
   completionPercentage?: number;
 }
 
-export default function ProfileCover({ 
-  name, 
-  avatarUrl, 
-  role, 
+export default function ProfileCover({
+  name,
+  avatarUrl,
+  role,
   isEditMode = false,
   onToggleEdit,
   completionPercentage = 0,
@@ -108,9 +108,9 @@ export default function ProfileCover({
 
       {/* Edit/View toggle button */}
       {onToggleEdit && (
-        <Tooltip 
-          title={isEditMode ? 'Switch to view mode' : 'Edit your profile'} 
-          arrow 
+        <Tooltip
+          title={isEditMode ? 'Switch to view mode' : 'Edit your profile'}
+          arrow
           placement="left"
         >
           <IconButton
@@ -137,19 +137,16 @@ export default function ProfileCover({
               },
             }}
           >
-            <Iconify 
-              icon={isEditMode ? 'solar:eye-bold' : 'solar:pen-bold'} 
-              width={20} 
-            />
+            <Iconify icon={isEditMode ? 'solar:eye-bold' : 'solar:pen-bold'} width={20} />
           </IconButton>
         </Tooltip>
       )}
 
       {/* Profile completion indicator */}
       {completionPercentage > 0 && completionPercentage < 100 && (
-        <Tooltip 
-          title={`Profile ${completionPercentage}% complete. Add more details to help us support you better!`} 
-          arrow 
+        <Tooltip
+          title={`Profile ${completionPercentage}% complete. Add more details to help us support you better!`}
+          arrow
           placement="bottom"
         >
           <Chip
@@ -232,28 +229,28 @@ export default function ProfileCover({
             textAlign: { xs: 'center', md: 'left' },
           }}
         >
-          <Typography 
-            variant="h4" 
-            sx={{ 
+          <Typography
+            variant="h4"
+            sx={{
               fontWeight: 700,
               color: coverTextColor,
             }}
           >
             {name || 'Welcome!'}
           </Typography>
-          
+
           {role && (
-            <Stack 
-              direction="row" 
-              alignItems="center" 
+            <Stack
+              direction="row"
+              alignItems="center"
               spacing={1}
               justifyContent={{ xs: 'center', md: 'flex-start' }}
               sx={{ mt: 0.5 }}
             >
               <Iconify icon="solar:briefcase-bold" width={18} sx={{ color: coverTextSecondary }} />
-              <Typography 
-                variant="body1" 
-                sx={{ 
+              <Typography
+                variant="body1"
+                sx={{
                   color: coverTextSecondary,
                   textTransform: 'capitalize',
                 }}
@@ -264,17 +261,17 @@ export default function ProfileCover({
           )}
 
           {/* Friendly welcome message */}
-          <Typography 
-            variant="body2" 
-            sx={{ 
+          <Typography
+            variant="body2"
+            sx={{
               mt: 1,
               color: coverTextSecondary,
               maxWidth: 300,
             }}
           >
-            {isEditMode 
+            {isEditMode
               ? 'Update your information below to help us support you better.'
-              : 'Your profile helps us provide personalized support.'}
+              : 'Your profile helps us provide personalised support.'}
           </Typography>
         </Stack>
       </Stack>

@@ -9,7 +9,6 @@ import { format } from 'date-fns';
 import { forwardRef, useMemo } from 'react';
 
 import { IAdjustmentRequestItem } from '@/types/adjustmentRequest';
-import { getApproverInitials } from '@/types/passport';
 import PassportStamp from './passport-stamp';
 
 // ----------------------------------------------------------------------
@@ -28,8 +27,6 @@ const PassportAdjustmentPage = forwardRef<HTMLDivElement, PassportAdjustmentPage
       const hash = adjustment.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
       return (hash % 11) - 5; // Range: -5 to 5 degrees
     }, [adjustment.id]);
-
-    const approverInitials = getApproverInitials(adjustment.approverName);
 
     return (
       <Box
@@ -270,9 +267,10 @@ const PassportAdjustmentPage = forwardRef<HTMLDivElement, PassportAdjustmentPage
           }}
         >
           <PassportStamp
-            approvalDate={adjustment.respondedAt || adjustment.createdAt}
-            approverInitials={approverInitials}
+            status="approved"
+            date={format(new Date(adjustment.respondedAt || adjustment.createdAt), 'dd MMM yyyy')}
             rotation={stampRotation}
+            size="sm"
           />
         </Box>
 

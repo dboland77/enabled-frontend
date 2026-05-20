@@ -42,10 +42,10 @@ export default function HomeView() {
     const createOnboardingNotifications = async () => {
       // Skip if already processed this session
       if (notificationsCreatedRef.current) return;
-      
+
       // Wait for both profile and notifications to finish loading
       if (profileLoading || notificationsLoading || !profile?.userId) return;
-      
+
       // Mark as processed immediately to prevent duplicate calls
       notificationsCreatedRef.current = true;
 
@@ -80,7 +80,7 @@ export default function HomeView() {
             userId: profile.userId,
             title: 'Try the Adjustment Wizard',
             message:
-              'Get personalised workplace adjustment recommendations based on your disabilities and limitations using our guided wizard.',
+              'Get personalised workplace adjustment recommendations based on your disabilities and challenges using our guided wizard.',
             type: NotificationType.TRY_WIZARD,
             category: NotificationCategory.SYSTEM,
           });
@@ -180,7 +180,7 @@ export default function HomeView() {
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Get personalised workplace adjustment recommendations based on your disabilities
-                  and limitations
+                  and challenges
                 </Typography>
               </Box>
               <Iconify

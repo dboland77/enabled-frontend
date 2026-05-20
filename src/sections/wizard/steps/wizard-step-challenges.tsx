@@ -15,20 +15,20 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { alpha, useTheme } from '@mui/material/styles';
 
 import Iconify from '@/components/iconify';
-import { IDisabilityItem } from '@/types/disability';
+import { IChallengeItem } from '@/types/wizard';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  disabilities: IDisabilityItem[];
+  challenges: IChallengeItem[];
   selectedIds: string[];
   onSelectionChange: (ids: string[]) => void;
   loading?: boolean;
   error?: string | null;
 };
 
-export default function WizardStepDisabilities({
-  disabilities,
+export default function WizardStepChallenges({
+  challenges,
   selectedIds,
   onSelectionChange,
   loading,
@@ -39,26 +39,43 @@ export default function WizardStepDisabilities({
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const itemsPerPage = 10;
 
-  // Group disabilities by category
-  const groupedDisabilities = useMemo(() => {
-    return disabilities.reduce(
-      (acc, disability) => {
-        const category = disability.category || 'Other';
+  // Group challenges by category
+  const groupedChallenges = useMemo(() => {
+    return challenges.reduce(
+      (acc, challenge) => {
+        const category = challenge.category || 'Other';
         if (!acc[category]) {
           acc[category] = [];
         }
-        acc[category].push(disability);
+        acc[category].push(challenge);
         return acc;
       },
-      {} as Record<string, IDisabilityItem[]>
+      {} as Record<string, IChallengeItem[]>
     );
-  }, [disabilities]);
+  }, [challenges]);
 
   const handleToggle = (id: string) => {
     const newSelection = selectedIds.includes(id)
       ? selectedIds.filter((sid) => sid !== id)
       : [...selectedIds, id];
     onSelectionChange(newSelection);
+  };
+
+  // Get category icon
+  const getCategoryIcon = (category: string) => {
+    const iconMap: Record<string, string> = {
+      Visual: 'mdi:eye',
+      Hearing: 'mdi:ear-hearing',
+      Mobility: 'mdi:wheelchair-accessibility',
+      Dexterity: 'mdi:hand-back-left',
+      Cognitive: 'mdi:brain',
+      Communication: 'mdi:message-text',
+      'Energy/Fatigue': 'mdi:battery-low',
+      'Pain Management': 'mdi:medical-bag',
+      'Mental Health': 'mdi:head-heart',
+      Other: 'mdi:dots-horizontal-circle',
+    };
+    return iconMap[category] || 'mdi:circle';
   };
 
   if (loading) {
@@ -81,27 +98,27 @@ export default function WizardStepDisabilities({
     <Stack spacing={3}>
       <Box>
         <Typography variant="h5" sx={{ mb: 1 }}>
-          Select Your Disabilities
+          Identify Functional Challenges
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Choose any disabilities that apply to you. This helps us recommend appropriate workplace
-          adjustments. You can skip this step if you prefer to select challenges directly.
+          Select any functional challenges you experience that may affect your work. These help us
+          provide more specific adjustment recommendations.
         </Typography>
       </Box>
 
       {/* Selected count */}
       {selectedIds.length > 0 && (
         <Alert severity="info" icon={<Iconify icon="mdi:information" />}>
-          {selectedIds.length} {selectedIds.length === 1 ? 'disability' : 'disabilities'} selected
+          {selectedIds.length} {selectedIds.length === 1 ? 'challenge' : 'challenges'} selected
         </Alert>
       )}
 
-      {/* Disability accordions grouped by category */}
+      {/* Challenge accordions grouped by category */}
       <Stack spacing={2}>
-        {Object.entries(groupedDisabilities)
+        {Object.entries(groupedChallenges)
           .slice((page - 1) * itemsPerPage, page * itemsPerPage)
           .map(([category, items]) => {
-          const categorySelectedCount = items.filter((d) => selectedIds.includes(d.id)).length;
+          const categorySelectedCount = items.filter((l) => selectedIds.includes(l.id)).length;
           const allSelected = categorySelectedCount === items.length;
           const someSelected = categorySelectedCount > 0 && !allSelected;
           const isExpanded = expandedCategory === category;
@@ -144,7 +161,7 @@ export default function WizardStepDisabilities({
                       color: theme.palette.primary.main,
                     }}
                   >
-                    <Iconify icon="mdi:folder-heart" width={22} />
+                    <Iconify icon={getCategoryIcon(category)} width={22} />
                   </Box>
                   <Box>
                     <Typography variant="subtitle1" fontWeight={600}>
@@ -152,31 +169,21 @@ export default function WizardStepDisabilities({
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
                       {categorySelectedCount > 0 && `${categorySelectedCount} of `}
-                      {items.length} {items.length === 1 ? 'disability' : 'disabilities'}
+                      {items.length} {items.length === 1 ? 'challenge' : 'challenges'}
                     </Typography>
                   </Box>
                 </Stack>
               </AccordionSummary>
 
               <AccordionDetails sx={{ pt: 0 }}>
-                <Box
-                  sx={{
-                    display: 'grid',
-                    gap: 1.5,
-                    gridTemplateColumns: {
-                      xs: 'repeat(1, 1fr)',
-                      sm: 'repeat(2, 1fr)',
-                      md: 'repeat(3, 1fr)',
-                    },
-                  }}
-                >
-                  {items.map((disability) => {
-                    const isSelected = selectedIds.includes(disability.id);
+                <Stack spacing={1.5}>
+                  {items.map((challenge) => {
+                    const isSelected = selectedIds.includes(challenge.id);
 
                     return (
                       <Box
-                        key={disability.id}
-                        onClick={() => handleToggle(disability.id)}
+                        key={challenge.id}
+                        onClick={() => handleToggle(challenge.id)}
                         sx={{
                           p: 2,
                           borderRadius: 1.5,
@@ -197,7 +204,7 @@ export default function WizardStepDisabilities({
                         onKeyDown={(e) => {
                           if (e.key === 'Enter' || e.key === ' ') {
                             e.preventDefault();
-                            handleToggle(disability.id);
+                            handleToggle(challenge.id);
                           }
                         }}
                       >
@@ -210,11 +217,11 @@ export default function WizardStepDisabilities({
                           />
                           <Box sx={{ flex: 1 }}>
                             <Typography variant="body2" fontWeight={500}>
-                              {disability.disability_name}
+                              {challenge.name}
                             </Typography>
-                            {disability.disability_nhs_slug && (
-                              <Typography variant="caption" color="text.secondary">
-                                NHS: {disability.disability_nhs_slug}
+                            {challenge.description && (
+                              <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
+                                {challenge.description}
                               </Typography>
                             )}
                           </Box>
@@ -222,7 +229,7 @@ export default function WizardStepDisabilities({
                       </Box>
                     );
                   })}
-                </Box>
+                </Stack>
               </AccordionDetails>
             </Accordion>
           );
@@ -230,10 +237,10 @@ export default function WizardStepDisabilities({
       </Stack>
 
       {/* Pagination */}
-      {Object.keys(groupedDisabilities).length > itemsPerPage && (
+      {Object.keys(groupedChallenges).length > itemsPerPage && (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
           <Pagination
-            count={Math.ceil(Object.keys(groupedDisabilities).length / itemsPerPage)}
+            count={Math.ceil(Object.keys(groupedChallenges).length / itemsPerPage)}
             page={page}
             onChange={(_, value) => setPage(value)}
             color="primary"
