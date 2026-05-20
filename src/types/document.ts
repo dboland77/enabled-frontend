@@ -52,6 +52,7 @@ export interface IDocumentShare {
   shared_by_user_id: string;
   permission_type: DocumentPermission;
   shared_at: string;
+  revoked_at?: string | null;
   // Joined data
   shared_with_user?: {
     firstname: string;
@@ -74,6 +75,7 @@ export interface IEligibleRecipient {
 // Document upload input
 export interface IDocumentUpload {
   title: string;
+  description?: string;
   category: DocumentCategory;
   file: File;
 }

@@ -140,7 +140,7 @@ export default function DocumentShareDialog({
                 whiteSpace: 'nowrap',
               }}
             >
-              {document?.title}
+              {document?.name}
             </Typography>
           </Box>
         </Stack>

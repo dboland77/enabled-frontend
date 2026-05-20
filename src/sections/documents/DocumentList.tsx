@@ -144,7 +144,7 @@ export default function DocumentList({
         </DialogTitle>
         <DialogContent>
           <Typography variant="body2" color="text.secondary">
-            Are you sure you want to delete <strong>{deleteConfirm?.title}</strong>? This action
+            Are you sure you want to delete <strong>{deleteConfirm?.name}</strong>? This action
             cannot be undone and will also remove all sharing permissions.
           </Typography>
         </DialogContent>

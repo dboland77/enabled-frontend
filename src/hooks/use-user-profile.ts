@@ -28,6 +28,7 @@ export interface UserAdjustment {
 
 export interface UserProfile {
   userId: string;
+  email: string | null;
   firstname: string;
   lastname: string;
   avatar: string | null;
@@ -74,7 +75,7 @@ async function fetchUserProfile(): Promise<UserProfile | null> {
     throw new Error(profileError.message);
   }
 
-  return data as UserProfile;
+  return { ...data, email: user.email ?? null } as UserProfile;
 }
 
 export function useUserProfile() {

@@ -54,7 +54,7 @@ export default function SignInView() {
     const { error } = await supabase.auth.signInWithPassword(data);
 
     if (error) {
-      router.push('/error');
+      setErrorMsg('Email or password not recognised. Please try again.');
       return;
     }
 
