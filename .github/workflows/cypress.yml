@@ -1,0 +1,99 @@
+name: Cypress E2E
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  # Passed through to the Next.js dev server so Supabase client initialises.
+  NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+  NEXT_SITE_URL: http://localhost:3000
+  NEXT_REDIRECT_URLS: http://localhost:3000/**
+
+jobs:
+  cypress:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      # ── Checkout ──────────────────────────────────────────────────────────
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # ── Node.js ───────────────────────────────────────────────────────────
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # ── Dependencies ──────────────────────────────────────────────────────
+      - name: Install dependencies
+        run: npm ci
+
+      # ── Seed test users ───────────────────────────────────────────────────
+      # Runs before the app starts so test accounts exist when Cypress logs in.
+      - name: Seed test users
+        env:
+          SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          CYPRESS_EMPLOYEE_PASSWORD: ${{ secrets.CYPRESS_EMPLOYEE_PASSWORD }}
+          CYPRESS_MANAGER_PASSWORD:  ${{ secrets.CYPRESS_MANAGER_PASSWORD }}
+          CYPRESS_APPROVER_PASSWORD: ${{ secrets.CYPRESS_APPROVER_PASSWORD }}
+          CYPRESS_ADMIN_PASSWORD:    ${{ secrets.CYPRESS_ADMIN_PASSWORD }}
+        run: npx tsx scripts/seed-test-users.ts
+
+      # ── Cypress run ───────────────────────────────────────────────────────
+      # The official action starts the dev server, waits for it, then runs tests.
+      - name: Run Cypress tests
+        uses: cypress-io/github-action@v6
+        with:
+          build: npm run build
+          start: npm start
+          wait-on: http://localhost:3000
+          wait-on-timeout: 120
+          browser: chrome
+          record: false
+        env:
+          # Cypress env vars are prefixed CYPRESS_ and stripped of that prefix
+          # when read inside specs via Cypress.env().
+          CYPRESS_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          CYPRESS_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+          CYPRESS_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          CYPRESS_EMPLOYEE_EMAIL:    test-employee@enabled.test
+          CYPRESS_EMPLOYEE_PASSWORD: ${{ secrets.CYPRESS_EMPLOYEE_PASSWORD }}
+          CYPRESS_MANAGER_EMAIL:     test-manager@enabled.test
+          CYPRESS_MANAGER_PASSWORD:  ${{ secrets.CYPRESS_MANAGER_PASSWORD }}
+          CYPRESS_APPROVER_EMAIL:    test-approver@enabled.test
+          CYPRESS_APPROVER_PASSWORD: ${{ secrets.CYPRESS_APPROVER_PASSWORD }}
+          CYPRESS_ADMIN_EMAIL:       test-admin@enabled.test
+          CYPRESS_ADMIN_PASSWORD:    ${{ secrets.CYPRESS_ADMIN_PASSWORD }}
+
+      # ── Artifacts ─────────────────────────────────────────────────────────
+      - name: Upload Cypress videos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-videos
+          path: cypress/videos
+          retention-days: 7
+
+      - name: Upload Cypress screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+          retention-days: 7
+
+      # ── Cleanup test users ────────────────────────────────────────────────
+      # Always runs so test accounts don't linger after a failed test run.
+      - name: Cleanup test users
+        if: always()
+        env:
+          SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npx tsx scripts/cleanup-test-users.ts

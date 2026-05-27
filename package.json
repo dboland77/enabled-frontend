@@ -6,7 +6,11 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "cy:seed": "tsx scripts/seed-test-users.ts",
+    "cy:cleanup": "tsx scripts/cleanup-test-users.ts"
   },
   "dependencies": {
     "@emotion/cache": "^11.14.0",
@@ -59,8 +63,12 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/react-lazy-load-image-component": "^1.6.5",
+    "@types/node": "^20",
+    "cypress": "^13",
+    "dotenv": "^16",
     "eslint": "^9",
     "eslint-config-next": "16.1.1",
+    "tsx": "^4",
     "typescript": "^5"
   }
 }
