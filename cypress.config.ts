@@ -1,5 +1,6 @@
 import { defineConfig } from 'cypress';
 import { createClient } from '@supabase/supabase-js';
+import { Client as PgClient } from 'pg';
 
 export default defineConfig({
   e2e: {
@@ -26,6 +27,30 @@ export default defineConfig({
       }
 
       on('task', {
+        // Query pg_tables directly for tables that have rowsecurity = false.
+        // PostgREST only exposes the public schema, so we use a direct pg connection.
+        // Returns an array of table names; an empty array means all tables are protected.
+        async checkRlsStatus(): Promise<string[]> {
+          const client = new PgClient({
+            connectionString: config.env.SUPABASE_DB_URL as string,
+            ssl: { rejectUnauthorized: false },
+          });
+
+          await client.connect();
+          try {
+            const result = await client.query<{ tablename: string }>(`
+              SELECT tablename
+              FROM   pg_tables
+              WHERE  schemaname = 'public'
+                AND  rowsecurity = false
+              ORDER  BY tablename;
+            `);
+            return result.rows.map((r) => r.tablename);
+          } finally {
+            await client.end();
+          }
+        },
+
         // Seed transient test data (not users — those are seeded by scripts/seed-test-users.ts).
         // Returns IDs so specs can target specific rows.
         async seedTestData() {

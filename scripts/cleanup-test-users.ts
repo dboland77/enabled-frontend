@@ -16,17 +16,30 @@
 import { createClient } from '@supabase/supabase-js';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
+import { fileURLToPath } from 'node:url';
 
-dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
-dotenv.config();
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const projectRoot = path.resolve(__dirname, '..');
+
+dotenv.config({ path: path.join(projectRoot, '.env.local') });
+dotenv.config({ path: path.join(projectRoot, '.env') });
 
 const SUPABASE_URL =
   process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
-const SERVICE_KEY  = process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
+const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
 
-if (!SUPABASE_URL || !SERVICE_KEY) {
+if (!SUPABASE_URL) {
   console.error(
-    'Missing SUPABASE_URL / NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY.'
+    '❌  SUPABASE_URL / NEXT_PUBLIC_SUPABASE_URL is not set.\n' +
+    `   Loaded env from: ${path.join(projectRoot, '.env.local')}`
+  );
+  process.exit(1);
+}
+
+if (!SERVICE_KEY) {
+  console.error(
+    '❌  SUPABASE_SERVICE_ROLE_KEY is not set.\n' +
+    '   Add it to .env.local (Supabase Dashboard → Project Settings → API → service_role).'
   );
   process.exit(1);
 }

@@ -63,6 +63,7 @@ jobs:
           CYPRESS_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           CYPRESS_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
           CYPRESS_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          CYPRESS_SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
           CYPRESS_EMPLOYEE_EMAIL:    test-employee@enabled.test
           CYPRESS_EMPLOYEE_PASSWORD: ${{ secrets.CYPRESS_EMPLOYEE_PASSWORD }}
           CYPRESS_MANAGER_EMAIL:     test-manager@enabled.test
